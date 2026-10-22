@@ -1,0 +1,23 @@
+{
+ "created": "2026-10-22T18:20:37",
+ "code_hash": "77f1abcd84235098",
+ "rule": "v2: min mean max_i(p95_i/D_i)@0.95 s.t. Jain@1.2>=0.98; ties within 1% -> closest to default; edge -> extend once",
+ "seeds": "1-5",
+ "params": {
+  "RL-SP+DRR": {
+   "rate_frac": 0.4
+  },
+  "SQ-DRR": {
+   "kappa": 4.0
+  },
+  "CQDRR": {
+   "scale": 93.75
+  },
+  "FuzzyDRR": {
+   "gain": 0.1
+  },
+  "RevenueDRR": {
+   "tau": 0.0125
+  }
+ }
+}

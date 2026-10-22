@@ -1,0 +1,19 @@
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Copyrighted papers and previews: never publish these
+papers/
+*.pdf
+!figures/*.pdf
+
+# Local logs from pipeline runs
+results/rerun_log.txt
+results/confirm_out.txt
+
+# Private to the author: research plan and submission strategy
+PROJECT_PLAN.md
+docs/VENUE.md
+**/rerun_log.txt
+**/confirm_out.txt

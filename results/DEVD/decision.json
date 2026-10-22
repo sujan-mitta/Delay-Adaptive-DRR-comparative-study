@@ -1,0 +1,7 @@
+{
+ "confirmed": true,
+ "worst_ratio": 1.0455034537562078,
+ "worst_point": "onoff|0.8",
+ "better_at_load_ge_0.9": "6/8",
+ "rule": "no point worse than +5% AND lower W at >= half of load>=0.9 points (dev seeds 1-5)"
+}

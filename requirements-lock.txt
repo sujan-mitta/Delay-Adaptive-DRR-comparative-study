@@ -1,0 +1,7 @@
+# Exact versions that produced the reported results (Python 3.13.0, Windows 11, x86-64).
+# Install these for bit-exact reproduction:  python -m pip install -r requirements-lock.txt
+numpy==2.4.0
+pandas==2.3.3
+matplotlib==3.10.8
+scipy==1.16.3
+pytest==9.1.1

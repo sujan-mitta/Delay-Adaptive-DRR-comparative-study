@@ -1,0 +1,424 @@
+# RESULTS (auto-generated)
+
+Generated 2026-10-22 19:28 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `73b4993ab915ae0b`. **Do not edit by hand** — re-run the script.
+
+> **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
+
+- Reported runs in the main matrix E1–E8: **6520** (seeds 101–120); further arms (E9, E9C, E10, E1D, E1V, ES) are reported in their own sections. Failed runs: **none**.
+- Pairing verified: 2320 (point, seed) groups, each with a single trace digest across all 8 schedulers.
+- Tuned parameters (dev seeds 1–5, frozen before reported runs): `{'RL-SP+DRR': {'rate_frac': 0.4}, 'DR-DRR': {'kappa': 4.0}, 'CQDRR': {'scale': 93.75}, 'FuzzyDRR': {'gain': 0.1}, 'RevenueDRR': {'tau': 0.0125}}`.
+- Values are mean ± 95 % t-interval half-width over 20 seeds; delays in ms. `W = max_i p95_i / D_i` with D = (10, 50, 500) ms: W ≤ 1 means every class met its p95 target.
+
+## Headline results (computed)
+
+1. **Strict Priority** gives the lowest latency-class p95 at 14/14 E1 points, but starves other classes under overload.
+2. **Starvation** (> 100 ms backlogged without service), episodes summed over E1–E8 (longest single gap): FIFO 1142 (288 ms), SP 21286 (2389 ms), CQDRR 12666 (444 ms); every other scheduler 0. FIFO has no priorities: its episodes are head-of-line waits in one long FIFO queue (mostly E4's 500 kB buffer), not service denial.
+3. **No single best adaptive scheduler**: best non-SP on W — DR-DRR 14/29, RL-SP+DRR 5/29, RevenueDRR 4/29, CQDRR 4/29, FuzzyDRR 2/29.
+4. **Shared tail-drop buffer fixes throughput shares**: Jain's index >= 0.9981 for every scheduler and run in E1 ON/OFF; fairness differences appear only with a partitioned buffer (E8).
+5. **Weight oscillation** helps under bursts and hurts under smooth overload (E9 + control E9C); damping (lambda = 0.5) lowers W by up to 51%.
+6. **Paper-trend checks**: RL-SP+DRR reproduced; CQDRR not reproduced (4/8); SCRR latency reproduced (8/8), fairness reproduced.
+
+
+## RQ1 — Latency-class p95 under identical traffic (E1)
+
+![p95 vs load](figures/fig2_p95_vs_load.png)
+
+**onoff, load 0.95**
+
+| scheduler | lat p95 | lat p99 | vid p95 | blk p95 | W |
+|---|---|---|---|---|---|
+| FIFO | 99.1 ± 0.1 | 99.9 ± 0.0 | 98.5 ± 0.1 | 98.1 ± 0.1 | 9.908 ± 0.007 |
+| SP | 1.1 ± 0.0 | 1.3 ± 0.0 | 20.9 ± 0.7 | 267.5 ± 7.0 | 0.535 ± 0.014 |
+| DRR | 19.6 ± 1.0 | 31.5 ± 2.5 | 156.3 ± 4.2 | 151.1 ± 5.3 | 3.126 ± 0.084 |
+| RL-SP+DRR | 6.8 ± 0.2 | 10.2 ± 0.6 | 158.0 ± 4.2 | 153.1 ± 5.5 | 3.159 ± 0.083 |
+| DR-DRR | 11.9 ± 0.3 | 16.4 ± 0.4 | 66.3 ± 1.4 | 216.8 ± 4.1 | 1.326 ± 0.028 |
+| CQDRR | 17.8 ± 0.4 | 27.1 ± 0.8 | 27.3 ± 0.7 | 260.2 ± 6.9 | 1.784 ± 0.038 |
+| FuzzyDRR | 24.7 ± 1.1 | 37.8 ± 2.5 | 135.1 ± 3.1 | 158.0 ± 4.0 | 2.726 ± 0.069 |
+| RevenueDRR | 8.6 ± 0.1 | 10.5 ± 0.1 | 71.2 ± 2.3 | 232.5 ± 4.6 | 1.425 ± 0.045 |
+
+**onoff, load 1.2**
+
+| scheduler | lat p95 | lat p99 | vid p95 | blk p95 | W |
+|---|---|---|---|---|---|
+| FIFO | 99.8 ± 0.0 | 100.3 ± 0.0 | 99.4 ± 0.0 | 99.2 ± 0.0 | 9.985 ± 0.001 |
+| SP | 1.2 ± 0.0 | 1.4 ± 0.0 | 40.2 ± 1.8 | 356.8 ± 5.3 | 0.812 ± 0.029 |
+| DRR | 63.5 ± 3.8 | 97.7 ± 8.1 | 194.5 ± 2.7 | 187.3 ± 3.0 | 6.351 ± 0.383 |
+| RL-SP+DRR | 34.4 ± 2.0 | 52.4 ± 3.7 | 199.8 ± 3.0 | 193.5 ± 3.4 | 4.054 ± 0.108 |
+| DR-DRR | 19.9 ± 0.3 | 26.5 ± 0.7 | 90.5 ± 1.5 | 273.9 ± 3.9 | 1.990 ± 0.028 |
+| CQDRR | 25.1 ± 1.0 | 46.2 ± 3.7 | 41.5 ± 0.7 | 348.1 ± 5.8 | 2.512 ± 0.098 |
+| FuzzyDRR | 63.2 ± 2.5 | 85.6 ± 3.9 | 169.9 ± 2.3 | 192.7 ± 2.6 | 6.322 ± 0.251 |
+| RevenueDRR | 10.4 ± 0.1 | 13.1 ± 0.3 | 119.3 ± 4.7 | 285.9 ± 5.0 | 2.386 ± 0.094 |
+
+**poisson, load 0.95**
+
+| scheduler | lat p95 | lat p99 | vid p95 | blk p95 | W |
+|---|---|---|---|---|---|
+| FIFO | 27.5 ± 2.1 | 43.5 ± 6.5 | 27.5 ± 2.2 | 27.6 ± 2.3 | 2.751 ± 0.211 |
+| SP | 1.1 ± 0.0 | 1.2 ± 0.0 | 3.3 ± 0.0 | 65.9 ± 5.4 | 0.132 ± 0.010 |
+| DRR | 2.7 ± 0.0 | 3.4 ± 0.0 | 34.5 ± 2.8 | 40.0 ± 3.1 | 0.689 ± 0.057 |
+| RL-SP+DRR | 1.5 ± 0.0 | 2.0 ± 0.0 | 34.8 ± 2.9 | 40.3 ± 3.1 | 0.697 ± 0.058 |
+| DR-DRR | 2.8 ± 0.0 | 3.6 ± 0.1 | 22.4 ± 0.3 | 51.7 ± 5.6 | 0.447 ± 0.006 |
+| CQDRR | 4.0 ± 0.0 | 5.7 ± 0.1 | 5.1 ± 0.1 | 64.6 ± 5.4 | 0.397 ± 0.004 |
+| FuzzyDRR | 2.7 ± 0.0 | 3.4 ± 0.0 | 31.3 ± 1.8 | 42.2 ± 4.0 | 0.627 ± 0.036 |
+| RevenueDRR | 4.1 ± 0.0 | 5.5 ± 0.0 | 8.1 ± 0.1 | 62.6 ± 5.4 | 0.415 ± 0.002 |
+
+Paired difference in latency-class p95 vs DRR (negative = better), ON/OFF-medium:
+
+| load | FIFO | SP | RL-SP+DRR | DR-DRR | CQDRR | FuzzyDRR | RevenueDRR |
+|---|---|---|---|---|---|---|---|
+| 0.4 | +1.3 (p<.001) | -0.5 (p<.001) | -0.3 (p<.001) | -0.0 (p=0.32) | +0.1 (p<.001) | -0.2 (p<.001) | +0.2 (p<.001) |
+| 0.8 | +65.4 (p<.001) | -5.0 (p<.001) | -3.2 (p<.001) | +1.0 (p<.001) | +7.3 (p<.001) | +1.9 (p<.001) | +1.6 (p<.001) |
+| 0.95 | +79.5 (p<.001) | -18.5 (p<.001) | -12.9 (p<.001) | -7.7 (p<.001) | -1.8 (p=0.001) | +5.1 (p<.001) | -11.0 (p<.001) |
+| 1.2 | +36.3 (p<.001) | -62.3 (p<.001) | -29.1 (p<.001) | -43.6 (p<.001) | -38.4 (p<.001) | -0.3 (p=0.9) | -53.1 (p<.001) |
+
+Facts:
+- Lowest latency-class p95: SP at 14/14 E1 points (a static baseline wins RQ1 outright).
+- Excluding SP, lowest latency p95 at E1 points: RL-SP+DRR 12, RevenueDRR 2.
+
+## RQ2 — Cost to other classes: delay, starvation, throughput, fairness (E5, E8)
+
+![starvation](figures/fig3_starvation_stress.png)
+
+![trade-off](figures/fig4_delay_fairness_tradeoff.png)
+
+**E5 stress, shared buffer** (latency class alone offers 0.8·C; total 1.3·C):
+
+| scheduler | lat p95 | vid p95 | blk p95 | blk starv # | blk starv s | vid starv s | blk tput Mb/s | Jain |
+|---|---|---|---|---|---|---|---|---|
+| FIFO | 100.0 ± 0.0 | 98.5 ± 0.1 | 98.1 ± 0.1 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.13 ± 0.04 | 2.03 ± 0.04 | 0.912 ± 0.007 |
+| SP | 46.0 ± 1.3 | 258.4 ± 10.4 | 639.0 ± 15.5 | 140.40 ± 3.92 | 34.53 ± 0.59 | 20.51 ± 0.50 | 2.01 ± 0.04 | 0.906 ± 0.007 |
+| DRR | 176.3 ± 1.9 | 26.6 ± 1.1 | 62.4 ± 2.7 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.03 ± 0.04 | 0.910 ± 0.007 |
+| RL-SP+DRR | 250.6 ± 0.0 | 33.7 ± 1.4 | 66.6 ± 3.0 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 1.75 ± 0.04 | 0.979 ± 0.003 |
+| DR-DRR | 109.9 ± 0.6 | 50.3 ± 0.8 | 301.0 ± 4.3 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.03 ± 0.04 | 0.911 ± 0.007 |
+| CQDRR | 76.3 ± 1.5 | 66.5 ± 2.3 | 573.2 ± 14.3 | 87.40 ± 3.51 | 14.26 ± 0.55 | 0.08 ± 0.04 | 2.02 ± 0.04 | 0.908 ± 0.007 |
+| FuzzyDRR | 166.9 ± 1.3 | 36.2 ± 1.4 | 83.7 ± 3.4 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.03 ± 0.04 | 0.911 ± 0.007 |
+| RevenueDRR | 139.0 ± 0.8 | 44.9 ± 1.9 | 212.5 ± 5.1 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.03 ± 0.04 | 0.912 ± 0.007 |
+
+**E8 stress, partitioned buffer** (B/3 per class):
+
+| scheduler | lat p95 | vid p95 | blk p95 | blk starv # | blk starv s | vid starv s | blk tput Mb/s | Jain |
+|---|---|---|---|---|---|---|---|---|
+| FIFO | 78.8 ± 0.8 | 83.4 ± 0.7 | 81.1 ± 0.8 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.77 ± 0.03 | 0.999 ± 0.000 |
+| SP | 33.3 ± 0.0 | 362.4 ± 11.7 | 749.6 ± 34.9 | 123.65 ± 3.90 | 40.16 ± 0.78 | 27.13 ± 0.71 | 1.23 ± 0.04 | 0.820 ± 0.010 |
+| DRR | 93.4 ± 0.7 | 43.5 ± 3.0 | 79.0 ± 1.1 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.89 ± 0.03 | 0.996 ± 0.001 |
+| RL-SP+DRR | 83.7 ± 0.0 | 58.6 ± 3.8 | 86.3 ± 1.8 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.87 ± 0.03 | 0.978 ± 0.001 |
+| DR-DRR | 61.0 ± 0.5 | 54.4 ± 1.4 | 244.0 ± 3.2 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.02 ± 0.03 | 0.965 ± 0.003 |
+| CQDRR | 50.8 ± 0.3 | 48.1 ± 0.9 | 430.0 ± 14.3 | 102.30 ± 5.05 | 15.81 ± 0.70 | 0.00 ± 0.00 | 1.67 ± 0.04 | 0.928 ± 0.005 |
+| FuzzyDRR | 84.8 ± 0.3 | 55.8 ± 2.9 | 89.7 ± 1.1 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.83 ± 0.03 | 0.997 ± 0.000 |
+| RevenueDRR | 66.3 ± 0.1 | 68.3 ± 2.7 | 150.9 ± 1.0 | 0.00 ± 0.00 | 0.00 ± 0.00 | 0.00 ± 0.00 | 2.39 ± 0.03 | 0.990 ± 0.001 |
+
+**E8 load 1.2, partitioned buffer:**
+
+| scheduler | lat p95 | vid p95 | blk p95 | lat tput Mb/s | vid tput Mb/s | blk tput Mb/s | Jain |
+|---|---|---|---|---|---|---|---|
+| FIFO | 89.4 ± 0.5 | 86.0 ± 0.5 | 85.5 ± 0.6 | 2.34 ± 0.03 | 3.57 ± 0.03 | 3.57 ± 0.03 | 1.000 ± 0.000 |
+| SP | 1.2 ± 0.0 | 51.8 ± 0.6 | 334.2 ± 12.0 | 2.41 ± 0.03 | 4.53 ± 0.05 | 2.34 ± 0.05 | 0.938 ± 0.004 |
+| DRR | 69.1 ± 2.0 | 96.5 ± 0.1 | 95.0 ± 0.2 | 2.40 ± 0.03 | 3.49 ± 0.03 | 3.52 ± 0.03 | 0.999 ± 0.000 |
+| RL-SP+DRR | 41.7 ± 2.4 | 103.0 ± 0.6 | 101.0 ± 0.8 | 2.41 ± 0.03 | 3.47 ± 0.03 | 3.49 ± 0.03 | 0.998 ± 0.000 |
+| DR-DRR | 16.5 ± 0.2 | 66.3 ± 0.4 | 187.7 ± 3.0 | 2.41 ± 0.03 | 4.11 ± 0.04 | 2.85 ± 0.04 | 0.978 ± 0.002 |
+| CQDRR | 44.0 ± 1.1 | 45.9 ± 0.2 | 306.7 ± 10.0 | 2.41 ± 0.03 | 4.52 ± 0.05 | 2.43 ± 0.05 | 0.944 ± 0.004 |
+| FuzzyDRR | 64.4 ± 1.6 | 90.3 ± 0.2 | 99.8 ± 0.4 | 2.41 ± 0.03 | 3.56 ± 0.03 | 3.46 ± 0.03 | 0.998 ± 0.000 |
+| RevenueDRR | 11.1 ± 0.1 | 85.1 ± 1.0 | 142.7 ± 0.6 | 2.41 ± 0.03 | 3.94 ± 0.04 | 3.01 ± 0.03 | 0.987 ± 0.001 |
+
+Facts:
+- Shared buffer: Jain's index over all E1 ON/OFF runs ranges 0.9981–1.0000 across **all** schedulers; per-class drop rates at load 1.2 differ across schedulers by at most 0.98 percentage points. With a class-blind tail-drop buffer, admitted (hence delivered) traffic is proportional to arrivals, so the scheduler cannot change throughput shares — only delay.
+- SP starves bulk 34.5 s and video 20.5 s per 60 s in E5. Starvation episodes (> 100 ms backlogged without service, any class) summed over all E1–E8 runs: FIFO 1142, SP 21286, DRR 0, RL-SP+DRR 0, DR-DRR 0, CQDRR 12666, FuzzyDRR 0, RevenueDRR 0.
+- With a partitioned buffer the throughput cost becomes visible: in E8 stress, bulk throughput is FIFO 2.77, SP 1.23, DRR 2.89, RL-SP+DRR 2.87, DR-DRR 2.02, CQDRR 1.67, FuzzyDRR 2.83, RevenueDRR 2.39 Mb/s.
+
+## RQ3 — Weight oscillation and its effect on tail delay
+
+![oscillation](figures/fig5_weight_oscillation.png)
+
+Oscillation (E1 ON/OFF, load 0.95): mean |ΔQ|/Q⁰ per 10-ms update and quantum sign flips per second.
+
+| scheduler | |ΔQ|/Q⁰ per update | flips/s | lat-class |ΔQ|/Q⁰ |
+|---|---|---|---|
+| DR-DRR | 0.857 ± 0.036 | 32.6 ± 1.0 | 1.084 ± 0.042 |
+| CQDRR | 0.285 ± 0.013 | 37.8 ± 0.7 | 0.279 ± 0.010 |
+| FuzzyDRR | 0.007 ± 0.000 | 26.3 ± 0.2 | 0.006 ± 0.000 |
+| RevenueDRR | 0.180 ± 0.002 | 36.7 ± 0.3 | 0.169 ± 0.002 |
+
+Within-point Spearman correlation between oscillation and W across the 20 seeds (mean over E1 points):
+
+- DR-DRR: ρ = +0.52 over 12 points
+- CQDRR: ρ = +0.32 over 14 points
+- FuzzyDRR: ρ = +0.33 over 14 points
+- RevenueDRR: ρ = +0.19 over 14 points
+
+A correlation across seeds cannot show cause; the intervention test is the pre-registered damping ablation E9 below.
+
+### E9 — pre-registered DR-DRR damping ablation (+ post-hoc control E9C)
+
+![damping](figures/fig9_drdrr_damping.png)
+
+Rule (fixed before running, see protocol §E9): *supported* if at ≥ 2 of 3 points some λ < 1 lowers mean W by ≥ 5 % vs λ = 1 with Holm-corrected paired Wilcoxon p < 0.05; *not supported* if no λ < 1 lowers W significantly anywhere; otherwise *mixed*. E9C = static DRR fixed at DR-DRR's mean quanta for that (point, λ).
+
+| point | λ | |ΔQ|/Q⁰ | W DR-DRR | ΔW vs λ=1 | Holm p | W static DRR @ mean Q (E9C) | DR-DRR − static (paired p) |
+|---|---|---|---|---|---|---|---|
+| onoff 0.95 | 1 | 0.857 | 1.326 ± 0.028 | – | – | 2.054 ± 0.064 | -0.728 (p=1.9e-06) |
+| onoff 0.95 | 0.5 | 0.124 | 1.263 ± 0.021 | -4.8% | 5.7e-06 | 2.168 ± 0.082 | -0.905 (p=1.9e-06) |
+| onoff 0.95 | 0.25 | 0.077 | 1.284 ± 0.020 | -3.2% | 1.9e-05 | 2.101 ± 0.079 | -0.817 (p=1.9e-06) |
+| onoff 0.95 | 0.1 | 0.047 | 1.373 ± 0.017 | +3.5% | 0.00039 | 2.000 ± 0.065 | -0.627 (p=1.9e-06) |
+| onoff 1.2 | 1 | 1.527 | 1.990 ± 0.028 | – | – | 4.778 ± 0.211 | -2.789 (p=1.9e-06) |
+| onoff 1.2 | 0.5 | 0.242 | 1.897 ± 0.024 | -4.6% | 3.8e-05 | 3.895 ± 0.162 | -1.997 (p=1.9e-06) |
+| onoff 1.2 | 0.25 | 0.154 | 1.989 ± 0.022 | -0.0% | 0.67 | 3.637 ± 0.159 | -1.648 (p=1.9e-06) |
+| onoff 1.2 | 0.1 | 0.092 | 2.232 ± 0.032 | +12.2% | 5.7e-06 | 3.380 ± 0.144 | -1.148 (p=1.9e-06) |
+| poisson 1.2 | 1 | 2.387 | 1.326 ± 0.014 | – | – | 0.859 ± 0.063 | +0.467 (p=1.9e-06) |
+| poisson 1.2 | 0.5 | 0.045 | 0.652 ± 0.005 | -50.8% | 5.7e-06 | 2.866 ± 0.390 | -2.214 (p=1.9e-06) |
+| poisson 1.2 | 0.25 | 0.021 | 0.655 ± 0.004 | -50.6% | 5.7e-06 | 2.921 ± 0.354 | -2.266 (p=1.9e-06) |
+| poisson 1.2 | 0.1 | 0.010 | 0.674 ± 0.003 | -49.1% | 5.7e-06 | 2.542 ± 0.395 | -1.868 (p=1.9e-06) |
+
+**Pre-registered verdict: mixed** — the ≥ 5 % criterion is met at 1 of 3 points.
+
+Facts:
+- Manipulation check: oscillation falls monotonically with λ at every point (table above).
+- ON/OFF bursts: DR-DRR beats static DRR at its own mean quanta at every λ, so the weight movement is the adaptation that helps, not harmful noise; mild damping changes W by < 5 %, heavy damping (λ = 0.1) makes it worse.
+- Poisson overload: static DRR at DR-DRR's λ = 1 mean quanta beats DR-DRR λ = 1 — here the oscillation itself costs tail delay, and damping (λ ≤ 0.5) roughly halves W.
+- λ = 0.5 lowered W at all three points. It is a candidate for the plan's optional fix, but it was chosen on reported seeds; adopting it requires confirming on dev seeds and the other E1 points first.
+
+### E1D — DR-DRR+damping (λ = 0.5) as a separate variant
+
+Dev-seed confirmation (seeds 1–5, rule fixed beforehand, protocol §E1D): **confirmed** — worst point onoff|0.8 at +4.6 % W (limit +5 %), lower W at 6/8 points with load ≥ 0.9.
+
+![damped variant](figures/fig10_drdrr_damping_variant.png)
+
+| point | W DR-DRR | W +damping | ΔW | Holm p | seeds better | lat p95 | vid p95 | blk p95 | |ΔQ|/Q⁰ | rank among 9 (8 + variant) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| onoff 0.4 | 0.144 | 0.144 | +0.0% | 0.95 | 0/20 | 1.4→1.4 | 3.5→3.5 | 4→4 | 0.000→0.000 | 5 |
+| poisson 0.4 | 0.119 | 0.119 | +0.0% | 1 | 0/20 | 1.2→1.2 | 1.5→1.5 | 1→1 | 0.000→0.000 | 6 |
+| onoff 0.6 | 0.361 | 0.366 | +1.4% | 2.7e-05 | 0/20 | 2.4→2.4 | 18.0→18.3 | 21→21 | 0.007→0.002 | 3 |
+| poisson 0.6 | 0.172 | 0.172 | +0.0% | 1 | 0/20 | 1.7→1.7 | 3.1→3.1 | 3→3 | 0.000→0.000 | 5 |
+| onoff 0.8 | 0.843 | 0.878 | +4.1% | 0.00016 | 1/20 | 7.2→7.0 | 42.2→43.9 | 141→141 | 0.279→0.045 | 4 |
+| poisson 0.8 | 0.216 | 0.217 | +0.0% | 0.63 | 6/20 | 2.2→2.2 | 7.7→7.7 | 8→8 | 0.000→0.000 | 6 |
+| onoff 0.9 | 1.181 | 1.146 | -2.9% | 7.6e-05 | 19/20 | 10.5→9.9 | 59.0→57.3 | 197→202 | 0.660→0.096 | 2 |
+| poisson 0.9 | 0.311 | 0.312 | +0.1% | 0.35 | 5/20 | 2.4→2.4 | 15.6→15.6 | 19→19 | 0.003→0.001 | 4 |
+| onoff 0.95 | 1.326 | 1.263 | -4.8% | 2.7e-05 | 20/20 | 11.9→11.4 | 66.3→63.2 | 217→222 | 0.857→0.124 | 2 |
+| poisson 0.95 | 0.447 | 0.453 | +1.3% | 2.7e-05 | 0/20 | 2.8→2.8 | 22.4→22.7 | 52→52 | 0.015→0.005 | 5 |
+| onoff 1.05 | 1.577 | 1.484 | -5.9% | 2.7e-05 | 20/20 | 14.9→14.7 | 78.9→73.3 | 243→253 | 1.192→0.178 | 2 |
+| poisson 1.05 | 0.901 | 0.613 | -32.0% | 2.7e-05 | 20/20 | 9.0→3.8 | 39.9→30.6 | 237→240 | 0.853→0.030 | 4 |
+| onoff 1.2 | 1.990 | 1.897 | -4.6% | 0.00013 | 19/20 | 19.9→19.0 | 90.5→84.4 | 274→284 | 1.527→0.242 | 2 |
+| poisson 1.2 | 1.326 | 0.652 | -50.8% | 2.7e-05 | 20/20 | 13.1→4.8 | 65.9→32.6 | 254→260 | 2.387→0.045 | 4 |
+
+Facts:
+- Holm-significant W change vs DR-DRR at 14 E1 points: better at 6, worse at 3, no difference at 5.
+- Largest gain: poisson|1.2 (-50.8%); bulk p95 rises slightly at high load but stays below its 500 ms target.
+- Rank = position by mean W among the 8 schedulers plus this variant (1 = best). It ranks 1st at 0 and 2nd at 4 of 14 points; median rank 4.
+- λ = 0.5 was confirmed on dev seeds, but the idea came from E9 on reported seeds, so present the variant as a data-motivated improvement, not a pre-planned arm.
+
+### ES — SCRR, the optional ninth scheduler (Sharafzadeh et al., NSDI 2025)
+
+Paper-faithful SCRR with enhancements (Appendix A, Algorithms 3-4), parameter-free, each class one sub-queue, run on the same traces as E1/E3/E5/E8 (pairing checked). Tests pre-registered in the protocol (section ES).
+
+![SCRR](figures/fig11_scrr.png)
+
+| point | latency mean, SCRR (ms) | latency mean, DRR-9000 (ms) | paired p | W SCRR | W DRR-1500 | W DRR-9000 | SCRR rank among 9 |
+|---|---|---|---|---|---|---|---|
+| onoff 0.4 | 0.33 | 0.50 | 1.9e-06 | 0.14 | 0.14 | 0.24 | 4 |
+| onoff 0.6 | 0.60 | 1.94 | 1.9e-06 | 0.42 | 0.39 | 0.91 | 6 |
+| onoff 0.8 | 1.62 | 4.55 | 1.9e-06 | 1.98 | 1.94 | 1.90 | 8 |
+| onoff 0.9 | 3.67 | 6.98 | 1.9e-06 | 2.89 | 2.85 | 2.82 | 8 |
+| onoff 0.95 | 5.40 | 8.67 | 1.9e-06 | 3.16 | 3.13 | 3.09 | 8 |
+| onoff 1.05 | 10.20 | 13.24 | 1.9e-06 | 3.81 | 3.75 | 3.87 | 7 |
+| onoff 1.2 | 20.02 | 22.31 | 1.9e-06 | 6.34 | 6.35 | 6.42 | 7 |
+| poisson 0.4 | 0.27 | 0.29 | 1.9e-06 | 0.12 | 0.12 | 0.13 | 8 |
+| poisson 0.6 | 0.48 | 0.64 | 1.9e-06 | 0.18 | 0.17 | 0.25 | 7 |
+| poisson 0.8 | 0.73 | 1.61 | 1.9e-06 | 0.23 | 0.22 | 0.64 | 6 |
+| poisson 0.9 | 0.82 | 3.02 | 1.9e-06 | 0.35 | 0.33 | 1.02 | 7 |
+| poisson 0.95 | 0.82 | 4.47 | 1.9e-06 | 0.73 | 0.69 | 1.23 | 8 |
+| poisson 1.05 | 0.80 | 7.33 | 1.9e-06 | 4.37 | 4.32 | 4.20 | 8 |
+| poisson 1.2 | 0.99 | 7.21 | 1.9e-06 | 4.98 | 4.90 | 4.78 | 8 |
+
+| SCRR paper claim | our test | result | verdict |
+|---|---|---|---|
+| (a) much lower application latency than DRR with a large quantum | latency-class mean delay below DRR-9000, paired p<0.05, at E1 loads >= 0.9 | 8/8 | **reproduced** |
+| (b) fairness on par with DRR | |Jain(SCRR) - Jain(DRR)| <= 0.01 at the 3 E8 partitioned points | 0.95: -0.0000, 1.2: -0.0000, stress: -0.0003 | **reproduced** |
+
+Facts: on this study's deadline-aware metric W, SCRR differs from DRR with a 1500 B quantum by -3% to +8% across the 14 E1 points and ranks 4-8 of 9 (median 7). SCRR targets fairness and sparse-flow latency without parameters; it does not use per-class delay targets, so a class-level, deadline-aware comparison is not where its advantages show. Its latency gain over a large-quantum DRR is large (table above).
+
+## RQ4 — Parameter sensitivity (E6) and burstiness (E3)
+
+![sensitivity](figures/fig6_parameter_sensitivity.png)
+
+Change in W when one knob moves from its tuned value to ×0.5 / ×1.5, all others fixed, ON/OFF-medium:
+
+| scheduler | knob | W tuned @0.95 | range @0.95 | W tuned @1.2 | range @1.2 |
+|---|---|---|---|---|---|
+| RL-SP+DRR | rate_frac | 3.16 | 3.16–45.80 | 4.05 | 4.05–50.01 |
+| DR-DRR | kappa | 1.33 | 1.33–1.46 | 1.99 | 1.88–2.16 |
+| DR-DRR | qmax_mult | 1.33 | 1.33–1.38 | 1.99 | 1.99–2.53 |
+| DR-DRR | theta | 1.33 | 1.29–1.33 | 1.99 | 1.80–2.02 |
+| CQDRR | rate_ewma | 1.78 | 1.58–2.10 | 2.51 | 2.46–2.74 |
+| CQDRR | rbar_gain | 1.78 | 1.77–1.78 | 2.51 | 2.51–2.54 |
+| CQDRR | scale | 1.78 | 1.71–1.96 | 2.51 | 2.51–2.79 |
+| CQDRR | w | 1.78 | 1.56–2.01 | 2.51 | 2.51–2.73 |
+| FuzzyDRR | delay_span | 2.73 | 2.72–2.79 | 6.32 | 6.12–6.51 |
+| FuzzyDRR | gain | 2.73 | 2.71–2.89 | 6.32 | 6.20–6.32 |
+| FuzzyDRR | qmin | 2.73 | 2.73–2.73 | 6.32 | 6.32–6.32 |
+| RevenueDRR | ewma | 1.42 | 1.39–1.45 | 2.39 | 2.36–2.39 |
+| RevenueDRR | guar_scale | 1.42 | 0.84–4.19 | 2.39 | 1.39–9.63 |
+| RevenueDRR | tau | 1.42 | 1.41–1.48 | 2.39 | 2.35–2.43 |
+
+![burstiness](figures/fig7_burstiness.png)
+
+W by arrival process (load 0.9, E3):
+
+| scheduler | poisson | onoff-small | onoff-medium | onoff-large |
+|---|---|---|---|---|
+| FIFO | 1.30 ± 0.05 | 5.42 ± 0.31 | 9.77 ± 0.04 | 9.95 ± 0.00 |
+| SP | 0.11 ± 0.00 | 0.26 ± 0.02 | 0.48 ± 0.01 | 0.66 ± 0.03 |
+| DRR | 0.33 ± 0.01 | 1.47 ± 0.10 | 2.85 ± 0.08 | 3.44 ± 0.09 |
+| RL-SP+DRR | 0.33 ± 0.01 | 1.49 ± 0.10 | 2.88 ± 0.08 | 3.47 ± 0.09 |
+| DR-DRR | 0.31 ± 0.01 | 0.65 ± 0.01 | 1.18 ± 0.03 | 1.77 ± 0.06 |
+| CQDRR | 0.35 ± 0.00 | 0.94 ± 0.01 | 1.64 ± 0.05 | 2.13 ± 0.09 |
+| FuzzyDRR | 0.31 ± 0.01 | 1.29 ± 0.06 | 2.48 ± 0.07 | 3.11 ± 0.10 |
+| RevenueDRR | 0.38 ± 0.00 | 0.74 ± 0.00 | 1.21 ± 0.05 | 1.98 ± 0.11 |
+
+## RQ5 — Do rankings hold across load, mix, buffer and seeds?
+
+![buffer and mix](figures/fig8_buffer_and_mix.png)
+
+| exp | point | best mean rank on W | its share of seeds ranked 1st | best excluding SP | its share of seeds 1st (SP excluded) |
+|---|---|---|---|---|---|
+| E1 | poisson 0.4 | SP | 100% | RL-SP+DRR | 100% |
+| E1 | onoff 0.4 | SP | 100% | RL-SP+DRR | 100% |
+| E1 | poisson 0.6 | SP | 100% | RL-SP+DRR | 100% |
+| E1 | onoff 0.6 | SP | 100% | DR-DRR | 85% |
+| E1 | poisson 0.8 | SP | 100% | RL-SP+DRR | 100% |
+| E1 | onoff 0.8 | SP | 100% | RevenueDRR | 80% |
+| E1 | poisson 0.9 | SP | 100% | FuzzyDRR | 80% |
+| E1 | onoff 0.9 | SP | 100% | DR-DRR | 55% |
+| E1 | poisson 0.95 | SP | 100% | CQDRR | 100% |
+| E1 | onoff 0.95 | SP | 100% | DR-DRR | 95% |
+| E1 | poisson 1.05 | RevenueDRR | 100% | RevenueDRR | 100% |
+| E1 | onoff 1.05 | SP | 100% | DR-DRR | 100% |
+| E1 | poisson 1.2 | SP | 75% | RevenueDRR | 80% |
+| E1 | onoff 1.2 | SP | 100% | DR-DRR | 100% |
+| E2 | mix=A | SP | 100% | DR-DRR | 95% |
+| E2 | mix=B | SP | 100% | CQDRR | 100% |
+| E2 | mix=C | DR-DRR | 30% | DR-DRR | 50% |
+| E3 | poisson | SP | 100% | FuzzyDRR | 80% |
+| E3 | onoff-small | SP | 100% | DR-DRR | 100% |
+| E3 | onoff-medium | SP | 100% | DR-DRR | 55% |
+| E3 | onoff-large | SP | 100% | DR-DRR | 95% |
+| E4 | buffer=small | SP | 100% | DR-DRR | 100% |
+| E4 | buffer=medium | SP | 100% | DR-DRR | 95% |
+| E4 | buffer=large | SP | 95% | CQDRR | 55% |
+| E7 | poisson 0.3 | SP | 100% | RL-SP+DRR | 55% |
+| E8 | partitioned 0.95 | SP | 100% | DR-DRR | 100% |
+| E8 | partitioned 1.2 | SP | 100% | DR-DRR | 80% |
+| E8 | partitioned stress | CQDRR | 100% | CQDRR | 100% |
+| E8 | partitioned poisson1.2 | SP | 100% | RevenueDRR | 100% |
+
+Facts:
+- Best non-SP scheduler on W across these points: DR-DRR 14/29, RL-SP+DRR 5/29, RevenueDRR 4/29, CQDRR 4/29, FuzzyDRR 2/29.
+- Low-load control E7 (Poisson 0.3): W spans 0.089–0.110 across schedulers; latency-class p95 spans 0.89–1.10 ms (differences vanish as expected).
+
+## Measurement adequacy and robustness
+
+Tail sample size: delivered packets per class per run behind each p95/p99 (over all E1–E8 runs):
+
+| class | min n | median n | tail samples behind p99 at min n |
+|---|---|---|---|
+| lat | 22137 | 71266 | 221 |
+| vid | 6740 | 21534 | 67 |
+| blk | 5113 | 17818 | 51 |
+
+Scheduling overhead: decisions per wall-clock second in this Python simulator (E1 ON/OFF 0.95, median over seeds). Relative cost only, not router performance; absolute values vary with machine load from run to run (a second full run gave about 10 % higher values in the same order).
+
+| FIFO | SP | DRR | RL-SP+DRR | DR-DRR | CQDRR | FuzzyDRR | RevenueDRR |
+|---|---|---|---|---|---|---|---|
+| 420 k | 496 k | 369 k | 291 k | 311 k | 155 k | 246 k | 292 k |
+
+**Warm-up check (E10b).** Mean W with a 20 s warm-up vs the default 5 s (same 60 s window):
+
+| point | FIFO | SP | DRR | RL-SP+DRR | DR-DRR | CQDRR | FuzzyDRR | RevenueDRR | order of mean W unchanged? |
+|---|---|---|---|---|---|---|---|---|---|
+| onoff 1.2 | 9.98 -> 9.98 | 0.81 -> 0.80 | 6.35 -> 6.49 | 4.05 -> 4.04 | 1.99 -> 2.01 | 2.51 -> 2.57 | 6.32 -> 6.44 | 2.39 -> 2.36 | yes |
+| poisson 1.2 | 9.98 -> 9.98 | 0.58 -> 0.58 | 4.90 -> 4.90 | 4.91 -> 4.91 | 1.33 -> 1.33 | 0.58 -> 0.58 | 1.95 -> 1.97 | 0.58 -> 0.58 | yes |
+
+**Update-interval check (E10a).** Mean W of each adaptive scheduler for update interval 5/10/20/50 ms (10 ms is the default):
+
+| scheduler | point | 5 ms | 10 ms | 20 ms | 50 ms |
+|---|---|---|---|---|---|
+| DR-DRR | onoff 0.95 | 1.28 ± 0.02 | 1.33 ± 0.03 | 1.70 ± 0.03 | 3.07 ± 0.05 |
+| DR-DRR | onoff 1.2 | 1.84 ± 0.04 | 1.99 ± 0.03 | 2.44 ± 0.03 | 3.98 ± 0.04 |
+| CQDRR | onoff 0.95 | 1.61 ± 0.06 | 1.78 ± 0.04 | 2.17 ± 0.04 | 3.39 ± 0.08 |
+| CQDRR | onoff 1.2 | 3.11 ± 0.13 | 2.51 ± 0.10 | 2.65 ± 0.07 | 3.96 ± 0.06 |
+| FuzzyDRR | onoff 0.95 | 2.73 ± 0.07 | 2.73 ± 0.07 | 2.74 ± 0.07 | 2.75 ± 0.07 |
+| FuzzyDRR | onoff 1.2 | 6.29 ± 0.24 | 6.32 ± 0.25 | 6.32 ± 0.22 | 6.38 ± 0.23 |
+| RevenueDRR | onoff 0.95 | 1.41 ± 0.04 | 1.42 ± 0.05 | 1.44 ± 0.04 | 1.92 ± 0.04 |
+| RevenueDRR | onoff 1.2 | 2.35 ± 0.10 | 2.39 ± 0.09 | 2.42 ± 0.10 | 2.46 ± 0.07 |
+
+Facts: the order of the four adaptive schedulers by mean W is NOT the same for every update interval at both loads. Change in mean W from 5 ms to 50 ms updates: DR-DRR 0.95: +140%, 1.2: +116%; CQDRR 0.95: +110%, 1.2: +27%; FuzzyDRR 0.95: +1%, 1.2: +1%; RevenueDRR 0.95: +36%, 1.2: +5%. All other results use 10 ms; a scheme whose W moves a lot here is sensitive to how fast it can react.
+
+**Shared-buffer capture (explains a non-monotone curve in Figure 2).** Under Poisson overload DRR's bulk p95 falls from load 1.05 to 1.2 while video's rises. With one shared tail-drop buffer, free space of 1000-1499 B admits a video packet but not a 1500 B bulk packet, so video holds most of the buffer. A partitioned buffer removes the asymmetry:
+
+| Poisson 1.2, DRR | video p95 (ms) | bulk p95 (ms) | video drop | bulk drop |
+|---|---|---|---|---|
+| shared buffer (E1) | 245 ± 1 | 88 ± 17 | 0.177 | 0.225 |
+| partitioned buffer (E8) | 88 ± 0 | 87 ± 0 | 0.204 | 0.208 |
+
+## Validation
+
+### Paper-trend reproduction (Phase 5; rules pre-registered in the protocol before the run)
+
+| scheduler | trend claimed by its paper | our test | points passing | verdict |
+|---|---|---|---|---|
+| CQDRR | lower average delay than DRR, larger gains at high load (paper Fig. 3) | mean delay of latency (TT) and video (AVB) below DRR, paired p<0.05, at E1 loads >= 0.9 | 4/8 | **NOT reproduced** |
+| RL-SP+DRR | prioritises high-priority traffic like strict priority, low-priority traffic still served | latency mean delay below FIFO (paired p<0.05) at every E1 load >= 0.6, and 0 video/bulk starvation in E1-E8 | 12/12; starvation episodes 0 | **reproduced** |
+| FuzzyDRR, RevenueDRR | — | not checkable: full texts unavailable (abstract / 2-page preview only) | — | **open** |
+| DR-DRR | — | our own design; no paper to reproduce | — | **n/a** |
+
+CQDRR per point (paired mean-delay difference vs DRR, ms; negative = CQDRR lower):
+
+| point | latency (TT) | video (AVB) | bulk (BE) |
+|---|---|---|---|
+| onoff 0.9 | +0.71 (p=1.9e-06) | -39.00 (p=1.9e-06) | +38.50 (p=1.9e-06) |
+| onoff 0.95 | -0.47 (p=0.00059) | -48.09 (p=1.9e-06) | +48.32 (p=1.9e-06) |
+| onoff 1.05 | -4.14 (p=1.9e-06) | -62.94 (p=1.9e-06) | +65.83 (p=1.9e-06) |
+| onoff 1.2 | -12.47 (p=1.9e-06) | -77.88 (p=1.9e-06) | +87.86 (p=1.9e-06) |
+| poisson 0.9 | +0.10 (p=1.9e-06) | -3.42 (p=1.9e-06) | +3.37 (p=1.9e-06) |
+| poisson 0.95 | +0.13 (p=1.9e-06) | -8.45 (p=1.9e-06) | +8.39 (p=1.9e-06) |
+| poisson 1.05 | +0.06 (p=1.9e-06) | -138.95 (p=1.9e-06) | +140.55 (p=1.9e-06) |
+| poisson 1.2 | -0.06 (p=1.9e-06) | -214.12 (p=1.9e-06) | +224.74 (p=1.9e-06) |
+
+Bulk (BE) is expected to get worse whenever TT/AVB improve: on a single work-conserving, non-preemptive link the load-weighted mean waiting time is the same for every scheduler (Kleinrock's conservation law), so the paper's claim that all three classes improve cannot transfer to this model — in the paper it rests on the 5G radio layer.
+
+### Intent checks (designs without a fully readable paper, plus one mechanism check)
+
+| scheduler | intended behaviour | check (data source) | result |
+|---|---|---|---|
+| DR-DRR | raise quanta of the class whose delay is at risk -> lower its tail | E1 ON/OFF load >= 0.8: video p95 below DRR (paired, p<0.05) | PASS (mean diff -86.1 ms) |
+| FuzzyDRR | raise quanta of the class whose delay is at risk -> lower its tail | E1 ON/OFF load >= 0.8: video p95 below DRR (paired, p<0.05) | PASS (mean diff -19.6 ms) |
+| RevenueDRR | steer spare capacity to higher-price classes -> more revenue than DRR | E8 partitioned, load 1.2: sum of price x throughput vs DRR (paired) | PASS (+0.414 revenue-Mb/s, p=1.9e-06) |
+| RL-SP+DRR (mechanism) | high-priority class shaped to its rate r | E5 stress (latency offers 0.8 C): latency throughput <= r = 0.4 C | PASS (3.94 Mb/s vs 4.0) |
+
+### How much did reading the paper change CQDRR? (E1V)
+
+| point | W, CQDRR as published (wired reading) | W, our earlier draft rule | W, DRR |
+|---|---|---|---|
+| onoff 0.4 | 0.15 | 0.11 | 0.14 |
+| onoff 0.6 | 0.63 | 0.20 | 0.39 |
+| onoff 0.8 | 1.35 | 0.51 | 1.94 |
+| onoff 0.9 | 1.64 | 0.73 | 2.85 |
+| onoff 0.95 | 1.78 | 0.84 | 3.13 |
+| onoff 1.05 | 2.06 | 1.04 | 3.75 |
+| onoff 1.2 | 2.51 | 1.29 | 6.35 |
+| poisson 0.4 | 0.10 | 0.10 | 0.12 |
+| poisson 0.6 | 0.15 | 0.11 | 0.17 |
+| poisson 0.8 | 0.27 | 0.16 | 0.22 |
+| poisson 0.9 | 0.35 | 0.18 | 0.33 |
+| poisson 0.95 | 0.40 | 0.20 | 0.69 |
+| poisson 1.05 | 0.53 | 0.52 | 4.32 |
+| poisson 1.2 | 0.58 | 0.58 | 4.90 |
+
+## Threats to validity (data-driven)
+
+- FuzzyDRR and RevenueDRR are inspired-by designs (full texts unavailable) and DR-DRR is our own design. FuzzyDRR's second input is queue occupancy where its paper's abstract names throughput. FuzzyDRR's tuned gain (0.1) is near 'off', i.e. under our reading of the rule base, adapting more makes it worse — the first thing to check against the paper.
+- CQDRR was designed for a TSN-5G radio link; on our wired link its channel term is constant and its delay term is inert with one TT class, so what remains is the queue-load term plus the AVB -log(D) term. Constants the paper does not give (alpha-fair alpha, weights, byte scale) are our choices (ALGORITHM_SPEC section 6).
+- RL-SP+DRR follows the paper's Algorithm 1 except one documented clamp (departure >= arrival after an idle period).
+- Throughput fairness is decided by buffer policy, not the scheduler, under shared tail drop; E8 is an exploratory addition made after E1 (protocol deviation log).
+- Single bottleneck, synthetic traffic, 3 classes; no real traces (as stated in the plan).
+- Statistics: p-values in the per-point tables are per-test (uncorrected) paired Wilcoxon values; Holm correction is applied only where stated (E9, E1D). With 20 paired seeds the smallest attainable Wilcoxon p is 1.9e-06, which is why many entries share that value.
+- Overhead figures come from a Python simulator and show relative cost only; they say nothing about router speed.
+- Several analyses were added after seeing data (E8, E9C, E10, E1V); each is labelled exploratory in the protocol's deviation log, and only the pre-registered rules (tuning, E9, E1D, ES, paper-trend checks) give verdicts.

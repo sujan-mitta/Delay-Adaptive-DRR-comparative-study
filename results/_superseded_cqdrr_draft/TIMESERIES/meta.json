@@ -1,0 +1,11 @@
+{
+ "seed": 101,
+ "window": [
+  20.0,
+  24.0
+ ],
+ "load": 0.95,
+ "arrival": "onoff-medium",
+ "code_hash": "02c416081765a765",
+ "trace": "f43605db1eeedcdb"
+}
