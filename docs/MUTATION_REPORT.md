@@ -1,6 +1,6 @@
 # Mutation check
 
-45/45 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+49/49 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
@@ -13,7 +13,7 @@
 | S1 | DRR keeps its deficit after the queue empties | equivalent | `` |
 | S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_reference_agreement_on_realistic_traces[0.6-onoff]` |
 | S3 | new DRR class jumps the round-robin queue | killed | `tests/test_core.py::test_accounting_and_fifo_within_class[DRR]` |
-| S4 | FIFO serves the newest head first | killed | `tests/test_core.py::test_toy_fifo_exact` |
+| S4 | FIFO serves the class of the newest queued packet | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S5 | strict priority order reversed | killed | `tests/test_core.py::test_toy_sp_exact` |
 | S6 | RL-SP shaper gives idle class 0 burst credit (and -inf start) | killed | `tests/test_core.py::test_rlsp_toy_exact` |
 | S7 | RL-SP misses the exact departure instant | killed | `tests/test_core.py::test_accounting_and_fifo_within_class[RL-SP+DRR]` |
@@ -43,7 +43,7 @@
 | R1 | RED average forgets its history | killed | `tests/test_aqm_imix.py::test_red_seed_pairs_runs_and_changes_draws` |
 | R2 | RED inter-drop count correction missing | killed | `tests/test_aqm_imix.py::test_red_matches_reference` |
 | R3 | RED admits packets into a full buffer | killed | `tests/test_aqm_imix.py::test_red_with_unreachable_thresholds_equals_tail_drop` |
-| I1 | IMIX weights ignored | killed | `tests/test_aqm_imix.py::test_imix_sizes_proportions_and_byte_load` |
+| I1 | IMIX weights ignored | killed | `tests/test_robustness.py::test_fuzzed_parameters_are_refused_or_simulate_correctly[FuzzyDRR]` |
 | U1 | runner header fixed by the first row (the bug found in round 3) | killed | `tests/test_pipeline.py::test_tasks_with_different_tag_columns_share_one_file` |
 | K1 | a 3-class-only scheduler accepts another number of classes | killed | `tests/test_literature.py::test_three_class_schedulers_refuse_other_k[RL-SP+DRR]` |
 | K2 | partition size ignores the number of classes | killed | `tests/test_literature.py::test_partitioned_buffer_splits_by_the_scheduler_class_count` |
@@ -51,10 +51,12 @@
 | L2 | DRR-EOS never ends an opportunity on an empty queue | killed | `tests/test_properties.py::test_invariants_every_scheduler[DRR-EOS]` |
 | L3 | token bucket not capped at its burst size | killed | `tests/test_literature.py::test_token_bucket_sources_conform[0.5]` |
 | L4 | SCRR probe never ends a visit (bursts summed across visits) | killed | `tests/test_literature.py::test_scrr_round_first_meets_theorems_on_random_traces` |
+| P1 | DRR skip-ahead jumps past the pass in which a class can send | killed | `tests/test_reference.py::test_drr_matches_textbook_reference` |
+| P2 | DRR skip-ahead disabled (tiny quanta hang again) | killed | `tests/test_drr_theory.py::test_tiny_quanta_do_not_hang` |
+| P3 | FIFO serves the newest packet (LIFO) | killed | `tests/test_core.py::test_toy_fifo_exact` |
+| L5 | Boyer bound computed without the 1-byte residual-deficit correction | killed | `tests/test_drr_theory.py::test_boyer_bound_reproduces_published_values` |
 
 **Equivalent mutants**
 
 - **S1**: DRR resets a class's deficit when the class re-joins (on_enqueue), and the deficit is never read while the class is off the active list, so also zeroing it on leaving changes nothing.
 - **M4**: Water-filling converges to the unique max-min fair allocation whether a class whose residual demand equals the fair share is frozen this round (<=) or next round (<).
-
-Rows K1–L4 (E13) and the re-targeted E3 (the partition line now divides by the scheduler's class count) were run separately with `--only` on 2026-10-23 after the class-count change; the other 39 rows are from the full run on the same day before that change. All saved runs re-simulate exactly after the change.

@@ -74,6 +74,21 @@ def conforms(times, sizes, r_Bps, b, tol=1e-6) -> bool:
     return True
 
 
+# ---------------------------------------------------------------- network-calculus bound
+def boyer_bound(i, quanta, lmax, burst, rate_Bps, link_Bps, eps=1):
+    """Delay bound (s) of flow i under DRR from the strict service curve of Boyer et al. (2012), as restated by
+    Tabatabaee & Le Boudec (2022, Sec. 2.3): rate R_i = c Q_i / Q_tot, latency
+    T_i = [sum_{j!=i} d_j + (1 + d_i / Q_i) sum_{j!=i} Q_j] / c with d_j = lmax_j - eps (eps = 1 byte here).
+    For a token-bucket flow (rate r_i <= R_i, burst b_i) the bound is T_i + b_i / R_i. All sizes in bytes."""
+    d = [l - eps for l in lmax]
+    others = [j for j in range(len(quanta)) if j != i]
+    R = link_Bps * quanta[i] / sum(quanta)
+    if rate_Bps > R:
+        raise ValueError("flow rate above its DRR guaranteed rate: no finite bound")
+    T = (sum(d[j] for j in others) + (1 + d[i] / quanta[i]) * sum(quanta[j] for j in others)) / link_Bps
+    return T + burst / R
+
+
 # ---------------------------------------------------------------- B1
 B1 = {"source": "Tabatabaee & Le Boudec, IEEE/ACM ToN 2022, Sec. 3 (arXiv:2106.01034)",
       "l": 100, "c": 100e6, "quanta": (10_000.0, 500.0, 1_000.0),

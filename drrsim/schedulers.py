@@ -16,6 +16,9 @@ BASE_Q = (1500.0, 1500.0, 1500.0)
 # (effectively a hang); above 1e9 B deficits stop being representable without overflow risk
 Q_LO, Q_HI = 0.01, 1e9
 FRAME = sum(BASE_Q)
+# DRR skips ahead after a full pass in which no class could send, if every class still needs at least this many more
+# passes (tiny quanta, e.g. 0.01 B against 1500 B packets, would otherwise cost 150 000 passes per packet)
+SKIP_MIN = 32
 D_TARGET = tuple(c.delay_target for c in CLASSES)
 PRICE = tuple(c.price for c in CLASSES)
 
@@ -80,15 +83,21 @@ class Scheduler:
 
 
 class FIFO(Scheduler):
+    """Serve the oldest queued packet. Admitted packets are enqueued in arrival order and FIFO always serves the
+    oldest, so remembering the class of each queued packet in that order gives the answer in O(1) per decision
+    (the same packet as scanning every queue head for the smallest packet id)."""
     name = "FIFO"
     any_k = True
 
+    def bind(self, view):
+        super().bind(view)
+        self.order = deque()
+
+    def on_enqueue(self, c, now):
+        self.order.append(c)
+
     def select(self, now):
-        best, best_id = -1, None
-        for c, q in enumerate(self.v.queues):
-            if q and (best_id is None or q[0] < best_id):
-                best, best_id = c, q[0]
-        return best
+        return self.order.popleft()
 
 
 class StrictPriority(Scheduler):
@@ -133,6 +142,18 @@ class DRR(Scheduler):
         self.deficit[c] = 0.0
         self.current = None
 
+    def _skip_empty_passes(self):
+        """Called after a full pass over the active list in which no class could send. Adds r quanta to every
+        active class at once, r = (fewest passes any class still needs) - 2, so the passes in which some class
+        can send are still taken one at a time and in order. Identical to adding one quantum per pass when the
+        quanta and deficits are whole numbers of bytes (exact float arithmetic); with fractional quanta the
+        deficits can differ in the last bits, which can move a send by one pass only at an exact tie."""
+        queues, size, deficit, Q = self.v.queues, self.v.size, self.deficit, self.Q
+        r = min(math.ceil((size[queues[c][0]] - deficit[c]) / Q[c]) for c in self.active) - 2
+        if r >= SKIP_MIN:
+            for c in self.active:
+                deficit[c] += r * Q[c]
+
     def select(self, now):
         queues, size, deficit, active = self.v.queues, self.v.size, self.deficit, self.active
         # invariant: a class is on the active list exactly while its queue is non-empty (it joins on
@@ -151,6 +172,7 @@ class DRR(Scheduler):
         if not active:
             raise RuntimeError("DRR select() with no backlogged class")
         Q = self.Q
+        misses = 0
         while True:                               # start the next visit: add the quantum once
             c = active[0]
             deficit[c] += Q[c]
@@ -164,6 +186,10 @@ class DRR(Scheduler):
                     self.current = c
                 return c
             active.rotate(-1)
+            misses += 1
+            if misses == len(active):             # a full pass without a send
+                misses = 0
+                self._skip_empty_passes()
 
 
 class DRREndOfService(DRR):
@@ -197,6 +223,7 @@ class DRREndOfService(DRR):
         if not active:
             raise RuntimeError("DRR-EOS select() with no backlogged class")
         Q = self.Q
+        misses = 0
         while True:
             c = active[0]
             deficit[c] += Q[c]
@@ -206,6 +233,10 @@ class DRREndOfService(DRR):
                 self.current = c
                 return c
             active.rotate(-1)
+            misses += 1
+            if misses == len(active):             # a full pass without a send
+                misses = 0
+                self._skip_empty_passes()
 
 
 class RLSPDRR(DRR):

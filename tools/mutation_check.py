@@ -1,20 +1,24 @@
 """Mutation check: plant realistic bugs one at a time in a temporary copy and confirm the tests catch them.
 
-Usage:  python tools/mutation_check.py [--out mutation_report.md]
+Usage:  python tools/mutation_check.py [--out mutation_report.md] [--only ID ...] [--jobs N]
 The working tree is never modified: each mutant is applied to a fresh copy in a temporary folder.
+Mutants run in parallel (--jobs, default a quarter of the CPUs); the report lists them in definition order.
 """
 import argparse
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
           "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py",
-          "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py", "tests/test_literature.py"]
+          "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py", "tests/test_literature.py",
+          "tests/test_drr_theory.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
@@ -39,8 +43,8 @@ MUTANTS = [
      "DRR needs strictly more deficit than the packet size"),
     ("S3", "drrsim/schedulers.py", "            self.active.append(c)", "            self.active.appendleft(c)",
      "new DRR class jumps the round-robin queue"),
-    ("S4", "drrsim/schedulers.py", "if q and (best_id is None or q[0] < best_id):", "if q and (best_id is None or q[0] > best_id):",
-     "FIFO serves the newest head first"),
+    ("S4", "drrsim/schedulers.py", "        return self.order.popleft()", "        return self.order.pop()",
+     "FIFO serves the class of the newest queued packet"),
     ("S5", "drrsim/schedulers.py", "        for c, q in enumerate(self.v.queues):\n            if q:\n                return c\n        raise RuntimeError(\"select() called",
      "        for c, q in reversed(list(enumerate(self.v.queues))):\n            if q:\n                return c\n        raise RuntimeError(\"select() called",
      "strict priority order reversed"),
@@ -112,6 +116,14 @@ MUTANTS = [
      "token bucket not capped at its burst size"),
     ("L4", "drrsim/literature.py", "        if self.new_q.pops + self.old_q.pops > pops0:", "        if False:",
      "SCRR probe never ends a visit (bursts summed across visits)"),
+    ("P1", "drrsim/schedulers.py", "for c in self.active) - 2", "for c in self.active) + 1",
+     "DRR skip-ahead jumps past the pass in which a class can send"),
+    ("P2", "drrsim/schedulers.py", "        if r >= SKIP_MIN:\n", "        if False:\n",
+     "DRR skip-ahead disabled (tiny quanta hang again)"),
+    ("P3", "drrsim/schedulers.py", "        self.order.append(c)", "        self.order.appendleft(c)",
+     "FIFO serves the newest packet (LIFO)"),
+    ("L5", "drrsim/literature.py", "    d = [l - eps for l in lmax]", "    d = [l for l in lmax]",
+     "Boyer bound computed without the 1-byte residual-deficit correction"),
 ]
 
 
@@ -124,35 +136,38 @@ EQUIVALENT = {
 }
 
 
+def _one(tmp, base, mutant):
+    mid, f, old, new, desc = mutant
+    work = Path(tmp) / mid
+    shutil.copytree(base, work)
+    path = work / f
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+    if text.count(old) != 1:
+        return mid, desc, "INVALID (pattern not found exactly once)", 0.0, ""
+    path.write_text(text.replace(old, new), encoding="utf-8")
+    t0 = time.time()
+    p = subprocess.run([sys.executable, "-m", "pytest", "-x", "-q", "-p", "no:cacheprovider", *SUITES],
+                       cwd=work, capture_output=True, text=True, timeout=3600)
+    dt = time.time() - t0
+    killer = next((ln.split(" - ")[0].replace("FAILED ", "") for ln in p.stdout.splitlines()
+                   if ln.startswith("FAILED") or ln.startswith("ERROR")), "")
+    status = "killed" if p.returncode != 0 else ("equivalent" if mid in EQUIVALENT else "SURVIVED")
+    print(f"{mid:4s} {status:8s} {dt:6.1f}s  {desc}  <- {killer}", flush=True)
+    shutil.rmtree(work, ignore_errors=True)
+    return mid, desc, status, dt, killer
+
+
 def run(args):
-    out, results = Path(args.out), []
+    out = Path(args.out)
+    todo = [m for m in MUTANTS if not args.only or m[0] in args.only]
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp) / "base"
         base.mkdir()
         for item in ("drrsim", "tests", "scripts", "config", "pytest.ini"):
             src = ROOT / item
             (shutil.copytree if src.is_dir() else shutil.copy2)(src, base / item)
-        for mid, f, old, new, desc in MUTANTS:
-            if args.only and mid not in args.only:
-                continue
-            work = Path(tmp) / mid
-            shutil.copytree(base, work)
-            path = work / f
-            text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
-            if text.count(old) != 1:
-                results.append((mid, desc, "INVALID (pattern not found exactly once)", 0.0, ""))
-                continue
-            path.write_text(text.replace(old, new), encoding="utf-8")
-            t0 = time.time()
-            p = subprocess.run([sys.executable, "-m", "pytest", "-x", "-q", "-p", "no:cacheprovider", *SUITES],
-                               cwd=work, capture_output=True, text=True, timeout=3600)
-            dt = time.time() - t0
-            killer = next((ln.split(" - ")[0].replace("FAILED ", "") for ln in p.stdout.splitlines()
-                           if ln.startswith("FAILED") or ln.startswith("ERROR")), "")
-            status = "killed" if p.returncode != 0 else ("equivalent" if mid in EQUIVALENT else "SURVIVED")
-            results.append((mid, desc, status, dt, killer))
-            print(f"{mid:4s} {status:8s} {dt:6.1f}s  {desc}  <- {killer}", flush=True)
-            shutil.rmtree(work, ignore_errors=True)
+        with ThreadPoolExecutor(max_workers=args.jobs) as ex:      # each worker drives one pytest process
+            results = list(ex.map(lambda m: _one(tmp, base, m), todo))
     killed = sum(r[2] == "killed" for r in results)
     equiv = sum(r[2] == "equivalent" for r in results)
     real = len(results) - equiv
@@ -173,4 +188,5 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "docs" / "MUTATION_REPORT.md"))
     ap.add_argument("--only", nargs="*", help="run only these mutant ids")
+    ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 4) // 4), help="mutants run in parallel")
     sys.exit(run(ap.parse_args()))
