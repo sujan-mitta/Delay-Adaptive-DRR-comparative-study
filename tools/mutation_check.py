@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
           "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py",
-          "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py"]
+          "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py", "tests/test_literature.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
@@ -23,7 +23,7 @@ MUTANTS = [
      "arrival processed before a completion at the same instant"),
     ("E2", "drrsim/engine.py", "else (total + s > buffer_bytes)", "else (total + s >= buffer_bytes)",
      "off-by-one: a packet that exactly fills the buffer is dropped"),
-    ("E3", "drrsim/engine.py", "part = buffer_bytes // K", "part = buffer_bytes // 2",
+    ("E3", "drrsim/engine.py", "part = buffer_bytes // k", "part = buffer_bytes // 2",
      "wrong partition size"),
     ("E4", "drrsim/engine.py", "now = t_wake if t_wake <= ta else ta", "now = t_wake",
      "near-tie wake-up recorded after the arrival it precedes"),
@@ -99,6 +99,19 @@ MUTANTS = [
     ("I1", "drrsim/traffic.py", "p=w / w.sum())]", "p=None)]", "IMIX weights ignored"),
     ("U1", "drrsim/runner.py", "header = list(row) + [k for k in tag_cols if k not in row]", "header = list(row)",
      "runner header fixed by the first row (the bug found in round 3)"),
+    ("K1", "drrsim/schedulers.py", 'if k != K and not vars(type(self)).get("any_k", False):', "if False:",
+     "a 3-class-only scheduler accepts another number of classes"),
+    ("K2", "drrsim/engine.py", "    part = buffer_bytes // k\n", "    part = buffer_bytes // K\n",
+     "partition size ignores the number of classes"),
+    ("L1", "drrsim/schedulers.py", "if c == self.current and len(self.v.queues[c]) == 1 and self.v.t_free <= now:",
+     "if False:", "DRR-EOS keeps an old opportunity across an idle link"),
+    ("L2", "drrsim/schedulers.py", "            if not q:                             # empty at the end of its service: the opportunity ends\n"
+     "                self._leave_front(c)\n            elif", "            if False:\n                pass\n            elif",
+     "DRR-EOS never ends an opportunity on an empty queue"),
+    ("L3", "drrsim/literature.py", "            tokens = min(float(b), tokens + r_Bps * gap)", "            tokens = tokens + r_Bps * gap",
+     "token bucket not capped at its burst size"),
+    ("L4", "drrsim/literature.py", "        if self.new_q.pops + self.old_q.pops > pops0:", "        if False:",
+     "SCRR probe never ends a visit (bursts summed across visits)"),
 ]
 
 

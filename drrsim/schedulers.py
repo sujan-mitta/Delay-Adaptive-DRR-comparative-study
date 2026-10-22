@@ -24,11 +24,19 @@ class Scheduler:
     name = "base"
     adaptive = False
     defaults: dict = {}
+    any_k = False      # True only where a class declares it: rule defined for any number of classes
 
-    def __init__(self, **params):
+    def __init__(self, k=None, **params):
         unknown = set(params) - set(self.defaults)
         if unknown:
             raise ValueError(f"{self.name}: unknown parameters {sorted(unknown)}")
+        if k is None:
+            k = K
+        if not (isinstance(k, int) and not isinstance(k, bool) and 1 <= k <= 4096):
+            raise ValueError(f"{self.name}: number of classes must be an integer in [1, 4096], got {k!r}")
+        if k != K and not vars(type(self)).get("any_k", False):
+            raise ValueError(f"{self.name} is defined for exactly {K} classes, got k={k}")
+        self.k = k
         self.p = {**self.defaults, **params}
         self.validate()
 
@@ -50,13 +58,15 @@ class Scheduler:
 
     def _vector(self, key, positive):
         v = self.p[key]
-        self._need(isinstance(v, (tuple, list)), f"{key} must be a tuple/list of {K} numbers, got {v!r}")
-        self._need(len(v) == K, f"{key} needs {K} values, got {len(v)}")
+        self._need(isinstance(v, (tuple, list)), f"{key} must be a tuple/list of {self.k} numbers, got {v!r}")
+        self._need(len(v) == self.k, f"{key} needs {self.k} values, got {len(v)}")
         self._need(all(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
                        and (Q_LO <= x <= Q_HI if positive else 0 <= x <= 1e6) for x in v),
                    f"{key} values must be finite and in {'[0.01, 1e9] bytes' if positive else '[0, 1e6]'}, got {v}")
 
     def bind(self, view):
+        if len(view.queues) != self.k:
+            raise ValueError(f"{self.name}: built for {self.k} classes, view has {len(view.queues)}")
         self.v = view
 
     def on_enqueue(self, c, now):
@@ -66,11 +76,12 @@ class Scheduler:
         pass
 
     def quanta(self):
-        return (float("nan"),) * K
+        return (float("nan"),) * self.k
 
 
 class FIFO(Scheduler):
     name = "FIFO"
+    any_k = True
 
     def select(self, now):
         best, best_id = -1, None
@@ -82,6 +93,7 @@ class FIFO(Scheduler):
 
 class StrictPriority(Scheduler):
     name = "SP"
+    any_k = True
 
     def select(self, now):
         for c, q in enumerate(self.v.queues):
@@ -93,6 +105,7 @@ class StrictPriority(Scheduler):
 class DRR(Scheduler):
     name = "DRR"
     defaults = {"quanta": BASE_Q}
+    any_k = True
 
     def validate(self):
         self._vector("quanta", positive=True)
@@ -100,9 +113,9 @@ class DRR(Scheduler):
     def bind(self, view):
         super().bind(view)
         self.Q = [float(x) for x in self.p["quanta"]]
-        self.deficit = [0.0] * K
+        self.deficit = [0.0] * self.k
         self.active = deque()
-        self.in_active = [False] * K
+        self.in_active = [False] * self.k
         self.current = None   # class whose visit is in progress (always active[0])
 
     def quanta(self):
@@ -153,6 +166,48 @@ class DRR(Scheduler):
             active.rotate(-1)
 
 
+class DRREndOfService(DRR):
+    """DRR as modelled in network calculus (Boyer et al. 2012; Tabatabaee & Le Boudec 2022): a class's
+    emission opportunity ends when its queue is empty at the END of a service, so a packet that arrives while
+    the class's last queued packet is on the link is still served in the same opportunity. The DRR class above
+    decides when the packet is dequeued at the start of its service, as Linux sch_drr does. The two differ
+    only in that case. Used by the literature benchmarks (E13); not one of the compared schedulers."""
+    name = "DRR-EOS"
+    any_k = True
+
+    def on_enqueue(self, c, now):
+        if c == self.current and len(self.v.queues[c]) == 1 and self.v.t_free <= now:
+            self._leave_front(c)       # its last packet finished before this arrival: the opportunity had ended
+        super().on_enqueue(c, now)
+
+    def select(self, now):
+        queues, size, deficit, active = self.v.queues, self.v.size, self.deficit, self.active
+        # invariant: every class on the active list except possibly the current one has a non-empty queue
+        c = self.current
+        if c is not None:
+            q = queues[c]
+            if not q:                             # empty at the end of its service: the opportunity ends
+                self._leave_front(c)
+            elif deficit[c] >= size[q[0]]:
+                deficit[c] -= size[q[0]]
+                return c
+            else:
+                self.current = None
+                active.rotate(-1)
+        if not active:
+            raise RuntimeError("DRR-EOS select() with no backlogged class")
+        Q = self.Q
+        while True:
+            c = active[0]
+            deficit[c] += Q[c]
+            head = size[queues[c][0]]
+            if deficit[c] >= head:
+                deficit[c] -= head
+                self.current = c
+                return c
+            active.rotate(-1)
+
+
 class RLSPDRR(DRR):
     """RL-SP-DRR, Algorithm 1 of Tokmakov et al. (CloudNet 2019, arXiv:2002.07027).
 
@@ -163,6 +218,7 @@ class RLSPDRR(DRR):
     """
     name = "RL-SP+DRR"
     defaults = {"quanta": BASE_Q, "rate_frac": 0.3}
+    any_k = False                     # one shaped high-priority class plus DRR: defined for the 3-class model
 
     def validate(self):
         super().validate()
@@ -189,7 +245,7 @@ class RLSPDRR(DRR):
         if self.dep and self.dep[0] <= now + TIE_EPS:   # same tie tolerance as the engine
             self.dep.popleft()
             return 0
-        if any(self.v.queues[c] for c in range(1, K)):
+        if any(self.v.queues[c] for c in range(1, self.k)):
             return super().select(now)
         return None
 
@@ -504,12 +560,13 @@ class SCRR(Scheduler):
     while Algorithm 4's idle-reset line can otherwise move it back after Initial Advance.
     """
     name = "SCRR"
+    any_k = True
 
     def bind(self, view):
         super().bind(view)
         self.new_q, self.old_q = deque(), deque()
-        self.in_sched = [False] * K
-        self.clock = [0.0] * K
+        self.in_sched = [False] * self.k
+        self.clock = [0.0] * self.k
         self.virtual_clock = 0.0
         self.virtual_previous = 0.0
         self.virtual_dequeue = 0.0
@@ -563,10 +620,11 @@ class SCRR(Scheduler):
 
 
 MAIN = (FIFO, StrictPriority, DRR, RLSPDRR, SQDRR, CQDRR, FuzzyDRR, RevenueDRR)
-REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR)}
+REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService)}
 SCHEDULERS = [cls.name for cls in MAIN]   # the 8 compared schedulers; variants are run separately
 ADAPTIVE = [c.name for c in MAIN if c.adaptive]
 
 
-def make(name: str, **params) -> Scheduler:
-    return REGISTRY[name](**params)
+def make(name: str, k: int | None = None, **params) -> Scheduler:
+    """k = number of traffic classes; None = the study's 3. Only FIFO, SP, DRR, DRR-EOS and SCRR accept others."""
+    return REGISTRY[name](k=k, **params)

@@ -32,15 +32,16 @@ TIE_EPS = 1e-12
 class View:
     """What a scheduler may observe. Read-only by convention."""
 
-    def __init__(self, arr_t, size, link_rate, buffer_bytes, update_interval):
+    def __init__(self, arr_t, size, link_rate, buffer_bytes, update_interval, n_classes=K):
         self.arr_t = arr_t
         self.size = size
         self.link_rate = link_rate
         self.buffer_bytes = buffer_bytes
         self.update_interval = update_interval
-        self.queues = [deque() for _ in range(K)]
-        self.qbytes = [0] * K
-        self.arrived_bytes = [0] * K     # cumulative offered bytes (incl. dropped)
+        self.queues = [deque() for _ in range(n_classes)]
+        self.qbytes = [0] * n_classes
+        self.arrived_bytes = [0] * n_classes     # cumulative offered bytes (incl. dropped)
+        self.t_free = 0.0                # end of the most recent service (in the past while the link is idle)
 
     def hol(self, c: int, now: float) -> float:
         q = self.queues[c]
@@ -53,14 +54,15 @@ class RunLog:
     end: np.ndarray          # service end per packet
     dropped: np.ndarray      # bool
     q_times: np.ndarray      # update instants (adaptive only)
-    q_values: np.ndarray     # (n_updates, K) quanta after each update
+    q_values: np.ndarray     # (n_updates, n_classes) quanta after each update
     decisions: int
     wall_time: float
     pending: int
 
 
 def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
-    trace.validate(K)
+    k = getattr(scheduler, "k", K)       # number of traffic classes (3 except in the literature benchmarks)
+    trace.validate(k)
     if scheduler.adaptive:
         span = max(cfg.traffic.horizon, float(trace.t[-1]) if len(trace) else 0.0)
         if span / cfg.update_interval > 5e7:
@@ -78,9 +80,9 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
     if red:   # classic RED (Floyd & Jacobson 1993), queue measured in bytes, evaluated at each arrival
         red_min, red_max, red_maxp, red_wq = cfg.red
         red_avg, red_count, red_rng = 0.0, -1, random.Random(cfg.red_seed)
-    part = buffer_bytes // K
+    part = buffer_bytes // k
 
-    view = View(arr_t, size, tc.link_rate, buffer_bytes, cfg.update_interval)
+    view = View(arr_t, size, tc.link_rate, buffer_bytes, cfg.update_interval, k)
     scheduler.bind(view)
     queues, qbytes, arrived = view.queues, view.qbytes, view.arrived_bytes
 
@@ -167,6 +169,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
             start[j] = now
             t_free = now + s / rate_Bps if rate_factor is None else now + s / (rate_Bps * rate_factor(now))
             end[j] = t_free
+            view.t_free = t_free
             decisions += 1
 
     wall = time.perf_counter() - wall0
@@ -176,7 +179,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
         end=np.array(end),
         dropped=np.frombuffer(bytes(dropped), dtype=np.uint8).astype(bool),
         q_times=np.array(q_times),
-        q_values=np.array(q_values, dtype=float).reshape(-1, K),
+        q_values=np.array(q_values, dtype=float).reshape(-1, k),
         decisions=decisions,
         wall_time=wall,
         pending=pending,

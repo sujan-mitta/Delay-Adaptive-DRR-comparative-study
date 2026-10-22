@@ -586,6 +586,70 @@ def main(out=None):
           f"{'unchanged' if o20 == o100 else 'changed'} -> {'passes' if m2_ok else '**fails**'}.")
         w()
 
+    # ---------------- E13: published examples
+    e13_dirs = sorted(d for d in (ROOT / "results" / "E13").glob("*") if d.is_dir() and not d.name.endswith("quick")) \
+        if (ROOT / "results" / "E13").exists() else []
+    e13_head = None
+    if e13_dirs:
+        e13 = json.loads((e13_dirs[-1] / "results.json").read_text())
+        rows13 = e13["rows"]
+        w("## E13 — Published examples re-created in this simulator (pre-registered)")
+        w()
+        w(f"Run `{e13_dirs[-1].name}` (code {e13['code_hash']}). Each benchmark rebuilds a setup printed in a paper, runs it "
+          "through the normal engine, and compares with the paper's own numbers. DRR-EOS is DRR with the end-of-service "
+          "rule used in network calculus (a class keeps its turn if a packet arrives while its last packet is on the "
+          "link); DRR is the dequeue-time rule of Linux `sch_drr` used everywhere else in this study.")
+        w()
+        w("| bench | case | scheduler | quantity | ours | published | unit | verdict |")
+        w("|---|---|---|---|---|---|---|---|")
+        for r in rows13:
+            w(f"| {r['benchmark']} | {r['case']} | {r['scheduler']} | {r['quantity']} | {r['ours']} | {r['published']} | "
+              f"{r['unit']} | {r['verdict']} |")
+        w()
+        reg = [r for r in rows13 if r["verdict"].startswith(("pass", "fail"))]
+        npass = sum(r["verdict"].startswith("pass") for r in reg)
+        fails = [r for r in reg if r["verdict"].startswith("fail")]
+        w(f"**{npass}/{len(reg)} pre-registered comparisons pass.**")
+        w()
+        b2 = [r for r in rows13 if r["benchmark"] == "B2" and r["scheduler"] == "DRR-EOS"]
+        tight = [float(r["verdict"].split("tightness ")[1].rstrip(")")) for r in b2]
+        w(f"- **B1** (Tabatabaee & Le Boudec): the paper's trajectory gives the published 119.256 µs to the printed precision, "
+          "under both DRR rules, and the service order (10, 62, 4, 10, 1 packets) is the paper's. The DRR rule only changes "
+          "how flow 3's first two turns split (10+10 vs 11+9), not the delay.")
+        w(f"- **B2** (Bouillard's 4-class server): no input ever exceeded a published bound; the worst observed delays reach "
+          f"{min(tight):.1%}–{max(tight):.1%} of the bounds, so the bounds of Thm. 5 are nearly tight (the video classes "
+          "within 1 %). The dequeue-time rule adds one 1500 B packet time (2.4 µs) for the small-packet class and stays "
+          "inside the bound.")
+        w("- **B3** (original DRR, Fig. 7): with per-flow isolation DRR gives the ill-behaved flow its fair share and FIFO "
+          "gives it about 3x (the paper: an 'arbitrary share'). With one shared tail-drop buffer DRR is as unfair as FIFO: "
+          "the ill-behaved flow takes the buffer, and the scheduler cannot serve packets that were dropped. The original "
+          "paper avoids this with McKenney's buffer stealing (drop from the longest queue); our partitioned buffer has the "
+          "same effect. The link rate (400 kb/s) is our assumption; the paper does not give it. With constant 100-bit "
+          "packets that link is never congested, so every flow gets what it sends; with the link scaled to the same "
+          "overload (post hoc) DRR is fair for all three size models, as the paper reports (Fig. 9).")
+        w("- **B4** (RL-SP-DRR PROACTIVE): high priority gets exactly the configured 60 % (6.0 Mb/s) and medium/low split "
+          "the rest 2.0/2.0; the testbed's 5.3 Mb/s is lower, which we attribute to iperf/bmv2 overheads we do not model. "
+          "Unshaped SP gives high priority ~9.8 Mb/s and starves low priority; the paper's STRICT also reached only 5.3 "
+          "because it was rate-limited.")
+        rf = sum(int(r["verdict"].split("(")[1].split()[0]) for r in rows13
+                 if r["benchmark"] == "B5" and "round-first" in r["scheduler"] and "exceed" in r["verdict"])
+        w("- **B5** (SCRR theorems): the global-clock advance per round exceeds M and a visit's burst exceeds 2M for SCRR as "
+          "printed in Algorithm 4. The cause: the pseudo-code closes a finished round one dequeue late, after the next "
+          "round's first packet has already raised `virtual_dequeue`. A diagnostic variant that closes the round first "
+          f"(added after this result, not pre-registered) exceeds a bound on {rf} trace(s)"
+          + (", so the theorems hold for the algorithm they describe and the printed ordering differs from it. "
+             if rf == 0 else ". ") + "Our compared SCRR stays as printed.")
+        if fails:
+            w(f"- Registered comparisons that fail: " + "; ".join(f"{r['benchmark']} {r['scheduler']} {r['quantity']}"
+                                                                 for r in fails) + ".")
+        w("- Not reproducible: WiOpt 2025 (Mukherjee et al.) Table II: inconsistent units and no stated arrival process.")
+        w()
+        e13_head = (f"9. **Published examples (E13)**: {npass}/{len(reg)} pre-registered comparisons pass. The DRR "
+                    f"trajectory delay of Tabatabaee & Le Boudec (119.256 µs) is reproduced exactly; Bouillard's bounds "
+                    f"hold and are {min(tight):.1%}–{max(tight):.1%} tight; the original DRR and RL-SP-DRR shares are "
+                    "reproduced; SCRR as printed exceeds its own Theorems 1–2 because of the order of two steps in "
+                    "Algorithm 4.")
+
     # ---------------- measurement adequacy and robustness
     w("## Measurement adequacy and robustness")
     w()
@@ -795,6 +859,8 @@ def main(out=None):
          "latency 4/4, no DRR-family starvation 4/4, DR-DRR beats DRR 4/4. Method checks: 100 seeds agree with the 20-seed "
          "intervals (8/8); a 10x longer window changes no mean W by more than 6 % (one statistical tie swaps places).",
          ""]
+    if e13_head:
+        H.insert(-1, e13_head)
     i = OUT.index("<<HEADLINE>>")
     OUT[i:i + 1] = H
     (Path(out) if out else ROOT / "RESULTS.md").write_text("\n".join(OUT), encoding="utf-8")

@@ -247,3 +247,40 @@ Checks of the method (no scenario change):
   intervals; all other positions are unchanged and no mean W moves by more than 5.2 %. Reported as a fail with the
   computed explanation; not re-worded.
 - New options (IMIX size distributions, RED) are off by default; all saved runs re-simulate exactly.
+
+
+## E13 — benchmarks against published examples (pre-registered 2026-10-23, before any code for them)
+Each benchmark re-creates a setup published in a paper, runs it in our simulator, and compares with the paper.
+
+| id | source (full text read) | published setup | what we compare | pass criterion |
+|----|-------------------------|-----------------|-----------------|----------------|
+| B1 | Tabatabaee & Le Boudec, IEEE/ACM ToN 2022 (arXiv 2106.01034), Sec. 3 | DRR, 3 flows, l = 100 B, c = 100 Mb/s, quanta 100l / 5l / 10l, the paper's exact trajectory | delay of the "packet of interest"; published 119.256 µs; Boyer et al. bound 146.228 µs; Soni et al. bound 112.172 µs | our delay = 119.256 µs (± 0.01); below the Boyer bound; above Soni's (reproducing its invalidity) |
+| B2 | same paper, Sec. 6.1 / Table 1 (Bouillard's single-server example) | DRR, 4 classes, c = 5 Gb/s, quantum 16 000 bit each, packets {3.04, 12, 12, 12} kb, token buckets b = {42.56, 2160, 3240, 7200} kb, r = {8.521, 180, 162, 180} Mb/s | worst delay found by simulation (greedy and randomised token-bucket-constrained arrivals) vs. published bounds {44.51 µs, 1.32 ms, 1.81 ms, 2.72 ms} (best bounds, Thm 5) | no class ever exceeds its published bound; tightness (observed / bound) reported |
+| B3 | Shreedhar & Varghese, IEEE/ACM ToN 1996, Sec. 5.2–5.3 | 20 flows, Poisson 10 pkt/s, sizes uniform up to 4500 bit; flow 10 ill-behaved at 30 pkt/s; random, constant (100 bit) and bimodal (100 / 4500 bit) sizes | per-flow bandwidth, DRR vs FCFS | DRR: the ill-behaved flow gets within 10 % of the mean of the others; FCFS: it gets ≥ 2× the mean of the others; DRR fairness holds for all three size models. Link rate is not given in the text: we use 400 kb/s (offered 495 kb/s, congested) and say so |
+| B4 | Tokmakov et al., IEEE CloudNet 2019 (arXiv 2002.07027), PROACTIVE | 10 Mb/s link, UDP saturating, high priority shaped to 60 %, medium and low share the rest by DRR; high priority switched on after 90 s for 90 s | per-class throughput with and without high priority; published: high priority 5.3 Mb/s | high = 6.0 Mb/s ± 1 % (the configured share; the published 5.3 includes testbed overhead), medium ≈ low ≈ 2.0 Mb/s ± 5 % while high is on, ≈ 5.0 each while off |
+| B5 | Sharafzadeh et al., NSDI 2025, Theorems 1–2 | SCRR, backlogged flows | (i) global-clock advance per round ≤ M (max packet length); (ii) bytes dequeued from one sub-queue in one visit ≤ (r_max + 1)·M = 2M (unweighted) | never violated, over randomised traces including jumbo/tiny mixes |
+| — | Mukherjee et al., WiOpt 2025, Table II | not reproducible: units inconsistent (a 10 Kb burst at 40 Kb/s cannot have 0.2 ms delay) and the simulated arrival process is not stated | — | reported as not reproducible |
+B2 and B3 need more than three traffic classes: FIFO, SP, DRR and SCRR are generalised to any number of
+classes (default 3, bit-exact with all saved runs); the adaptive schedulers stay three-class.
+
+### E13 — amendments and notes (written before the final run; development runs disclosed)
+- Run sizes, fixed before the final run: B1 2000 random inputs; B2 3000 inputs (500 × {greedy, random offsets,
+  random silences} × 2 RNG streams); B3 and B4 seeds 101–120; B5 1000 traces per case.
+- B3 buffer (not stated in the registration): unlimited buffer for the registered check, so that the drop policy
+  cannot matter (the paper used McKenney's buffer stealing, which we do not model). A 140 kB shared and a
+  140 kB partitioned buffer are reported as descriptive sensitivity. Packet sizes in bytes: 4500 bit → 562 B,
+  100 bit → 13 B; DRR quantum 562 B. SCRR is added to B3 as a descriptive extra.
+- B4: per-class (partitioned) buffers, as bmv2 priority queues have; FIFO is the paper's "NO", and unshaped SP is
+  shown for contrast (the paper's STRICT is rate-limited, so it is not the same thing).
+- Two DRR rules are reported in B1 and B2: DRR-EOS (end-of-service rule of the network-calculus model the bounds
+  are derived for) and our DRR (dequeue-time rule, as Linux `sch_drr`). B1's registered criterion applies to both.
+- Development runs: while building the benchmarks, single-seed (101) and small trial runs of B1–B5 were made to
+  check the code. They showed the B5 violation. The diagnostic SCRR variant that closes a round before the next
+  dequeue (`SCRRRoundFirst`) was written **after** seeing it; its rows are descriptive, not registered.
+- New options in the engine: any number of classes for FIFO, SP, DRR, DRR-EOS and SCRR (default 3; all saved runs
+  re-simulate exactly); the adaptive schedulers and RL-SP+DRR refuse any other number.
+- After the first full run (`results/E13/20261023-012612`, kept): with constant 13 B packets the offered load is
+  ~23 kb/s on the 400 kb/s link, so nothing is congested and every flow (including the ill-behaved one) gets what it
+  sends; that case cannot test fairness. A **post-hoc** variant scales the link to the same overload as with random
+  sizes (offered / link = 1.24) for the constant and bimodal cases. Its rows are labelled "post hoc" and are
+  descriptive. Nothing else changed between the two runs.

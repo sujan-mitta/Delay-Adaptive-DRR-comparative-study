@@ -367,6 +367,41 @@ def fig13_e12_heatmap():
                       "fig13_e12_heatmap", check="scenario")
 
 
+def fig14_literature():
+    """E13: (a) the original DRR paper's Fig. 7 re-created; (b) worst observed delay / published bound (B2)."""
+    import json
+    dirs = sorted(d for d in (ROOT / "results" / "E13").glob("*") if d.is_dir() and not d.name.endswith("quick"))         if (ROOT / "results" / "E13").exists() else []
+    if not dirs:
+        return
+    res = json.loads((dirs[-1] / "results.json").read_text())
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.2, 2.7), gridspec_kw={"width_ratios": [1.5, 1]})
+    flows = np.arange(1, 21)
+    for sch, col, mk in (("FIFO", COLOR["FIFO"], "o"), ("DRR", COLOR["DRR"], "D")):
+        y = np.array(res["B3"][f"{sch}|random|unlimited"]) / 1e3
+        a1.plot(flows, y, marker=mk, color=col, label="FCFS" if sch == "FIFO" else "DRR", lw=1.2)
+    a1.set_xlabel("flow (flow 10 sends 3x the rate)")
+    a1.set_ylabel("delivered kb/s")
+    a1.set_xticks([1, 5, 10, 15, 20])
+    a1.set_title("(a) Shreedhar & Varghese Fig. 7, re-created", fontsize=8.5)
+    a1.legend(fontsize=7.5)
+    rows = [r for r in res["rows"] if r["benchmark"] == "B2"]
+    names = ["electric", "VR games", "video conf.", "4k video"]
+    x = np.arange(4)
+    for i, (sch, col) in enumerate((("DRR-EOS", "#2a78d6"), ("DRR", COLOR["DRR"]))):
+        t = [float(r["verdict"].split("tightness ")[1].rstrip(")")) for r in rows if r["scheduler"] == sch]
+        a2.bar(x + (i - 0.5) * 0.38, t, 0.38, color=col, label="DRR, end-of-service rule" if sch == "DRR-EOS" else "DRR, dequeue rule")
+    a2.axhline(1.0, color=INK, lw=0.9, ls="--")
+    a2.text(3.6, 1.01, "published bound", ha="right", va="bottom", fontsize=7, color=INK)
+    a2.set_xticks(x, names, fontsize=7, rotation=20)
+    a2.set_ylim(0, 1.5)
+    a2.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    a2.set_ylabel("worst observed / bound")
+    a2.set_title("(b) Bouillard's 4-class server (B2)", fontsize=8.5)
+    a2.legend(fontsize=6.5, loc="upper left")
+    fig.subplots_adjust(wspace=0.35)
+    save(fig, "fig14_literature")
+
+
 if __name__ == "__main__":
     fig1_model()
     fig2_delay_vs_load()
@@ -381,3 +416,4 @@ if __name__ == "__main__":
     fig11_scrr()
     fig12_reallife_heatmap()
     fig13_e12_heatmap()
+    fig14_literature()

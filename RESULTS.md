@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-22 23:50 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `89a888e9a6818ebc`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-23 01:39 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `d34ca77309f14f19`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -19,6 +19,7 @@ Generated 2026-10-22 23:50 by `scripts/make_report.py` from `results/*/runs.csv`
 6. **Paper-trend checks**: RL-SP+DRR reproduced; CQDRR not reproduced (4/8); SCRR latency reproduced (8/8), fairness reproduced.
 7. **Real-life stress (E11, 8 scenarios)**: SP still gives the lowest latency in all 8; DR-DRR beats DRR in all 8 and is the most robust non-SP scheduler; a non-work-conserving shaper (RL-SP+DRR) behind a shared buffer lets one mislabelled class waste link capacity and raise everyone's loss (section E11).
 8. **More conditions (E12: IMIX sizes, RED queue management, bulk flood, shallow buffer + jumbo)**: SP lowest latency 4/4, no DRR-family starvation 4/4, DR-DRR beats DRR 4/4. Method checks: 100 seeds agree with the 20-seed intervals (8/8); a 10x longer window changes no mean W by more than 6 % (one statistical tie swaps places).
+9. **Published examples (E13)**: 14/16 pre-registered comparisons pass. The DRR trajectory delay of Tabatabaee & Le Boudec (119.256 µs) is reproduced exactly; Bouillard's bounds hold and are 83.8%–99.8% tight; the original DRR and RL-SP-DRR shares are reproduced; SCRR as printed exceeds its own Theorems 1–2 because of the order of two steps in Algorithm 4.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -415,6 +416,80 @@ Verdicts: **F1** 4/4; **F2'** 4/4; **F3** holds (winners: DR-DRR 3, RevenueDRR 1
 | RevenueDRR | 1.425 ± 0.045 | 1.391 | yes |
 
 M1 **fails**; M2: 8/8 inside, order unchanged -> passes.
+
+## E13 — Published examples re-created in this simulator (pre-registered)
+
+Run `20261023-012809` (code d34ca77309f14f19). Each benchmark rebuilds a setup printed in a paper, runs it through the normal engine, and compares with the paper's own numbers. DRR-EOS is DRR with the end-of-service rule used in network calculus (a class keeps its turn if a packet arrives while its last packet is on the link); DRR is the dequeue-time rule of Linux `sch_drr` used everywhere else in this study.
+
+| bench | case | scheduler | quantity | ours | published | unit | verdict |
+|---|---|---|---|---|---|---|---|
+| B1 | paper trajectory | DRR-EOS | delay of packet of interest | 119.2557 | 119.256 | us | pass |
+| B1 | paper trajectory | DRR | delay of packet of interest | 119.2557 | 119.256 | us | pass |
+| B1 | 2000 random token-bucket inputs | DRR-EOS | max flow-1 delay (<= Boyer bound) | 127.628 | 146.228 | us | pass |
+| B2 | 3000 token-bucket inputs | DRR-EOS | max delay, electric protection | 37.312 | 44.51 | us | pass (tightness 0.838) |
+| B2 | 3000 token-bucket inputs | DRR-EOS | max delay, VR games | 1306.336 | 1320.0 | us | pass (tightness 0.990) |
+| B2 | 3000 token-bucket inputs | DRR-EOS | max delay, video conference | 1802.84 | 1810.0 | us | pass (tightness 0.996) |
+| B2 | 3000 token-bucket inputs | DRR-EOS | max delay, 4k video | 2715.168 | 2720.0 | us | pass (tightness 0.998) |
+| B2 | 3000 token-bucket inputs | DRR | max delay, electric protection | 39.712 | 44.51 | us | pass (tightness 0.892) |
+| B2 | 3000 token-bucket inputs | DRR | max delay, VR games | 1308.736 | 1320.0 | us | pass (tightness 0.991) |
+| B2 | 3000 token-bucket inputs | DRR | max delay, video conference | 1804.352 | 1810.0 | us | pass (tightness 0.997) |
+| B2 | 3000 token-bucket inputs | DRR | max delay, 4k video | 2715.168 | 2720.0 | us | pass (tightness 0.998) |
+| B3 | bimodal sizes, unlimited buffer, 20 seeds | DRR | ill-behaved / mean of others | 1.002 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | bimodal sizes, unlimited buffer | DRR | max deviation of well-behaved flows from their mean | 0.0012 | 0.0032 | fraction | descriptive |
+| B3 | bimodal sizes, unlimited, link scaled (post hoc) buffer, 20 seeds | DRR | ill-behaved / mean of others | 1.002 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | bimodal sizes, unlimited, link scaled (post hoc) buffer | DRR | max deviation of well-behaved flows from their mean | 0.0014 | 0.0032 | fraction | descriptive |
+| B3 | constant sizes, unlimited buffer, 20 seeds | DRR | ill-behaved / mean of others | 2.994 ± 0.005 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | constant sizes, unlimited buffer | DRR | max deviation of well-behaved flows from their mean | 0.0143 | 0.003 | fraction | descriptive |
+| B3 | constant sizes, unlimited, link scaled (post hoc) buffer, 20 seeds | DRR | ill-behaved / mean of others | 1.007 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | constant sizes, unlimited, link scaled (post hoc) buffer | DRR | max deviation of well-behaved flows from their mean | 0.0018 | 0.003 | fraction | descriptive |
+| B3 | random sizes, partitioned buffer, 20 seeds | DRR | ill-behaved / mean of others | 1.003 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, shared buffer, 20 seeds | DRR | ill-behaved / mean of others | 2.964 ± 0.009 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, unlimited buffer, 20 seeds | DRR | ill-behaved / mean of others | 1.001 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | pass |
+| B3 | random sizes, unlimited buffer | DRR | max deviation of well-behaved flows from their mean | 0.0009 | 0.004699 | fraction | descriptive |
+| B3 | bimodal sizes, unlimited buffer, 20 seeds | FIFO | ill-behaved / mean of others | 2.995 ± 0.011 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | bimodal sizes, unlimited, link scaled (post hoc) buffer, 20 seeds | FIFO | ill-behaved / mean of others | 2.996 ± 0.011 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | constant sizes, unlimited buffer, 20 seeds | FIFO | ill-behaved / mean of others | 2.994 ± 0.005 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | constant sizes, unlimited, link scaled (post hoc) buffer, 20 seeds | FIFO | ill-behaved / mean of others | 2.993 ± 0.006 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, partitioned buffer, 20 seeds | FIFO | ill-behaved / mean of others | 1.229 ± 0.001 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, shared buffer, 20 seeds | FIFO | ill-behaved / mean of others | 2.997 ± 0.008 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, unlimited buffer, 20 seeds | FIFO | ill-behaved / mean of others | 2.995 ± 0.010 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | pass |
+| B3 | bimodal sizes, unlimited buffer, 20 seeds | SCRR | ill-behaved / mean of others | 1.001 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | bimodal sizes, unlimited, link scaled (post hoc) buffer, 20 seeds | SCRR | ill-behaved / mean of others | 1.001 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | constant sizes, unlimited buffer, 20 seeds | SCRR | ill-behaved / mean of others | 2.994 ± 0.005 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | constant sizes, unlimited, link scaled (post hoc) buffer, 20 seeds | SCRR | ill-behaved / mean of others | 1.001 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, partitioned buffer, 20 seeds | SCRR | ill-behaved / mean of others | 1.002 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, shared buffer, 20 seeds | SCRR | ill-behaved / mean of others | 2.963 ± 0.008 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B3 | random sizes, unlimited buffer, 20 seeds | SCRR | ill-behaved / mean of others | 1.001 ± 0.000 | FCFS: 'arbitrary share'; DRR: 'nearly perfect fairness' | ratio | descriptive |
+| B4 | high priority on, 20 seeds | DRR | high / medium / low throughput | 3.333 / 3.333 / 3.333 | high 5.3 (RL-SP-DRR and STRICT) | Mb/s | descriptive |
+| B4 | high priority off, 20 seeds | DRR | high / medium / low throughput | 0.000 / 5.000 / 5.000 | - | Mb/s | descriptive |
+| B4 | high priority on, 20 seeds | FIFO | high / medium / low throughput | 3.333 / 3.333 / 3.333 | high 5.3 (RL-SP-DRR and STRICT) | Mb/s | descriptive |
+| B4 | high priority off, 20 seeds | FIFO | high / medium / low throughput | 0.000 / 5.000 / 5.000 | - | Mb/s | descriptive |
+| B4 | high priority on, 20 seeds | RL-SP+DRR | high / medium / low throughput | 6.000 / 2.000 / 2.000 | high 5.3 (RL-SP-DRR and STRICT) | Mb/s | pass |
+| B4 | high priority off, 20 seeds | RL-SP+DRR | high / medium / low throughput | 0.000 / 5.000 / 5.000 | - | Mb/s | descriptive |
+| B4 | high priority on, 20 seeds | SP | high / medium / low throughput | 9.815 / 0.185 / 0.000 | high 5.3 (RL-SP-DRR and STRICT) | Mb/s | descriptive |
+| B4 | high priority off, 20 seeds | SP | high / medium / low throughput | 0.000 / 9.819 / 0.181 | - | Mb/s | descriptive |
+| B5 | 1000 random traces, backlogged | SCRR (as printed) | max clock advance per round / M (Thm 1: <= 1) | 2.0 | 1 | M | fail (305 traces) |
+| B5 | 1000 random traces, backlogged | SCRR (as printed) | max burst of one visit / M (Thm 2: <= 2) | 2.682 | 2 | M | fail (39 traces) |
+| B5 | 1000 random traces, backlogged | SCRR (as printed) | max advance when the queue empties / M (no theorem) | 2.149 | - | M | descriptive |
+| B5 | 1000 random traces, dynamic arrivals | SCRR (as printed) | max clock advance per round / M (Thm 1: <= 1) | 2.0 | 1 | M | descriptive (298 traces exceed) |
+| B5 | 1000 random traces, dynamic arrivals | SCRR (as printed) | max burst of one visit / M (Thm 2: <= 2) | 3.0 | 2 | M | descriptive (54 traces exceed) |
+| B5 | 1000 random traces, dynamic arrivals | SCRR (as printed) | max advance when the queue empties / M (no theorem) | 3.0 | - | M | descriptive |
+| B5 | 1000 random traces, backlogged | SCRR (round-first) | max clock advance per round / M (Thm 1: <= 1) | 1.0 | 1 | M | descriptive (0 traces exceed) |
+| B5 | 1000 random traces, backlogged | SCRR (round-first) | max burst of one visit / M (Thm 2: <= 2) | 1.992 | 2 | M | descriptive (0 traces exceed) |
+| B5 | 1000 random traces, backlogged | SCRR (round-first) | max advance when the queue empties / M (no theorem) | 3.0 | - | M | descriptive |
+| B5 | 1000 random traces, dynamic arrivals | SCRR (round-first) | max clock advance per round / M (Thm 1: <= 1) | 1.0 | 1 | M | descriptive (0 traces exceed) |
+| B5 | 1000 random traces, dynamic arrivals | SCRR (round-first) | max burst of one visit / M (Thm 2: <= 2) | 2.0 | 2 | M | descriptive (0 traces exceed) |
+| B5 | 1000 random traces, dynamic arrivals | SCRR (round-first) | max advance when the queue empties / M (no theorem) | 3.0 | - | M | descriptive |
+
+**14/16 pre-registered comparisons pass.**
+
+- **B1** (Tabatabaee & Le Boudec): the paper's trajectory gives the published 119.256 µs to the printed precision, under both DRR rules, and the service order (10, 62, 4, 10, 1 packets) is the paper's. The DRR rule only changes how flow 3's first two turns split (10+10 vs 11+9), not the delay.
+- **B2** (Bouillard's 4-class server): no input ever exceeded a published bound; the worst observed delays reach 83.8%–99.8% of the bounds, so the bounds of Thm. 5 are nearly tight (the video classes within 1 %). The dequeue-time rule adds one 1500 B packet time (2.4 µs) for the small-packet class and stays inside the bound.
+- **B3** (original DRR, Fig. 7): with per-flow isolation DRR gives the ill-behaved flow its fair share and FIFO gives it about 3x (the paper: an 'arbitrary share'). With one shared tail-drop buffer DRR is as unfair as FIFO: the ill-behaved flow takes the buffer, and the scheduler cannot serve packets that were dropped. The original paper avoids this with McKenney's buffer stealing (drop from the longest queue); our partitioned buffer has the same effect. The link rate (400 kb/s) is our assumption; the paper does not give it. With constant 100-bit packets that link is never congested, so every flow gets what it sends; with the link scaled to the same overload (post hoc) DRR is fair for all three size models, as the paper reports (Fig. 9).
+- **B4** (RL-SP-DRR PROACTIVE): high priority gets exactly the configured 60 % (6.0 Mb/s) and medium/low split the rest 2.0/2.0; the testbed's 5.3 Mb/s is lower, which we attribute to iperf/bmv2 overheads we do not model. Unshaped SP gives high priority ~9.8 Mb/s and starves low priority; the paper's STRICT also reached only 5.3 because it was rate-limited.
+- **B5** (SCRR theorems): the global-clock advance per round exceeds M and a visit's burst exceeds 2M for SCRR as printed in Algorithm 4. The cause: the pseudo-code closes a finished round one dequeue late, after the next round's first packet has already raised `virtual_dequeue`. A diagnostic variant that closes the round first (added after this result, not pre-registered) exceeds a bound on 0 trace(s), so the theorems hold for the algorithm they describe and the printed ordering differs from it. Our compared SCRR stays as printed.
+- Registered comparisons that fail: B5 SCRR (as printed) max clock advance per round / M (Thm 1: <= 1); B5 SCRR (as printed) max burst of one visit / M (Thm 2: <= 2).
+- Not reproducible: WiOpt 2025 (Mukherjee et al.) Table II: inconsistent units and no stated arrival process.
 
 ## Measurement adequacy and robustness
 

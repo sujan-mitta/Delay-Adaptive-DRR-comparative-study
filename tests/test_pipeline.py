@@ -209,7 +209,7 @@ def test_figures_regenerate(tmp_path, monkeypatch):
         if name.startswith("fig") and callable(getattr(fig, name)):
             getattr(fig, name)()
     pngs = sorted(p.stem for p in tmp_path.glob("*.png"))
-    assert len(pngs) in (11, 12, 13) and all((tmp_path / f"{p}.pdf").exists() for p in pngs)
+    assert len(pngs) in (11, 12, 13, 14) and all((tmp_path / f"{p}.pdf").exists() for p in pngs)
 
 
 @pytest.mark.skipif(not HAVE_RESULTS, reason="needs saved results")

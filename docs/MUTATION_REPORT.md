@@ -1,6 +1,6 @@
 # Mutation check
 
-39/39 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+45/45 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
@@ -45,8 +45,16 @@
 | R3 | RED admits packets into a full buffer | killed | `tests/test_aqm_imix.py::test_red_with_unreachable_thresholds_equals_tail_drop` |
 | I1 | IMIX weights ignored | killed | `tests/test_aqm_imix.py::test_imix_sizes_proportions_and_byte_load` |
 | U1 | runner header fixed by the first row (the bug found in round 3) | killed | `tests/test_pipeline.py::test_tasks_with_different_tag_columns_share_one_file` |
+| K1 | a 3-class-only scheduler accepts another number of classes | killed | `tests/test_literature.py::test_three_class_schedulers_refuse_other_k[RL-SP+DRR]` |
+| K2 | partition size ignores the number of classes | killed | `tests/test_literature.py::test_partitioned_buffer_splits_by_the_scheduler_class_count` |
+| L1 | DRR-EOS keeps an old opportunity across an idle link | killed | `tests/test_literature.py::test_drr_eos_opportunity_ends_when_the_link_goes_idle` |
+| L2 | DRR-EOS never ends an opportunity on an empty queue | killed | `tests/test_properties.py::test_invariants_every_scheduler[DRR-EOS]` |
+| L3 | token bucket not capped at its burst size | killed | `tests/test_literature.py::test_token_bucket_sources_conform[0.5]` |
+| L4 | SCRR probe never ends a visit (bursts summed across visits) | killed | `tests/test_literature.py::test_scrr_round_first_meets_theorems_on_random_traces` |
 
 **Equivalent mutants**
 
 - **S1**: DRR resets a class's deficit when the class re-joins (on_enqueue), and the deficit is never read while the class is off the active list, so also zeroing it on leaving changes nothing.
 - **M4**: Water-filling converges to the unique max-min fair allocation whether a class whose residual demand equals the fair share is frozen this round (<=) or next round (<).
+
+Rows K1–L4 (E13) and the re-targeted E3 (the partition line now divides by the scheduler's class count) were run separately with `--only` on 2026-10-23 after the class-count change; the other 39 rows are from the full run on the same day before that change. All saved runs re-simulate exactly after the change.
