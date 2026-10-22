@@ -13,6 +13,7 @@ immediately starts the packet chosen by the scheduler.
 """
 from __future__ import annotations
 
+import random
 import time
 from collections import deque
 from dataclasses import dataclass
@@ -73,6 +74,10 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
     rate_Bps = tc.link_rate / 8.0
     buffer_bytes = cfg.buffer_bytes
     partitioned = cfg.buffer_policy == "partitioned"
+    red = cfg.buffer_policy == "red"
+    if red:   # classic RED (Floyd & Jacobson 1993), queue measured in bytes, evaluated at each arrival
+        red_min, red_max, red_maxp, red_wq = cfg.red
+        red_avg, red_count, red_rng = 0.0, -1, random.Random(cfg.red_seed)
     part = buffer_bytes // K
 
     view = View(arr_t, size, tc.link_rate, buffer_bytes, cfg.update_interval)
@@ -88,8 +93,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
     next_upd = upd
     t_wake = INF          # set when a non-work-conserving scheduler leaves the link idle
     total = 0
-    busy = False
-    t_free = 0.0
+    t_free = INF          # completion time of the packet on the link; INF while the link is idle
     decisions = 0
     i = 0
     now = 0.0
@@ -97,18 +101,18 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
     select, on_enqueue, update, quanta = scheduler.select, scheduler.on_enqueue, scheduler.update, scheduler.quanta
     drain, horizon = cfg.drain, tc.horizon
     rate_factor = cfg.rate_factor if cfg.capacity else None      # time-varying link (E11); None = constant
+    arr_ext = arr_t + [INF]                                       # sentinel: no bounds check per event
     wall0 = time.perf_counter()
 
     while True:
-        ta = arr_t[i] if i < n else INF
-        if not busy and total == 0 and ta == INF:
+        ta = arr_ext[i]
+        if t_free == INF and total == 0 and ta == INF:
             break
-        tcmp = t_free if busy else INF
-        if not drain and min(ta, tcmp, next_upd, t_wake) > horizon:
+        if not drain and min(ta, t_free, next_upd, t_wake) > horizon:
             break
-        if busy and tcmp <= ta and tcmp <= next_upd and tcmp <= t_wake:
-            now = tcmp
-            busy = False
+        if t_free <= ta and t_free <= next_upd and t_free <= t_wake and t_free != INF:
+            now = t_free
+            t_free = INF
         elif t_wake <= ta + TIE_EPS and t_wake <= next_upd:
             now = t_wake if t_wake <= ta else ta     # a wake-up within TIE_EPS of an arrival goes first
             t_wake = INF
@@ -123,7 +127,24 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
             c = cls[i]
             s = size[i]
             arrived[c] += s
-            if (qbytes[c] + s > part) if partitioned else (total + s > buffer_bytes):
+            if red:
+                red_avg = (1 - red_wq) * red_avg + red_wq * total
+                if total + s > buffer_bytes:                     # physical buffer full: tail drop
+                    drop = True
+                elif red_avg < red_min:
+                    drop, red_count = False, -1
+                elif red_avg >= red_max:
+                    drop, red_count = True, 0
+                else:
+                    red_count += 1
+                    pb = red_maxp * (red_avg - red_min) / (red_max - red_min)
+                    pa = pb / (1 - red_count * pb) if red_count * pb < 1 else 1.0
+                    drop = red_rng.random() < pa
+                    if drop:
+                        red_count = 0
+            else:
+                drop = (qbytes[c] + s > part) if partitioned else (total + s > buffer_bytes)
+            if drop:
                 dropped[i] = 1
             else:
                 queues[c].append(i)
@@ -131,7 +152,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
                 total += s
                 on_enqueue(c, now)
             i += 1
-        if not busy and total > 0:
+        if t_free == INF and total > 0:
             c = select(now)
             if c is None:     # backlog exists but nothing is eligible yet
                 t_wake = scheduler.wake_time()
@@ -146,7 +167,6 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
             start[j] = now
             t_free = now + s / rate_Bps if rate_factor is None else now + s / (rate_Bps * rate_factor(now))
             end[j] = t_free
-            busy = True
             decisions += 1
 
     wall = time.perf_counter() - wall0

@@ -13,11 +13,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
-          "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py"]
+          "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py",
+          "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
-    ("E1", "drrsim/engine.py", "if busy and tcmp <= ta and", "if busy and tcmp < ta and",
+    ("E1", "drrsim/engine.py", "if t_free <= ta and t_free <= next_upd and t_free <= t_wake and t_free != INF:",
+     "if t_free < ta and t_free <= next_upd and t_free <= t_wake and t_free != INF:",
      "arrival processed before a completion at the same instant"),
     ("E2", "drrsim/engine.py", "else (total + s > buffer_bytes)", "else (total + s >= buffer_bytes)",
      "off-by-one: a packet that exactly fills the buffer is dropped"),
@@ -88,6 +90,15 @@ MUTANTS = [
      "keep = np.random.default_rng([seed, k, 31337]).random(len(t)) < f", "load-profile thinning wrong"),
     ("G4", "drrsim/traffic.py", "        lo, hi = tc.class_sizes(k)", "        lo, hi = spec.size_min, spec.size_max",
      "packet-size override ignored"),
+    ("R1", "drrsim/engine.py", "red_avg = (1 - red_wq) * red_avg + red_wq * total", "red_avg = red_wq * total",
+     "RED average forgets its history"),
+    ("R2", "drrsim/engine.py", "pa = pb / (1 - red_count * pb) if red_count * pb < 1 else 1.0", "pa = pb",
+     "RED inter-drop count correction missing"),
+    ("R3", "drrsim/engine.py", "if total + s > buffer_bytes:                     # physical buffer full: tail drop",
+     "if False:", "RED admits packets into a full buffer"),
+    ("I1", "drrsim/traffic.py", "p=w / w.sum())]", "p=None)]", "IMIX weights ignored"),
+    ("U1", "drrsim/runner.py", "header = list(row) + [k for k in tag_cols if k not in row]", "header = list(row)",
+     "runner header fixed by the first row (the bug found in round 3)"),
 ]
 
 

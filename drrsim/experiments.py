@@ -167,6 +167,17 @@ def experiment_tasks(exp: str, tuned: dict):
         for label, cfg in SCENARIOS.items():
             for name in SCHEDULERS + ["SCRR"]:
                 t += [task("E11", label, name, s, cfg, tuned.get(name, {}), {"scenario": label}) for s in SEEDS]
+    elif exp == "E12":  # more real-life conditions + checks of the method (protocol section E12)
+        for label, cfg in SCENARIOS_E12.items():
+            for name in SCHEDULERS + ["SCRR"]:
+                t += [task("E12", label, name, s, cfg, tuned.get(name, {}), {"check": "scenario", "scenario": label})
+                      for s in SEEDS]
+        for load in (0.95, 1.2):                       # M1: 10x longer measurement window
+            cfg = onoff(load, duration=600.0)
+            t += [task("E12", f"window|{load}", name, s, cfg, tuned.get(name, {}), {"check": "window", "base": f"onoff|{load}"})
+                  for name in SCHEDULERS for s in range(101, 111)]
+        t += [task("E12", "seeds|0.95", name, s, onoff(0.95), tuned.get(name, {}), {"check": "seeds", "base": "onoff|0.95"})
+              for name in SCHEDULERS for s in range(101, 201)]   # M2: 100 seeds
     elif exp == "E7":
         t += _all("E7", "poisson|0.3", poisson(0.3), tuned)
     else:
@@ -186,6 +197,14 @@ SCENARIOS = {
     "abuse": SimConfig(TrafficConfig(arrival="onoff", on_mean=0.05, load=1.1, class_loads=(0.6, 0.2, 0.3),
                                      size_override=((1500, 1500), None, None))),
     "ramp": onoff(0.8, profile=tuple((a, b, f, -1) for a, b, f in _STEPS)),
+}
+
+IMIX = ((40, 7), (576, 4), (1500, 1))      # classic Internet mix by packet count
+SCENARIOS_E12 = {
+    "imix": onoff(0.95, size_dist=(None, IMIX, IMIX)),
+    "red": SimConfig(onoff(0.95).traffic, buffer_policy="red"),
+    "bulk-flood": SimConfig(TrafficConfig(arrival="onoff", on_mean=0.05, load=3.6, class_loads=(0.2, 0.4, 3.0))),
+    "shallow-jumbo": SimConfig(onoff(0.95, size_override=(None, None, (9000, 9000))).traffic, buffer_bytes=30_000),
 }
 
 EXPERIMENTS = ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10"]

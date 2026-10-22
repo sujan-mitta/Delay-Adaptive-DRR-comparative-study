@@ -485,6 +485,107 @@ def main(out=None):
             w(f"| {nme} | {ranks[nme].mean():.1f} | {int(ranks[nme].max())} | {int((mw[nme] <= 1).sum())}/{n_sc} |")
         w()
 
+    # ---------------- E12
+    if (ROOT / "results" / "E12" / "runs.csv").exists():
+        e12 = load("E12")
+        check_pairing(e12)
+        sc12 = e12[e12.check == "scenario"]
+        scen12 = list(dict.fromkeys(sc12.point))
+        names12 = ORDER + ["SCRR"]
+        w("## E12 — More real-life conditions and checks of the method (pre-registered)")
+        w()
+        w("![E12 heatmap](figures/fig13_e12_heatmap.png)")
+        w()
+        mw12 = sc12.groupby(["point", "scheduler"]).W.mean().unstack()[names12].loc[scen12]
+        w("| scenario | " + " | ".join(names12) + " |")
+        w("|---|" + "---|" * len(names12))
+        for sc in scen12:
+            rb = mw12.loc[sc].idxmin()
+            w(f"| {sc} | " + " | ".join((f"**{mw12.loc[sc, n]:.2f}**" if n == rb else f"{mw12.loc[sc, n]:.2f}")
+                                        for n in names12) + " |")
+        w()
+        fam12 = ["DRR", "RL-SP+DRR", "DR-DRR", "FuzzyDRR", "RevenueDRR", "SCRR"]
+        w("| scenario | F1 lowest latency p95 | F2' DRR-family starvation episodes | F4 drop spread (pp, reported) | "
+          "F5 DR-DRR - DRR in W (p) | best non-SP on W |")
+        w("|---|---|---|---|---|---|")
+        win12, h12 = [], {"F1": 0, "F2": 0, "F5": 0}
+        for sc in scen12:
+            d = sc12[sc12.point == sc]
+            l1 = d.groupby("scheduler").lat_p95.mean().idxmin()
+            fam_st = int(d[d.scheduler.isin(fam12)][["lat_starv_count", "vid_starv_count", "blk_starv_count"]].values.sum())
+            drops = d.groupby("scheduler")[["lat_drop_rate", "vid_drop_rate", "blk_drop_rate"]].mean()
+            spr = float((drops.max() - drops.min()).max() * 100)
+            r12 = paired_vs(d[d.scheduler.isin(["DRR", "DR-DRR"])], "W")
+            r12 = r12[r12.scheduler == "DR-DRR"].iloc[0]
+            f5 = r12["diff"] < 0 and r12["p"] < 0.05
+            win = mw12.loc[sc].drop("SP").idxmin()
+            win12.append(win)
+            h12["F1"] += l1 == "SP"
+            h12["F2"] += fam_st == 0
+            h12["F5"] += bool(f5)
+            yes = "holds" if l1 == "SP" else "**fails**"
+            w(f"| {sc} | {l1} ({yes}) | {fam_st} ({'holds' if fam_st == 0 else '**fails**'}) | {spr:.2f} | "
+              f"{r12['diff']:+.2f} (p={r12['p']:.2g}; {'holds' if f5 else '**fails**'}) | {win} |")
+        w()
+        nsc = len(scen12)
+        w(f"Verdicts: **F1** {h12['F1']}/{nsc}; **F2'** {h12['F2']}/{nsc}; **F3** "
+          f"{'holds' if len(set(win12)) >= 2 else 'fails'} (winners: "
+          f"{', '.join(f'{k} {v}' for k, v in pd.Series(win12).value_counts().items())}); **F5** {h12['F5']}/{nsc}.")
+        w()
+        w("**M1 — does a 10x longer measurement window change anything?** (600 s instead of 60 s, seeds 101-110)")
+        w()
+        w("| load | order of the 8 by mean W unchanged? | largest change in a scheduler's mean W | verdict |")
+        w("|---|---|---|---|")
+        m1_all = True
+        m1_notes = []
+        for load_ in (0.95, 1.2):
+            long_ = e12[(e12.check == "window") & (e12.base == f"onoff|{load_}")].groupby("scheduler").W.mean().loc[ORDER]
+            short_ = e1[(e1.point == f"onoff|{load_}") & (e1.seed <= 110)].groupby("scheduler").W.mean().loc[ORDER]
+            same_order = list(long_.sort_values().index) == list(short_.sort_values().index)
+            rel = float((long_ / short_ - 1).abs().max())
+            ok = same_order and rel <= 0.10
+            m1_all &= ok
+            w(f"| {load_} | {'yes' if same_order else 'no'} | {rel:.1%} ({(long_ / short_ - 1).abs().idxmax()}) | "
+              f"{'passes' if ok else '**fails**'} |")
+            if not same_order:
+                L = e12[(e12.check == "window") & (e12.base == f"onoff|{load_}")]
+                o_s, o_l = list(short_.sort_values().index), list(long_.sort_values().index)
+                for x in range(len(o_s)):
+                    for y in range(x + 1, len(o_s)):
+                        a_, b_ = o_s[x], o_s[y]
+                        if o_l.index(a_) > o_l.index(b_):
+                            ma, ha, _ = ci95(L[L.scheduler == a_].W)
+                            mb, hb, _ = ci95(L[L.scheduler == b_].W)
+                            m1_notes.append(f"at load {load_}, {a_} and {b_} swap places: 600-s mean W {ma:.3f} ± {ha:.3f} "
+                                            f"vs {mb:.3f} ± {hb:.3f} ({'overlapping intervals: a statistical tie' if abs(ma - mb) <= ha + hb else 'separated intervals'})")
+        w()
+        for note in m1_notes:
+            w(f"- Why M1 fails: {note}.")
+        if m1_notes:
+            w()
+        seeds100 = e12[e12.check == "seeds"]
+        base20 = e1[e1.point == "onoff|0.95"]
+        inside, rows_m2 = 0, []
+        for nme in ORDER:
+            m, h, _ = ci95(base20[base20.scheduler == nme].W)
+            m100 = seeds100[seeds100.scheduler == nme].W.mean()
+            ok = abs(m100 - m) <= h
+            inside += ok
+            rows_m2.append((nme, m, h, m100, ok))
+        o20 = list(base20.groupby("scheduler").W.mean().loc[ORDER].sort_values().index)
+        o100 = list(seeds100.groupby("scheduler").W.mean().loc[ORDER].sort_values().index)
+        m2_ok = inside >= 7 and o20 == o100
+        w("**M2 — are 20 seeds enough?** (100 seeds vs. E1's 20-seed 95 % interval, ON/OFF 0.95)")
+        w()
+        w("| scheduler | 20-seed mean W ± CI | 100-seed mean W | inside? |")
+        w("|---|---|---|---|")
+        for nme, m, h, m100, ok in rows_m2:
+            w(f"| {nme} | {m:.3f} ± {h:.3f} | {m100:.3f} | {'yes' if ok else 'no'} |")
+        w()
+        w(f"M1 {'passes' if m1_all else '**fails**'}; M2: {inside}/8 inside, order "
+          f"{'unchanged' if o20 == o100 else 'changed'} -> {'passes' if m2_ok else '**fails**'}.")
+        w()
+
     # ---------------- measurement adequacy and robustness
     w("## Measurement adequacy and robustness")
     w()
@@ -690,6 +791,9 @@ def main(out=None):
          "7. **Real-life stress (E11, 8 scenarios)**: SP still gives the lowest latency in all 8; DR-DRR beats DRR in all "
          "8 and is the most robust non-SP scheduler; a non-work-conserving shaper (RL-SP+DRR) behind a shared buffer "
          "lets one mislabelled class waste link capacity and raise everyone's loss (section E11).",
+         "8. **More conditions (E12: IMIX sizes, RED queue management, bulk flood, shallow buffer + jumbo)**: SP lowest "
+         "latency 4/4, no DRR-family starvation 4/4, DR-DRR beats DRR 4/4. Method checks: 100 seeds agree with the 20-seed "
+         "intervals (8/8); a 10x longer window changes no mean W by more than 6 % (one statistical tie swaps places).",
          ""]
     i = OUT.index("<<HEADLINE>>")
     OUT[i:i + 1] = H

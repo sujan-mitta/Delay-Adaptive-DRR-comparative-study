@@ -66,7 +66,10 @@ def check_common(tr, log, cfg):
     # tail-drop decisions match the independently recomputed occupancy
     occ = occupancy_oracle(tr, log, cfg)
     limit = cfg.buffer_bytes // K if cfg.buffer_policy == "partitioned" else cfg.buffer_bytes
-    assert np.array_equal(log.dropped, occ + tr.size > limit)
+    if cfg.buffer_policy == "red":           # RED may drop early, but must drop whenever the buffer is full
+        assert log.dropped[occ + tr.size > limit].all()
+    else:
+        assert np.array_equal(log.dropped, occ + tr.size > limit)
 
 
 def check_work_conserving(tr, log):

@@ -78,7 +78,7 @@ def test_code_hash_format_and_stability():
 
 # ---------------- experiment definitions ----------------
 EXPECTED = {"E1": 2240, "E2": 480, "E3": 640, "E4": 480, "E5": 160, "E6": 1720, "E7": 160, "E8": 640,
-            "E9": 240, "E10": 960, "DEVD": 140, "E1D": 280, "E1V": 280, "ES": 720, "E11": 1440}
+            "E9": 240, "E10": 960, "DEVD": 140, "E1D": 280, "E1V": 280, "ES": 720, "E11": 1440, "E12": 1680}
 
 
 @pytest.mark.parametrize("exp", sorted(EXPECTED))
@@ -87,7 +87,10 @@ def test_experiment_task_counts_and_unique_keys(exp):
     assert len(t) == EXPECTED[exp]
     assert len({key(x) for x in t}) == len(t)
     seeds = {x["seed"] for x in t}
-    assert seeds == (set(DEV_SEEDS) if exp == "DEVD" else set(SEEDS))
+    if exp == "E12":                                   # M2 deliberately uses seeds 101-200
+        assert seeds >= set(SEEDS) and not seeds & set(DEV_SEEDS)
+    else:
+        assert seeds == (set(DEV_SEEDS) if exp == "DEVD" else set(SEEDS))
 
 
 def test_unknown_experiment_rejected():
@@ -206,7 +209,7 @@ def test_figures_regenerate(tmp_path, monkeypatch):
         if name.startswith("fig") and callable(getattr(fig, name)):
             getattr(fig, name)()
     pngs = sorted(p.stem for p in tmp_path.glob("*.png"))
-    assert len(pngs) in (11, 12) and all((tmp_path / f"{p}.pdf").exists() for p in pngs)
+    assert len(pngs) in (11, 12, 13) and all((tmp_path / f"{p}.pdf").exists() for p in pngs)
 
 
 @pytest.mark.skipif(not HAVE_RESULTS, reason="needs saved results")
@@ -222,3 +225,25 @@ def test_saved_results_integrity():
         assert not f.exists() or f.stat().st_size == 0, exp
     dec = json.loads((ROOT / "results" / "DEVD" / "decision.json").read_text())
     assert dec["confirmed"] is True
+
+
+@pytest.mark.skipif(not HAVE_RESULTS, reason="needs saved results")
+def test_regression_guard_sample_of_saved_runs_is_reproduced_exactly():
+    # any change that alters simulated behaviour fails here (full check: python tools/regress_check.py)
+    sys.path.insert(0, str(ROOT / "tools"))
+    import regress_check
+    n, diffs = regress_check.run(sample=120, workers=4)
+    assert n == 120 and diffs == [], diffs[:3]
+
+
+def test_tasks_with_different_tag_columns_share_one_file(tmp_path):
+    # regression: the header used to be fixed by the first finished row, crashing on a row with other tags
+    a = [task("T", "p1", "FIFO", s, tiny(), tags={"scenario": "x"}) for s in (1, 2)]
+    b = [task("T", "p2", "DRR", s, tiny(), tags={"base": "y"}) for s in (1, 2)]
+    run_tasks(tmp_path, a + b, workers=2)
+    df = pd.read_csv(tmp_path / "runs.csv")
+    assert len(df) == 4 and {"scenario", "base"} <= set(df.columns)
+    assert set(df[df.point == "p1"].scenario) == {"x"} and df[df.point == "p1"].base.isna().all()
+    with pytest.raises(ValueError, match="no column"):           # a new tag column for an existing file: refused up front
+        run_tasks(tmp_path, [task("T", "p3", "SP", 1, tiny(), tags={"other": 1})], workers=1)
+    assert len(pd.read_csv(tmp_path / "runs.csv")) == 4

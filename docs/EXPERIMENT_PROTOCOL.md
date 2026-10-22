@@ -14,6 +14,8 @@
 | E10 | robustness: update interval, warm-up | exploratory | `results/E10` |
 | E1V | superseded CQDRR draft rule, for comparison | exploratory | `results/E1V` |
 | ES | SCRR (optional ninth scheduler) + DRR-9000 comparator | pre-registered | `results/ES` |
+| E11 | real-life stress scenarios (8) | pre-registered | `results/E11` |
+| E12 | IMIX, RED, bulk flood, shallow+jumbo; window-length and seed-count checks | pre-registered | `results/E12` |
 
 ## Fixed defaults
 - Link 10 Mb/s; buffer 125 000 B (100 ms at line rate); warm-up 5 s; measurement 60 s;
@@ -214,3 +216,34 @@ a verdict: each scheduler's rank by W per scenario and its worst rank (robustnes
 - E11 ran as pre-registered. The wording of F2 ("only SP and CQDRR ever starve") omitted FIFO, whose long
   FIFO waits also count as starvation episodes in the main study; F2 is reported as registered (fails), with
   the computed explanation beside it, not re-worded.
+
+## E12 — more real-life conditions and checks of the method (pre-registered 2026-10-22, before any code for it)
+Same setup as E11 (8 schedulers + SCRR, frozen parameters, seeds 101–120, ON/OFF-medium, 125 kB shared buffer).
+
+| id | scenario | change vs. the base model | load |
+|----|----------|---------------------------|------|
+| R1 | imix | video and bulk use the classic Internet mix by packet count 7:4:1 of 40 / 576 / 1500 B | 0.95 |
+| R2 | red | RED active queue management on the shared buffer (byte mode, min 25 kB, max 75 kB, max_p 0.1, w 0.002) | 0.95 |
+| R3 | bulk-flood | bulk class alone offers 3·C (a flood on the lowest class); latency 0.2, video 0.4 | 3.6 |
+| R4 | shallow-jumbo | 30 kB buffer and 9000-B bulk frames | 0.95 |
+
+Findings re-tested (same criteria as E11): F1, F3, F5 as before; F2' = no DRR-family scheduler (DRR, RL-SP+DRR,
+DR-DRR, FuzzyDRR, RevenueDRR, SCRR) ever starves a class; F4 is reported only (RED changes admission).
+
+Checks of the method (no scenario change):
+- **M1 window length**: ON/OFF loads 0.95 and 1.2 with a 600 s window (10×), seeds 101–110. Passes if the order of
+  the 8 schedulers by mean W is identical to E1's and every scheduler's W is within 10 % of E1's.
+- **M2 seed count**: ON/OFF 0.95 with seeds 101–200 (100 seeds). Passes if at least 7 of the 8 schedulers' 100-seed
+  mean W lies inside E1's 20-seed 95 % confidence interval, and the order of the 8 by mean W is unchanged.
+  *(Amended within minutes of registration, before any E12 code or data existed: "every scheduler" would fail by
+  chance about one time in three even if all intervals were correct, since each 95 % interval misses 5 % of the time.)*
+
+## Deviation 9 — round 3 (2026-10-23)
+- The first E12 run stopped after 720 rows because of a runner bug (CSV header fixed by the first finished row;
+  E12 mixes tag columns). The runner was fixed and tested; the partial output is archived in
+  `results/_aborted_e12_header/`, and E12 was re-run in full. No earlier experiment was affected.
+- M2's pass rule was amended before any E12 code or data existed (see E12 section).
+- M1 fails as registered at load 1.2: DRR and FuzzyDRR (6th and 7th) swap places with overlapping confidence
+  intervals; all other positions are unchanged and no mean W moves by more than 5.2 %. Reported as a fail with the
+  computed explanation; not re-worded.
+- New options (IMIX size distributions, RED) are off by default; all saved runs re-simulate exactly.

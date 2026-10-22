@@ -109,7 +109,7 @@ MAX_PACKETS = 5e7
 
 def generate_trace(tc: TrafficConfig, seed: int) -> Trace:
     loads = tc.per_class_load()
-    expected = sum(l * tc.link_rate / 8 / (sum(tc.class_sizes(k)) / 2) * max([1.0] + [s[2] for s in tc.profile])
+    expected = sum(l * tc.link_rate / 8 / tc.class_mean_size(k) * max([1.0] + [s[2] for s in tc.profile])
                    for k, l in enumerate(loads)) * tc.horizon
     if expected > MAX_PACKETS:
         raise ValueError(f"configuration would generate ~{expected:.3g} packets (limit {MAX_PACKETS:.0e}); "
@@ -124,7 +124,7 @@ def generate_trace(tc: TrafficConfig, seed: int) -> Trace:
         lo, hi = tc.class_sizes(k)
         segs = [seg for seg in tc.profile if seg[3] in (-1, k)]
         fmax = max([1.0] + [seg[2] for seg in segs])                   # thinning envelope
-        pkt_rate = loads[k] * tc.link_rate / 8 / ((lo + hi) / 2) * fmax
+        pkt_rate = loads[k] * tc.link_rate / 8 / tc.class_mean_size(k) * fmax
         if tc.arrival == "poisson":
             t = _poisson_times(rng, pkt_rate, tc.horizon)
         else:
@@ -135,7 +135,13 @@ def generate_trace(tc: TrafficConfig, seed: int) -> Trace:
                 f[(t >= t0) & (t < t1)] = factor
             keep = np.random.default_rng([seed, k, 31337]).random(len(t)) < f / fmax
             t = t[keep]
-        s = rng.integers(lo, hi + 1, size=len(t))
+        dist = tc.size_dist[k] if tc.size_dist is not None else None
+        if dist is None:
+            s = rng.integers(lo, hi + 1, size=len(t))
+        else:                                                          # discrete size distribution (e.g. IMIX)
+            vals = np.array([x[0] for x in dist])
+            w = np.array([x[1] for x in dist], dtype=float)
+            s = vals[rng.choice(len(vals), size=len(t), p=w / w.sum())]
         ts.append(t)
         cs.append(np.full(len(t), k, dtype=np.int8))
         ss.append(s.astype(np.int32))

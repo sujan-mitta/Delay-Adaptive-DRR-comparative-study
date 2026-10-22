@@ -6,6 +6,7 @@
 Used only by tests/test_reference.py.
 """
 import heapq
+import random
 from collections import deque
 
 import numpy as np
@@ -103,8 +104,10 @@ class RefRLSP:
         return None, (self.dep[0] if self.dep else None)
 
 
-def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched, capacity=()):
+def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched, capacity=(), red=None, red_seed=0):
+    """red: (min_th, max_th, max_p, w_q) when policy == "red" (classic RED, written out independently)."""
     n = len(t)
+    avg, count, rng = 0.0, -1, random.Random(red_seed)
     rate = link_rate / 8.0
     part = buffer_bytes // K
     if isinstance(sched, RefRLSP):
@@ -135,7 +138,24 @@ def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched, capacity=
         else:
             arrivals_done += 1
             i, c, s = x, cls[x], size[x]
-            full = (qbytes[c] + s > part) if policy == "partitioned" else (sum(qbytes) + s > buffer_bytes)
+            if policy == "red":
+                lo, hi, maxp, wq = red
+                q = sum(qbytes)
+                avg = avg * (1 - wq) + wq * q
+                if q + s > buffer_bytes:
+                    full = True
+                elif avg < lo:
+                    full, count = False, -1
+                elif avg >= hi:
+                    full, count = True, 0
+                else:
+                    count += 1
+                    pb = maxp * (avg - lo) / (hi - lo)
+                    full = rng.random() < (pb / (1 - count * pb) if count * pb < 1 else 1.0)
+                    if full:
+                        count = 0
+            else:
+                full = (qbytes[c] + s > part) if policy == "partitioned" else (sum(qbytes) + s > buffer_bytes)
             if full:
                 dropped[i] = True
             else:

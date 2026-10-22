@@ -322,18 +322,20 @@ def fig11_scrr():
     save(fig, "fig11_scrr")
 
 
-def fig12_reallife_heatmap():
+def _scenario_heatmap(exp, title, out, check=None):
     from matplotlib.colors import LinearSegmentedColormap, LogNorm
-    path = ROOT / "results" / "E11" / "runs.csv"
+    path = ROOT / "results" / exp / "runs.csv"
     if not path.exists():
         return
-    e11 = load("E11")
+    d = load(exp)
+    if check is not None:
+        d = d[d.check == check]
     names = ORDER + ["SCRR"]
-    scen = list(dict.fromkeys(e11.point))
-    mw = e11.groupby(["point", "scheduler"]).W.mean().unstack()[names].loc[scen]
+    scen = list(dict.fromkeys(d.point))
+    mw = d.groupby(["point", "scheduler"]).W.mean().unstack()[names].loc[scen]
     ramp = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]   # one hue, light -> dark
     cmap = LinearSegmentedColormap.from_list("blues", ramp)
-    fig, ax = plt.subplots(figsize=(7.4, 3.6))
+    fig, ax = plt.subplots(figsize=(7.4, 0.42 * len(scen) + 1.2))
     im = ax.imshow(mw.values, cmap=cmap, norm=LogNorm(vmin=max(mw.values.min(), 0.05), vmax=mw.values.max()),
                    aspect="auto")
     for i in range(len(scen)):
@@ -352,8 +354,17 @@ def fig12_reallife_heatmap():
     cb.ax.yaxis.set_major_locator(LogLocator(base=10, subs=(1, 2, 5)))
     cb.ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
     cb.ax.yaxis.set_minor_formatter(NullFormatter())
-    ax.set_title("E11 real-life scenarios: mean W over 20 seeds (bold = best in row)", fontsize=8, color=INK)
-    save(fig, "fig12_reallife_heatmap")
+    ax.set_title(title, fontsize=8, color=INK)
+    save(fig, out)
+
+
+def fig12_reallife_heatmap():
+    _scenario_heatmap("E11", "E11 real-life scenarios: mean W over 20 seeds (bold = best in row)", "fig12_reallife_heatmap")
+
+
+def fig13_e12_heatmap():
+    _scenario_heatmap("E12", "E12 more real-life conditions: mean W over 20 seeds (bold = best in row)",
+                      "fig13_e12_heatmap", check="scenario")
 
 
 if __name__ == "__main__":
@@ -369,3 +380,4 @@ if __name__ == "__main__":
     fig10_damped_variant()
     fig11_scrr()
     fig12_reallife_heatmap()
+    fig13_e12_heatmap()

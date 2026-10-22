@@ -21,6 +21,7 @@ python scripts/run_experiments.py E1D  # DR-DRR+damping on reported seeds
 python scripts/run_experiments.py E1V  # superseded CQDRR draft, for comparison
 python scripts/run_experiments.py ES   # SCRR (NSDI 2025), optional ninth scheduler
 python scripts/run_experiments.py E11  # real-life stress scenarios (jumbo, tiny, heavy-tail, sync, flash, fade, abuse, ramp)
+python scripts/run_experiments.py E12  # IMIX, RED AQM, bulk flood, shallow buffer + jumbo; window and seed-count checks
 python scripts/timeseries.py           # quanta traces for Figure 5
 python scripts/make_figures.py         # figures/ from results/*.csv only
 python scripts/make_report.py          # RESULTS.md from results/*.csv only
@@ -54,6 +55,7 @@ skipped, nothing is overwritten. To start a clean run, move `results/` aside (ne
 | `scripts/` | tuning, experiment runs, controls, figures, report, `reproduce.ps1` |
 | `tests/` | tests: toy cases, edge cases, property-based, reference implementations, queueing theory, pipeline (docs/TESTING.md) |
 | `tools/mutation_check.py` | plants realistic bugs in temp copies to check the tests catch them |
+| `tools/regress_check.py` | re-simulates every saved run; all metrics must match exactly |
 | `docs/` | algorithm spec, protocol + deviation log, reference check, testing and mutation report |
 | `results/` | every run as CSV + manifests; `_superseded*/` keeps earlier runs (never deleted) |
 
@@ -82,6 +84,7 @@ skipped, nothing is overwritten. To start a clean run, move `results/` aside (ne
 | fig10_drdrr_damping_variant | DR-DRR+damping across all E1 points | extra |
 | fig11_scrr | SCRR vs DRR (1500 B and 9000 B quanta) | extra (optional 9th scheduler) |
 | fig12_reallife_heatmap | mean W per real-life scenario and scheduler (E11) | extra |
+| fig13_e12_heatmap | mean W per scenario and scheduler (E12) | extra |
 
 ## Citation and AI-use note
 If you use this simulator, cite the accompanying paper (details to be added on acceptance).

@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-22 22:43 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `8f00f25789c80934`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-22 23:50 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `89a888e9a6818ebc`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -18,6 +18,7 @@ Generated 2026-10-22 22:43 by `scripts/make_report.py` from `results/*/runs.csv`
 5. **Weight oscillation** helps under bursts and hurts under smooth overload (E9 + control E9C); damping (lambda = 0.5) lowers W by up to 51%.
 6. **Paper-trend checks**: RL-SP+DRR reproduced; CQDRR not reproduced (4/8); SCRR latency reproduced (8/8), fairness reproduced.
 7. **Real-life stress (E11, 8 scenarios)**: SP still gives the lowest latency in all 8; DR-DRR beats DRR in all 8 and is the most robust non-SP scheduler; a non-work-conserving shaper (RL-SP+DRR) behind a shared buffer lets one mislabelled class waste link capacity and raise everyone's loss (section E11).
+8. **More conditions (E12: IMIX sizes, RED queue management, bulk flood, shallow buffer + jumbo)**: SP lowest latency 4/4, no DRR-family starvation 4/4, DR-DRR beats DRR 4/4. Method checks: 100 seeds agree with the 20-seed intervals (8/8); a 10x longer window changes no mean W by more than 6 % (one statistical tie swaps places).
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -370,6 +371,50 @@ Robustness of each scheduler across the 8 scenarios (rank by mean W, 1 = best of
 | RL-SP+DRR | 6.6 | 9 | 0/8 |
 | SCRR | 7.9 | 8 | 0/8 |
 | FIFO | 8.1 | 9 | 0/8 |
+
+## E12 — More real-life conditions and checks of the method (pre-registered)
+
+![E12 heatmap](figures/fig13_e12_heatmap.png)
+
+| scenario | FIFO | SP | DRR | RL-SP+DRR | DR-DRR | CQDRR | FuzzyDRR | RevenueDRR | SCRR |
+|---|---|---|---|---|---|---|---|---|---|
+| imix | 9.93 | **0.54** | 3.17 | 3.21 | 1.33 | 1.76 | 2.76 | 1.40 | 3.20 |
+| red | 7.94 | **0.38** | 2.18 | 2.19 | 1.04 | 1.58 | 1.99 | 1.12 | 2.22 |
+| bulk-flood | 10.03 | **0.48** | 2.08 | 2.11 | 1.12 | 1.24 | 2.05 | 0.91 | 2.08 |
+| shallow-jumbo | 2.34 | **0.61** | 0.89 | 0.88 | 0.84 | 1.49 | 0.93 | 0.89 | 1.46 |
+
+| scenario | F1 lowest latency p95 | F2' DRR-family starvation episodes | F4 drop spread (pp, reported) | F5 DR-DRR - DRR in W (p) | best non-SP on W |
+|---|---|---|---|---|---|
+| imix | SP (holds) | 0 (holds) | 0.22 | -1.84 (p=1.9e-06; holds) | DR-DRR |
+| red | SP (holds) | 0 (holds) | 0.11 | -1.14 (p=1.9e-06; holds) | DR-DRR |
+| bulk-flood | SP (holds) | 0 (holds) | 4.00 | -0.95 (p=1.9e-06; holds) | RevenueDRR |
+| shallow-jumbo | SP (holds) | 0 (holds) | 0.58 | -0.06 (p=1.9e-06; holds) | DR-DRR |
+
+Verdicts: **F1** 4/4; **F2'** 4/4; **F3** holds (winners: DR-DRR 3, RevenueDRR 1); **F5** 4/4.
+
+**M1 — does a 10x longer measurement window change anything?** (600 s instead of 60 s, seeds 101-110)
+
+| load | order of the 8 by mean W unchanged? | largest change in a scheduler's mean W | verdict |
+|---|---|---|---|
+| 0.95 | yes | 2.0% (RevenueDRR) | passes |
+| 1.2 | no | 5.2% (DRR) | **fails** |
+
+- Why M1 fails: at load 1.2, DRR and FuzzyDRR swap places: 600-s mean W 6.477 ± 0.163 vs 6.407 ± 0.100 (overlapping intervals: a statistical tie).
+
+**M2 — are 20 seeds enough?** (100 seeds vs. E1's 20-seed 95 % interval, ON/OFF 0.95)
+
+| scheduler | 20-seed mean W ± CI | 100-seed mean W | inside? |
+|---|---|---|---|
+| FIFO | 9.908 ± 0.007 | 9.904 | yes |
+| SP | 0.535 ± 0.014 | 0.534 | yes |
+| DRR | 3.126 ± 0.084 | 3.109 | yes |
+| RL-SP+DRR | 3.159 ± 0.083 | 3.143 | yes |
+| DR-DRR | 1.326 ± 0.028 | 1.309 | yes |
+| CQDRR | 1.784 ± 0.038 | 1.806 | yes |
+| FuzzyDRR | 2.726 ± 0.069 | 2.715 | yes |
+| RevenueDRR | 1.425 ± 0.045 | 1.391 | yes |
+
+M1 **fails**; M2: 8/8 inside, order unchanged -> passes.
 
 ## Measurement adequacy and robustness
 

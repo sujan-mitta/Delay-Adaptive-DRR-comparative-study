@@ -25,7 +25,7 @@ def test_traffic_config_rejects(kw):
 
 @pytest.mark.parametrize("kw", [
     dict(buffer_bytes=1499), dict(update_interval=0.0), dict(starvation_T=0.0),
-    dict(buffer_policy="red"), dict(buffer_bytes=4499, buffer_policy="partitioned"),
+    dict(buffer_policy="codel"), dict(buffer_bytes=4499, buffer_policy="partitioned"),
 ])
 def test_sim_config_rejects(kw):
     with pytest.raises(ValueError):

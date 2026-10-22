@@ -86,9 +86,13 @@ def run_tasks(exp_dir, tasks, workers=None, chunksize=4):
     if not todo:
         return
     header = None
+    tag_cols = list(dict.fromkeys(k for t in todo for k in t["tags"]))   # tasks may carry different tags
     if runs.exists():
         with open(runs, newline="") as f:
             header = next(csv.reader(f))
+        missing = [k for k in tag_cols if k not in header]
+        if missing:                                  # refuse before running anything, never mid-run
+            raise ValueError(f"{runs} has no column(s) {missing} needed by the new tasks; write them to a new folder")
     t0 = time.time()
     n_ok = n_fail = 0
     workers = workers or max(1, (os.cpu_count() or 2) - 2)
@@ -97,9 +101,9 @@ def run_tasks(exp_dir, tasks, workers=None, chunksize=4):
         for i, (ok, row) in enumerate(pool.imap_unordered(_execute, todo, chunksize=chunksize), 1):
             if ok:
                 if header is None:
-                    header = list(row)
+                    header = list(row) + [k for k in tag_cols if k not in row]
                 if w is None:
-                    w = csv.DictWriter(fr, fieldnames=header, extrasaction="raise")
+                    w = csv.DictWriter(fr, fieldnames=header, extrasaction="raise", restval="")
                     if fr.tell() == 0:
                         w.writeheader()
                 w.writerow(row)

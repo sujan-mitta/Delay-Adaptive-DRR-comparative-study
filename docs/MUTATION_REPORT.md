@@ -1,6 +1,6 @@
 # Mutation check
 
-34/34 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+39/39 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
@@ -11,7 +11,7 @@
 | E5 | bit/byte conversion error | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | E6 | buffer occupancy not released when a packet starts service | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S1 | DRR keeps its deficit after the queue empties | equivalent | `` |
-| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_drr_matches_textbook_reference` |
+| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_reference_agreement_on_realistic_traces[0.6-onoff]` |
 | S3 | new DRR class jumps the round-robin queue | killed | `tests/test_core.py::test_accounting_and_fifo_within_class[DRR]` |
 | S4 | FIFO serves the newest head first | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S5 | strict priority order reversed | killed | `tests/test_core.py::test_toy_sp_exact` |
@@ -40,6 +40,11 @@
 | G2 | synchronised bursts ignored | killed | `tests/test_scenarios.py::test_sync_all_classes_share_one_onoff_process` |
 | G3 | load-profile thinning wrong | killed | `tests/test_scenarios.py::test_profile_scales_rate_inside_segment_only` |
 | G4 | packet-size override ignored | killed | `tests/test_scenarios.py::test_size_override_exact_and_byte_load_preserved` |
+| R1 | RED average forgets its history | killed | `tests/test_aqm_imix.py::test_red_seed_pairs_runs_and_changes_draws` |
+| R2 | RED inter-drop count correction missing | killed | `tests/test_aqm_imix.py::test_red_matches_reference` |
+| R3 | RED admits packets into a full buffer | killed | `tests/test_aqm_imix.py::test_red_with_unreachable_thresholds_equals_tail_drop` |
+| I1 | IMIX weights ignored | killed | `tests/test_aqm_imix.py::test_imix_sizes_proportions_and_byte_load` |
+| U1 | runner header fixed by the first row (the bug found in round 3) | killed | `tests/test_pipeline.py::test_tasks_with_different_tag_columns_share_one_file` |
 
 **Equivalent mutants**
 
