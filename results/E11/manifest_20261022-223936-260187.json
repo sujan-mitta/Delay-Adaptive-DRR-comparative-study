@@ -1,0 +1,30 @@
+{
+ "started": "20261022-223936-260187",
+ "code_hash": "8f00f25789c80934",
+ "python": "3.13.0 (tags/v3.13.0:60403a5, Oct  7 2024, 09:38:07) [MSC v.1941 64 bit (AMD64)]",
+ "platform": "Windows-11-10.0.26300-SP0",
+ "numpy": "2.4.0",
+ "n_tasks": 1440,
+ "n_skipped_already_done": 0,
+ "configs": [
+  "{\"point\": \"abuse\", \"cfg\": {\"traffic\": {\"load\": 1.1, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": [0.6, 0.2, 0.3], \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": [[1500, 1500], null, null], \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": []}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}",
+  "{\"point\": \"flash-crowd\", \"cfg\": {\"traffic\": {\"load\": 0.8, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": null, \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": [[25.0, 35.0, 3.0, 1]]}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}",
+  "{\"point\": \"heavy-tail\", \"cfg\": {\"traffic\": {\"load\": 0.95, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": null, \"on_dist\": \"pareto\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": []}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}",
+  "{\"point\": \"jumbo\", \"cfg\": {\"traffic\": {\"load\": 0.95, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": [null, null, [9000, 9000]], \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": []}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}",
+  "{\"point\": \"link-fade\", \"cfg\": {\"traffic\": {\"load\": 0.8, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": null, \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": []}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": [[25.0, 35.0, 0.4]]}}",
+  "{\"point\": \"ramp\", \"cfg\": {\"traffic\": {\"load\": 0.8, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": null, \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": [[5.0, 15.0, 0.5, -1], [15.0, 25.0, 0.75, -1], [25.0, 35.0, 1.0, -1], [35.0, 45.0, 1.25, -1], [45.0, 55.0, 1.5, -1], [55.0, 65.0, 1.625, -1]]}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}",
+  "{\"point\": \"sync\", \"cfg\": {\"traffic\": {\"load\": 0.95, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": null, \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": true, \"profile\": []}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}",
+  "{\"point\": \"tiny\", \"cfg\": {\"traffic\": {\"load\": 0.95, \"mix\": [0.2, 0.4, 0.4], \"arrival\": \"onoff\", \"on_mean\": 0.05, \"duty\": 0.5, \"class_loads\": null, \"warmup\": 5.0, \"duration\": 60.0, \"link_rate\": 10000000.0, \"size_override\": [[64, 64], null, null], \"on_dist\": \"exp\", \"pareto_alpha\": 1.5, \"sync\": false, \"profile\": []}, \"buffer_bytes\": 125000, \"buffer_policy\": \"shared\", \"update_interval\": 0.01, \"starvation_T\": 0.1, \"drain\": true, \"capacity\": []}}"
+ ],
+ "params": [
+  "{\"params\": {\"gain\": 0.1}, \"scheduler\": \"FuzzyDRR\"}",
+  "{\"params\": {\"kappa\": 4.0}, \"scheduler\": \"DR-DRR\"}",
+  "{\"params\": {\"rate_frac\": 0.4}, \"scheduler\": \"RL-SP+DRR\"}",
+  "{\"params\": {\"scale\": 93.75}, \"scheduler\": \"CQDRR\"}",
+  "{\"params\": {\"tau\": 0.0125}, \"scheduler\": \"RevenueDRR\"}",
+  "{\"params\": {}, \"scheduler\": \"DRR\"}",
+  "{\"params\": {}, \"scheduler\": \"FIFO\"}",
+  "{\"params\": {}, \"scheduler\": \"SCRR\"}",
+  "{\"params\": {}, \"scheduler\": \"SP\"}"
+ ]
+}

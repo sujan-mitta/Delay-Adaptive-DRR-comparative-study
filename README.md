@@ -11,7 +11,7 @@ protocol + deviation log: [docs/EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL
 
 ```powershell
 python -m pip install -r requirements-lock.txt   # or requirements.txt for any recent versions
-python -m pytest                       # 256 tests (needs requirements-dev.txt); see docs/TESTING.md
+python -m pytest                       # full suite (needs requirements-dev.txt); see docs/TESTING.md
 python scripts/tune.py                 # dev seeds 1–5; verifies config/tuned_params.json is reproduced
 python scripts/run_experiments.py      # E1–E10, seeds 101–120 (~7 min on 16 cores); resumable
 python scripts/e9_control.py           # E9C: static DRR at DR-DRR mean quanta (needs E9)
@@ -20,6 +20,7 @@ python scripts/confirm_damping.py      # pre-registered rule; stop if it exits n
 python scripts/run_experiments.py E1D  # DR-DRR+damping on reported seeds
 python scripts/run_experiments.py E1V  # superseded CQDRR draft, for comparison
 python scripts/run_experiments.py ES   # SCRR (NSDI 2025), optional ninth scheduler
+python scripts/run_experiments.py E11  # real-life stress scenarios (jumbo, tiny, heavy-tail, sync, flash, fade, abuse, ramp)
 python scripts/timeseries.py           # quanta traces for Figure 5
 python scripts/make_figures.py         # figures/ from results/*.csv only
 python scripts/make_report.py          # RESULTS.md from results/*.csv only
@@ -51,7 +52,7 @@ skipped, nothing is overwritten. To start a clean run, move `results/` aside (ne
 | `drrsim/experiments.py` | all experiments (index in docs/EXPERIMENT_PROTOCOL.md), tuning grid, sensitivity knobs |
 | `drrsim/analysis.py` | 95 % CIs, paired Wilcoxon tests, rank stability, pairing check |
 | `scripts/` | tuning, experiment runs, controls, figures, report, `reproduce.ps1` |
-| `tests/` | 256 tests: toy cases, edge cases, property-based, reference implementations, queueing theory, pipeline (docs/TESTING.md) |
+| `tests/` | tests: toy cases, edge cases, property-based, reference implementations, queueing theory, pipeline (docs/TESTING.md) |
 | `tools/mutation_check.py` | plants realistic bugs in temp copies to check the tests catch them |
 | `docs/` | algorithm spec, protocol + deviation log, reference check, testing and mutation report |
 | `results/` | every run as CSV + manifests; `_superseded*/` keeps earlier runs (never deleted) |
@@ -80,6 +81,7 @@ skipped, nothing is overwritten. To start a clean run, move `results/` aside (ne
 | fig9_drdrr_damping | damping ablation with static-DRR control | extra |
 | fig10_drdrr_damping_variant | DR-DRR+damping across all E1 points | extra |
 | fig11_scrr | SCRR vs DRR (1500 B and 9000 B quanta) | extra (optional 9th scheduler) |
+| fig12_reallife_heatmap | mean W per real-life scenario and scheduler (E11) | extra |
 
 ## Citation and AI-use note
 If you use this simulator, cite the accompanying paper (details to be added on acceptance).

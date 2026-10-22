@@ -12,6 +12,7 @@ import numpy as np
 
 K = 3
 COMPLETION, WAKE, ARRIVAL = 0, 1, 2          # processing order for equal timestamps
+TIE_EPS = 1e-12                               # same tie tolerance as drrsim (written out, not imported)
 
 
 class RefFIFO:
@@ -94,7 +95,7 @@ class RefRLSP:
             self.drr.arrive(i, c, t)
 
     def next(self, t, queues, size):
-        if self.dep and self.dep[0] <= t + 1e-12:
+        if self.dep and self.dep[0] <= t + TIE_EPS:
             self.dep.popleft()
             return queues[0][0], None
         if queues[1] or queues[2]:
@@ -102,7 +103,7 @@ class RefRLSP:
         return None, (self.dep[0] if self.dep else None)
 
 
-def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched):
+def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched, capacity=()):
     n = len(t)
     rate = link_rate / 8.0
     part = buffer_bytes // K
@@ -112,20 +113,27 @@ def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched):
     dropped = np.zeros(n, bool)
     queues = [deque() for _ in range(K)]
     qbytes = [0] * K
-    ev = [(t[i], ARRIVAL, i) for i in range(n)]
+    # events: (heap time, kind, seq, exact time). A wake-up is keyed TIE_EPS early so that it precedes any
+    # arrival within TIE_EPS before it; it then fires at that arrival's time (or its own, if no such arrival).
+    ev = [(t[i], ARRIVAL, i, t[i]) for i in range(n)]
     heapq.heapify(ev)
     seq = n
     busy = False
     wake_pending = None
+    arrivals_done = 0
     while ev:
-        now, kind, x = heapq.heappop(ev)
+        key, kind, x, exact = heapq.heappop(ev)
+        now = key
         if kind == COMPLETION:
             busy = False
         elif kind == WAKE:
-            if wake_pending != now:
+            if wake_pending != exact:
                 continue
             wake_pending = None
+            ta = t[arrivals_done] if arrivals_done < n else np.inf
+            now = ta if ta < exact else exact
         else:
+            arrivals_done += 1
             i, c, s = x, cls[x], size[x]
             full = (qbytes[c] + s > part) if policy == "partitioned" else (sum(qbytes) + s > buffer_bytes)
             if full:
@@ -139,7 +147,7 @@ def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched):
             if i is None:
                 if wake is not None and wake_pending != wake:
                     wake_pending = wake
-                    heapq.heappush(ev, (wake, WAKE, seq))
+                    heapq.heappush(ev, (wake - TIE_EPS, WAKE, seq, wake))
                     seq += 1
                 continue
             c = cls[i]
@@ -148,6 +156,10 @@ def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched):
             qbytes[c] -= size[i]
             start[i] = now
             busy = True
-            heapq.heappush(ev, (now + size[i] / rate, COMPLETION, seq))
+            f = 1.0
+            for t0, t1, factor in capacity:              # rate in force when transmission starts
+                if t0 <= now < t1:
+                    f = factor
+            heapq.heappush(ev, (now + size[i] / (rate * f) if capacity else now + size[i] / rate, COMPLETION, seq, None))
             seq += 1
     return start, dropped

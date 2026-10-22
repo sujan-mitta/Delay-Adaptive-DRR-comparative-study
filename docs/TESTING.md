@@ -1,12 +1,12 @@
 # Testing and verification
 
-256 automated tests in seven layers, plus mutation testing of the suite itself.
+483 automated tests in nine layers, plus mutation testing of the suite itself.
 
 ```powershell
 python -m pip install -r requirements-dev.txt
-python -m pytest                                   # all 256 tests (~8 min; theory and property tests dominate)
+python -m pytest                                   # all tests (a few minutes; theory, property and fuzz tests dominate)
 python -m pytest --cov=drrsim --cov=scripts        # with coverage
-python tools/mutation_check.py                     # plants 27 bugs in temp copies; writes docs/MUTATION_REPORT.md
+python tools/mutation_check.py                     # plants 36 bugs in temp copies; writes docs/MUTATION_REPORT.md
 ```
 
 ## Layers
@@ -18,17 +18,19 @@ python tools/mutation_check.py                     # plants 27 bugs in temp copi
 | `test_properties.py` | 20 | Hypothesis property tests, 150 random scenarios each (random arrival times incl. exact ties, classes, sizes, buffer sizes and policies, link rates). For **all 11 schedulers**: conservation, start ≥ arrival, exact service times, one packet on the link, FIFO within class, determinism, and an **independent drop oracle** — buffer occupancy recomputed from the logs alone must explain every drop and every admission. Work conservation for all work-conserving schedulers; RL-SP departure times; quanta bounds; partition isolation |
 | `test_reference.py` | 8 | **Differential testing**: FIFO, SP, DRR (random quanta) and RL-SP must agree packet-for-packet (every start time, every drop) with independent reference implementations in `tests/reference.py` (heap-based event loop, textbook "visit" DRR) on random and realistic traces |
 | `test_theory.py` | 18 | **Queueing theory**: M/D/1 and M/G/1 (Pollaczek–Khinchine) mean waits within 3 %; strict priority vs **Cobham's formula** within 4 % per class; **Kleinrock's conservation law** (exact sample-path form, all work-conserving schedulers agree to 1e-9); **Little's law** (exact); bit-exact **time-scale invariance**; traffic statistics (KS test of exponential inter-arrivals, unit dispersion, chi-square of packet sizes, ON/OFF duty cycle and peak rate) |
-| `test_pipeline.py` | 32 | runner (append-only, resume, failure log, duplicate keys, deterministic rows), task counts and key uniqueness for every experiment, tuning-rule ties/feasibility/fallback, damping decision rule, CI/paired-test/rank statistics, end-to-end regeneration of `RESULTS.md` and all 11 figures, integrity of the saved results |
+| `test_pipeline.py` | 33 | runner (append-only, resume, failure log, duplicate keys, deterministic rows), task counts and key uniqueness for every experiment, tuning-rule ties/feasibility/fallback, damping decision rule, CI/paired-test/rank statistics, end-to-end regeneration of `RESULTS.md` and all 11 figures, integrity of the saved results |
+| `test_robustness.py` | 176 | **Hostile and out-of-bound inputs**: unsorted / NaN / infinite / negative times, out-of-range classes, zero, negative and fractional sizes, mismatched arrays, NaN/infinite/absurd configs, absurd scale (refused before allocating); **fuzzing of every scheduler parameter** with NaN, ±inf, 1e±300, zero, negatives, strings, None, booleans and wrong-length lists — each input is refused with a clear `ValueError` or simulates correctly; **extreme but valid** real-world inputs for all 11 schedulers: 50× overload, near-zero load, 1 kb/s and 100 Gb/s links, a one-packet buffer, 9000-B jumbo and 1-B packets, 10 000 simultaneous arrivals, and a tie storm where every arrival lands on a completion instant |
+| `test_scenarios.py` | 50 | E11 scenario features: validation, packet-size overrides, Pareto ON/OFF (mean and heavy tail), synchronised ON/OFF, load profiles (rate inside/outside, silencing, other classes untouched), link-capacity schedules (exact, half-open, non-preemptive; agreement with the reference simulator and full invariants for every scheduler on random schedules), and every scenario run for every scheduler |
 | `test_scripts.py` | 16 | miniature end-to-end runs of `tune.py` (incl. the `--force` overwrite guard), `run_experiments.py`, `e9_control.py`, `timeseries.py`, `confirm_damping.py` (exit codes) in temporary folders; guard paths; backlog reconstruction vs brute force |
 
 Coverage: **100 % of every `drrsim` module**; 94–99 % of the scripts (only `__main__` launch lines uncovered).
 Also passes on Python 3.11 with the newest library versions.
 
 ## Mutation testing
-`tools/mutation_check.py` plants 27 realistic bugs one at a time (wrong tie order, off-by-one buffer
+`tools/mutation_check.py` plants 36 realistic bugs one at a time (wrong tie order, off-by-one buffer
 admission, wrong partition size, bit/byte error, missing occupancy release, DRR deficit and ordering
 errors, reversed priorities, RL-SP shaping errors, formula sign errors, the SCRR clock and CQDRR loop
-bugs, wrong percentile/threshold/Jain/max-min/sign-flip logic, generator size/duty/sort errors) in
+bugs, wrong percentile/threshold/Jain/max-min/sign-flip logic, generator size/duty/sort errors, validation, tie-rule, capacity-schedule and scenario-generator errors) in
 temporary copies and records whether the suite fails. Result: see `docs/MUTATION_REPORT.md`.
 
 ## Bugs found by this testing (all fixed)
@@ -38,6 +40,9 @@ temporary copies and records whether the suite fails. Result: see `docs/MUTATION
 | SCRR (paper's Algorithm 4) | global virtual clock could move backwards when the scheduler emptied, contradicting the paper's own invariant | small; SCRR arm (ES) re-run, verdicts re-checked |
 | runner manifests | two runs started in the same second overwrote each other's manifest | none (each real call ran longer than a second) |
 | test suite | the first mutation run showed two gaps (wake-vs-arrival tie; flip counting across flat steps) | tests added; both mutants now killed |
+| input handling | negative sizes and zero / negative DRR quanta hung forever; unsorted, NaN or negative arrival times gave silently wrong timings; other bad inputs crashed with IndexError / ZeroDivisionError; infinite loads were accepted | none (strict validation added; all 9 400 saved runs re-simulate identically) |
+| RL-SP + engine | the 1e-12 s tie tolerance applied to RL-SP eligibility but not to wake-up vs. arrival ordering; in an adversarial tie storm a held packet could leave up to 1e-12 s early after an arrival had already been refused | none (unified tie rule; all 810 RL-SP runs re-simulate identically) |
+| fuzzing | an RL-SP shaping rate of 1e-52 pushed departure times to 1e50 s, beyond float precision | none (rate_frac bounded to [1e-6, 1e3]) |
 
 ## Performance
 Profiling shows the time is the per-packet event loop (metrics 0.013 s and trace generation 0.008 s per

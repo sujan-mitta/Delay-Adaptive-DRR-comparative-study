@@ -173,3 +173,44 @@ Paper-trend checks:
   Behaviour is unchanged for every reported run (none came near the old cap).
 - **Runner**: manifest file names now carry microseconds and a collision counter (never overwritten).
 All other results were re-produced from a clean copy and compared bit-for-bit (see docs/TESTING.md).
+
+## E11 — real-life stress scenarios (pre-registered 2026-10-22, before any code for them exists)
+Purpose: test whether the main findings survive conditions the model did not cover. All 8 compared
+schedulers + SCRR, tuned parameters frozen (no re-tuning), seeds 101–120, ON/OFF-medium unless noted,
+shared 125 kB buffer, 60 s window after 5 s warm-up.
+
+| id | scenario | change vs. the base model | base load |
+|----|----------|---------------------------|-----------|
+| S1 | jumbo | bulk packets 9000 B (data-centre jumbo frames); quanta unchanged | 0.95 |
+| S2 | tiny | latency packets 64 B (VoIP/ACK floods), same byte load | 0.95 |
+| S3 | heavy-tail | ON and OFF periods Pareto (shape 1.5, same means): self-similar traffic | 0.95 |
+| S4 | sync | one shared ON/OFF process for all classes (correlated bursts) | 0.95 |
+| S5 | flash-crowd | video arrival rate ×3 during t ∈ [25, 35) s | 0.8 |
+| S6 | link-fade | link capacity ×0.4 during t ∈ [25, 35) s (schedulers still assume nominal C) | 0.8 |
+| S7 | abuse | latency class carries 1500-B packets at 0.6·C (mislabelled bulk); video 0.2, bulk 0.3 | 1.1 |
+| S8 | ramp | load ×{0.4, 0.6, 0.8, 1.0, 1.2, 1.3}/0.8 in six 10-s steps over the window | 0.8 |
+
+Findings re-tested, with the criterion for "holds" fixed now:
+- **F1** SP gives the lowest mean latency-class p95 of all 9 schedulers.
+- **F2** Only SP and CQDRR ever starve a class (> 100 ms backlogged without service): every other
+  scheduler has 0 episodes.
+- **F3** No single best non-SP scheduler: at least two different schedulers are best (mean W, SP excluded)
+  across the 8 scenarios.
+- **F4** Under the shared buffer, per-class drop rates differ across schedulers by ≤ 1 percentage point.
+- **F5** DR-DRR has lower mean W than DRR (paired Wilcoxon p < 0.05).
+Reported per scenario and in total (number of scenarios in which each finding holds). Also reported, without
+a verdict: each scheduler's rank by W per scenario and its worst rank (robustness).
+
+## Deviation 8 — input hardening, unified tie rule, E11 results (2026-10-22)
+- Strict validation of traces, configurations and every scheduler parameter (hostile inputs used to hang,
+  give silently wrong timings, or crash with unclear errors; see docs/TESTING.md).
+- One tie rule for the whole engine: events within 1e-12 s are simultaneous, ordered completion, wake-up,
+  update, arrival. Previously RL-SP's eligibility used this tolerance but wake-up vs. arrival ordering did not;
+  the inconsistency only appeared in an adversarial tie storm.
+- New scenario options (size overrides, Pareto ON/OFF, synchronised ON/OFF, load profiles, link-capacity
+  schedule) are off by default.
+- **Effect on reported results: none.** All 9 400 saved runs were re-simulated after these changes and match
+  exactly; all 720 saved traffic traces regenerate with identical digests.
+- E11 ran as pre-registered. The wording of F2 ("only SP and CQDRR ever starve") omitted FIFO, whose long
+  FIFO waits also count as starvation episodes in the main study; F2 is reported as registered (fails), with
+  the computed explanation beside it, not re-worded.

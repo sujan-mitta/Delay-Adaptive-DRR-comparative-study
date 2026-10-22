@@ -322,6 +322,40 @@ def fig11_scrr():
     save(fig, "fig11_scrr")
 
 
+def fig12_reallife_heatmap():
+    from matplotlib.colors import LinearSegmentedColormap, LogNorm
+    path = ROOT / "results" / "E11" / "runs.csv"
+    if not path.exists():
+        return
+    e11 = load("E11")
+    names = ORDER + ["SCRR"]
+    scen = list(dict.fromkeys(e11.point))
+    mw = e11.groupby(["point", "scheduler"]).W.mean().unstack()[names].loc[scen]
+    ramp = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]   # one hue, light -> dark
+    cmap = LinearSegmentedColormap.from_list("blues", ramp)
+    fig, ax = plt.subplots(figsize=(7.4, 3.6))
+    im = ax.imshow(mw.values, cmap=cmap, norm=LogNorm(vmin=max(mw.values.min(), 0.05), vmax=mw.values.max()),
+                   aspect="auto")
+    for i in range(len(scen)):
+        best = np.argmin(mw.values[i])
+        for j in range(len(names)):
+            v = mw.values[i, j]
+            dark = (np.log(v) - np.log(im.norm.vmin)) / (np.log(im.norm.vmax) - np.log(im.norm.vmin)) > 0.55
+            ax.text(j, i, f"{v:.2f}" if v < 10 else f"{v:.0f}", ha="center", va="center", fontsize=6.5,
+                    color="white" if dark else INK, weight="bold" if j == best else "normal")
+    ax.set_xticks(range(len(names)), names, rotation=35, ha="right", fontsize=7)
+    ax.set_yticks(range(len(scen)), scen, fontsize=7)
+    ax.grid(False)
+    cb = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
+    cb.set_label("mean W (log scale; lower is better)", fontsize=7)
+    cb.ax.tick_params(labelsize=6)
+    cb.ax.yaxis.set_major_locator(LogLocator(base=10, subs=(1, 2, 5)))
+    cb.ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+    cb.ax.yaxis.set_minor_formatter(NullFormatter())
+    ax.set_title("E11 real-life scenarios: mean W over 20 seeds (bold = best in row)", fontsize=8, color=INK)
+    save(fig, "fig12_reallife_heatmap")
+
+
 if __name__ == "__main__":
     fig1_model()
     fig2_delay_vs_load()
@@ -334,3 +368,4 @@ if __name__ == "__main__":
     fig9_damping()
     fig10_damped_variant()
     fig11_scrr()
+    fig12_reallife_heatmap()

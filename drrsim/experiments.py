@@ -163,11 +163,29 @@ def experiment_tasks(exp: str, tuned: dict):
             if src == "E1":
                 t += [task("ES", f"{src}|{label}|q9000", "DRR", s, cfg, {"quanta": (9000, 9000, 9000)},
                            {"src_exp": src, "base_point": label}) for s in SEEDS]
+    elif exp == "E11":  # real-life stress scenarios (pre-registered, protocol section E11); 8 schedulers + SCRR
+        for label, cfg in SCENARIOS.items():
+            for name in SCHEDULERS + ["SCRR"]:
+                t += [task("E11", label, name, s, cfg, tuned.get(name, {}), {"scenario": label}) for s in SEEDS]
     elif exp == "E7":
         t += _all("E7", "poisson|0.3", poisson(0.3), tuned)
     else:
         raise ValueError(exp)
     return t
 
+
+_STEPS = ((5.0, 15.0, 0.5), (15.0, 25.0, 0.75), (25.0, 35.0, 1.0), (35.0, 45.0, 1.25), (45.0, 55.0, 1.5),
+          (55.0, 65.0, 1.625))   # load 0.8 x factor = 0.4, 0.6, 0.8, 1.0, 1.2, 1.3 in six 10-s steps
+SCENARIOS = {
+    "jumbo": onoff(0.95, size_override=(None, None, (9000, 9000))),
+    "tiny": onoff(0.95, size_override=((64, 64), None, None)),
+    "heavy-tail": onoff(0.95, on_dist="pareto", pareto_alpha=1.5),
+    "sync": onoff(0.95, sync=True),
+    "flash-crowd": onoff(0.8, profile=((25.0, 35.0, 3.0, 1),)),
+    "link-fade": SimConfig(onoff(0.8).traffic, capacity=((25.0, 35.0, 0.4),)),
+    "abuse": SimConfig(TrafficConfig(arrival="onoff", on_mean=0.05, load=1.1, class_loads=(0.6, 0.2, 0.3),
+                                     size_override=((1500, 1500), None, None))),
+    "ramp": onoff(0.8, profile=tuple((a, b, f, -1) for a, b, f in _STEPS)),
+}
 
 EXPERIMENTS = ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10"]

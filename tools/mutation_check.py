@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
-          "tests/test_properties.py", "tests/test_theory.py"]
+          "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
@@ -23,8 +23,8 @@ MUTANTS = [
      "off-by-one: a packet that exactly fills the buffer is dropped"),
     ("E3", "drrsim/engine.py", "part = buffer_bytes // K", "part = buffer_bytes // 2",
      "wrong partition size"),
-    ("E4", "drrsim/engine.py", "elif t_wake <= ta and t_wake <= next_upd:", "elif t_wake < ta and t_wake <= next_upd:",
-     "arrival processed before a wake-up at the same instant"),
+    ("E4", "drrsim/engine.py", "now = t_wake if t_wake <= ta else ta", "now = t_wake",
+     "near-tie wake-up recorded after the arrival it precedes"),
     ("E5", "drrsim/engine.py", "rate_Bps = tc.link_rate / 8.0", "rate_Bps = tc.link_rate / 8.5",
      "bit/byte conversion error"),
     ("E6", "drrsim/engine.py", "            total -= s\n", "",
@@ -44,7 +44,7 @@ MUTANTS = [
      "strict priority order reversed"),
     ("S6", "drrsim/schedulers.py", "d = max(now, self.last_dep + ", "d = (self.last_dep + ",
      "RL-SP shaper gives idle class 0 burst credit (and -inf start)"),
-    ("S7", "drrsim/schedulers.py", "if self.dep and self.dep[0] <= now + 1e-12:", "if self.dep and self.dep[0] < now - 1e-12:",
+    ("S7", "drrsim/schedulers.py", "if self.dep and self.dep[0] <= now + TIE_EPS:", "if self.dep and self.dep[0] < now - TIE_EPS:",
      "RL-SP misses the exact departure instant"),
     ("S8", "drrsim/schedulers.py", "return (rho - 1) / (rho - rho ** (-k))", "return (rho - 1) / (rho + rho ** (-k))",
      "M/M/1/K blocking formula sign error"),
@@ -65,11 +65,29 @@ MUTANTS = [
     ("M5", "drrsim/metrics.py", "prev_end = np.concatenate([[-np.inf], end[:-1]])", "prev_end = np.concatenate([[-np.inf], end[1:]])",
      "starvation gap uses the wrong previous packet"),
     ("M6", "drrsim/metrics.py", "s = np.sign(dq[np.abs(dq) > 1e-9])", "s = np.sign(dq)", "zero changes counted as sign flips"),
-    ("T1", "drrsim/traffic.py", "rng.integers(spec.size_min, spec.size_max + 1, size=len(t))",
-     "rng.integers(spec.size_min, spec.size_max, size=len(t))", "largest packet size never generated"),
+    ("T1", "drrsim/traffic.py", "s = rng.integers(lo, hi + 1, size=len(t))", "s = rng.integers(lo, hi, size=len(t))",
+     "largest packet size never generated"),
     ("T2", "drrsim/traffic.py", "off_mean = on_mean * (1 - duty) / duty", "off_mean = on_mean * duty / (1 - duty)",
      "ON/OFF duty cycle inverted"),
     ("T3", "drrsim/traffic.py", "order = np.lexsort((c, t))", "order = np.lexsort((t, c))", "trace sorted by class instead of time"),
+    ("V1", "drrsim/traffic.py", "        if np.any(np.diff(t) < 0):", "        if False:",
+     "unsorted traces silently accepted"),
+    ("V2", "drrsim/config.py", "        if not all(isinstance(x, (int, float)) and math.isfinite(x) for x in nums):",
+     "        if False:", "infinite / NaN traffic parameters accepted"),
+    ("T4", "drrsim/engine.py", "elif t_wake <= ta + TIE_EPS and t_wake <= next_upd:", "elif t_wake <= ta and t_wake <= next_upd:",
+     "wake-up within the tie tolerance processed after an arrival"),
+    ("C1", "drrsim/engine.py", "else now + s / (rate_Bps * rate_factor(now))", "else now + s / rate_Bps",
+     "capacity schedule ignored"),
+    ("C2", "drrsim/config.py", "            if t0 <= t < t1:", "            if t0 <= t <= t1:",
+     "capacity segment end treated as inclusive"),
+    ("G1", "drrsim/traffic.py", "return mean * (alpha - 1) / alpha * (1.0 + rng.pareto(alpha))",
+     "return mean * (1.0 + rng.pareto(alpha))", "Pareto periods with the wrong mean"),
+    ("G2", "drrsim/traffic.py", '    if tc.arrival == "onoff" and tc.sync and tc.duty < 1:', "    if False:",
+     "synchronised bursts ignored"),
+    ("G3", "drrsim/traffic.py", "keep = np.random.default_rng([seed, k, 31337]).random(len(t)) < f / fmax",
+     "keep = np.random.default_rng([seed, k, 31337]).random(len(t)) < f", "load-profile thinning wrong"),
+    ("G4", "drrsim/traffic.py", "        lo, hi = tc.class_sizes(k)", "        lo, hi = spec.size_min, spec.size_max",
+     "packet-size override ignored"),
 ]
 
 

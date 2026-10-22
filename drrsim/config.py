@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from dataclasses import asdict, dataclass, field, replace
 
 
@@ -38,8 +39,18 @@ class TrafficConfig:
     warmup: float = 5.0
     duration: float = 60.0
     link_rate: float = 10e6
+    # --- real-life scenario options (E11); the defaults reproduce the original model exactly ---
+    size_override: tuple | None = None     # per class: None or (min_bytes, max_bytes)
+    on_dist: str = "exp"                   # ON/OFF period distribution: "exp" | "pareto"
+    pareto_alpha: float = 1.5              # Pareto shape for on_dist="pareto" (> 1: finite mean)
+    sync: bool = False                     # one shared ON/OFF process for all classes
+    profile: tuple = ()                    # ((t0, t1, factor, cls), ...): arrival-rate multiplier, cls -1 = all
 
     def __post_init__(self):
+        nums = [self.load, self.on_mean, self.duty, self.warmup, self.duration, self.link_rate, *self.mix,
+                *(self.class_loads or ())]
+        if not all(isinstance(x, (int, float)) and math.isfinite(x) for x in nums):
+            raise ValueError("traffic parameters must be finite numbers (no NaN or infinity)")
         if self.arrival not in ("poisson", "onoff"):
             raise ValueError(f"unknown arrival process {self.arrival!r}")
         if len(self.mix) != K or any(m < 0 for m in self.mix) or abs(sum(self.mix) - 1) > 1e-9:
@@ -50,10 +61,32 @@ class TrafficConfig:
             raise ValueError("load, link_rate, duration must be > 0 and warmup >= 0")
         if not (0 < self.duty <= 1 and self.on_mean > 0):
             raise ValueError("duty must be in (0,1] and on_mean > 0")
+        if self.on_dist not in ("exp", "pareto"):
+            raise ValueError(f"unknown on_dist {self.on_dist!r}")
+        if not (isinstance(self.pareto_alpha, (int, float)) and math.isfinite(self.pareto_alpha)
+                and 1 < self.pareto_alpha <= 50):
+            raise ValueError("pareto_alpha must be in (1, 50] (finite mean)")
+        if not isinstance(self.sync, bool):
+            raise ValueError("sync must be True or False")
+        if self.size_override is not None:
+            if len(self.size_override) != K:
+                raise ValueError(f"size_override needs {K} entries (None or (min, max))")
+            for e in self.size_override:
+                if e is not None and not (len(e) == 2 and all(isinstance(x, int) and not isinstance(x, bool) for x in e)
+                                          and 1 <= e[0] <= e[1] <= 65535):
+                    raise ValueError(f"size_override entry must be (min, max) integers with 1 <= min <= max <= 65535, got {e}")
+        for seg in self.profile:
+            if not (len(seg) == 4 and all(isinstance(x, (int, float)) and math.isfinite(x) for x in seg)
+                    and seg[0] < seg[1] and 0 <= seg[2] <= 100 and seg[3] in (-1, 0, 1, 2)):
+                raise ValueError(f"profile segment must be (t0 < t1, 0 <= factor <= 100, class in -1..2), got {seg}")
 
     @property
     def horizon(self) -> float:
         return self.warmup + self.duration
+
+    def class_sizes(self, k: int) -> tuple:
+        o = self.size_override[k] if self.size_override else None
+        return o if o is not None else (CLASSES[k].size_min, CLASSES[k].size_max)
 
     def per_class_load(self) -> tuple:
         if self.class_loads is not None:
@@ -72,8 +105,13 @@ class SimConfig:
     update_interval: float = 0.010
     starvation_T: float = 0.100
     drain: bool = True
+    capacity: tuple = ()                   # ((t0, t1, factor), ...): link-rate multiplier at service start
 
     def __post_init__(self):
+        if not isinstance(self.buffer_bytes, int) or isinstance(self.buffer_bytes, bool):
+            raise ValueError("buffer_bytes must be an integer number of bytes")
+        if not all(isinstance(x, (int, float)) and math.isfinite(x) for x in (self.update_interval, self.starvation_T)):
+            raise ValueError("update_interval and starvation_T must be finite numbers")
         if self.buffer_bytes < max(c.size_max for c in CLASSES):
             raise ValueError("buffer must hold at least one maximum-size packet")
         if self.buffer_policy not in ("shared", "partitioned"):
@@ -82,6 +120,18 @@ class SimConfig:
             raise ValueError("each partition must hold at least one maximum-size packet")
         if self.update_interval <= 0 or self.starvation_T <= 0:
             raise ValueError("update_interval and starvation_T must be > 0")
+        for seg in self.capacity:
+            if not (len(seg) == 3 and all(isinstance(x, (int, float)) and math.isfinite(x) for x in seg)
+                    and seg[0] < seg[1] and 1e-3 <= seg[2] <= 1e3):
+                raise ValueError(f"capacity segment must be (t0 < t1, 1e-3 <= factor <= 1e3), got {seg}")
+
+    def rate_factor(self, t: float) -> float:
+        """Link-rate multiplier for a packet starting service at time t (last matching segment wins)."""
+        f = 1.0
+        for t0, t1, factor in self.capacity:
+            if t0 <= t < t1:
+                f = factor
+        return f
 
     def with_traffic(self, **kw) -> "SimConfig":
         return replace(self, traffic=replace(self.traffic, **kw))

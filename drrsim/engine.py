@@ -4,7 +4,8 @@ Buffer policy: "shared" = one byte pool, tail drop on the total; "partitioned" =
 may queue at most buffer/K bytes.
 
 A non-work-conserving scheduler may return None from select() and name a wake_time();
-the link then stays idle until that time or the next event.
+the link then stays idle until that time or the next event. A wake-up within TIE_EPS after an
+arrival is processed first (at the arrival's time), consistent with the scheduler's eligibility test.
 
 Event order at equal timestamps: link completion, then wake-up, then scheduler update, then arrivals
 (arrivals in packet-id order). After every event, an idle link with a non-empty buffer
@@ -22,6 +23,9 @@ from .config import K, SimConfig
 from .traffic import Trace
 
 INF = float("inf")
+# Times within TIE_EPS are treated as simultaneous where float rounding would otherwise split an exact tie
+# (shaped departure times vs. completion/arrival instants); order stays completion, wake, update, arrival.
+TIE_EPS = 1e-12
 
 
 class View:
@@ -55,6 +59,12 @@ class RunLog:
 
 
 def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
+    trace.validate(K)
+    if scheduler.adaptive:
+        span = max(cfg.traffic.horizon, float(trace.t[-1]) if len(trace) else 0.0)
+        if span / cfg.update_interval > 5e7:
+            raise ValueError(f"update_interval {cfg.update_interval} s would need {span / cfg.update_interval:.3g} "
+                             "quantum updates (limit 5e7)")
     arr_t = trace.t.tolist()
     cls = trace.cls.tolist()
     size = trace.size.tolist()
@@ -86,6 +96,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
     # hot-loop locals (bound after bind(), so per-instance overrides are honoured)
     select, on_enqueue, update, quanta = scheduler.select, scheduler.on_enqueue, scheduler.update, scheduler.quanta
     drain, horizon = cfg.drain, tc.horizon
+    rate_factor = cfg.rate_factor if cfg.capacity else None      # time-varying link (E11); None = constant
     wall0 = time.perf_counter()
 
     while True:
@@ -98,8 +109,8 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
         if busy and tcmp <= ta and tcmp <= next_upd and tcmp <= t_wake:
             now = tcmp
             busy = False
-        elif t_wake <= ta and t_wake <= next_upd:
-            now = t_wake
+        elif t_wake <= ta + TIE_EPS and t_wake <= next_upd:
+            now = t_wake if t_wake <= ta else ta     # a wake-up within TIE_EPS of an arrival goes first
             t_wake = INF
         elif next_upd <= ta:
             now = next_upd
@@ -133,7 +144,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
             qbytes[c] -= s
             total -= s
             start[j] = now
-            t_free = now + s / rate_Bps
+            t_free = now + s / rate_Bps if rate_factor is None else now + s / (rate_Bps * rate_factor(now))
             end[j] = t_free
             busy = True
             decisions += 1

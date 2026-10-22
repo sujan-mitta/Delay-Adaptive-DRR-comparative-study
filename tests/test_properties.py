@@ -55,7 +55,8 @@ def check_common(tr, log, cfg):
     assert np.isnan(log.start[log.dropped]).all() and not np.isnan(log.start[served]).any()
     assert n == served.sum() + log.dropped.sum()
     assert (log.start[served] >= tr.t[served]).all()
-    assert np.allclose(log.end[served] - log.start[served], tr.size[served] / rate)
+    f = np.array([cfg.rate_factor(x) for x in log.start[served]]) if cfg.capacity else 1.0
+    assert np.allclose(log.end[served] - log.start[served], tr.size[served] / (rate * f))
     order = np.argsort(log.start[served], kind="stable")
     st_, en_ = log.start[served][order], log.end[served][order]
     assert (st_[1:] >= en_[:-1] - 1e-12).all()                         # one packet on the link at a time
@@ -114,7 +115,7 @@ def test_rlsp_class0_never_leaves_before_its_shaped_departure_time(sc, r):
     d_prev = -np.inf
     for i in idx:                                       # recompute the paper's departure times independently
         d = max(tr.t[i], d_prev + tr.size[i] / rate)
-        assert log.start[i] >= d - 1e-9
+        assert log.start[i] >= d - 1e-12                 # never earlier than the engine tie tolerance TIE_EPS
         d_prev = d
 
 

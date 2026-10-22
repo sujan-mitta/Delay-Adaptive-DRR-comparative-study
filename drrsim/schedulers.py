@@ -5,11 +5,16 @@ update(now) (adaptive only, every update_interval); quanta() -> current per-clas
 """
 from __future__ import annotations
 
+import math
 from collections import deque
 
 from .config import CLASSES, K
+from .engine import TIE_EPS
 
 BASE_Q = (1500.0, 1500.0, 1500.0)
+# physically meaningful limits for byte quanta: below 0.01 B a packet needs > 10^5 rounds per byte of size
+# (effectively a hang); above 1e9 B deficits stop being representable without overflow risk
+Q_LO, Q_HI = 0.01, 1e9
 FRAME = sum(BASE_Q)
 D_TARGET = tuple(c.delay_target for c in CLASSES)
 PRICE = tuple(c.price for c in CLASSES)
@@ -25,6 +30,31 @@ class Scheduler:
         if unknown:
             raise ValueError(f"{self.name}: unknown parameters {sorted(unknown)}")
         self.p = {**self.defaults, **params}
+        self.validate()
+
+    def validate(self):
+        """Raise ValueError for parameters that would hang or corrupt the simulation."""
+
+    def _need(self, ok, msg):
+        if not ok:
+            raise ValueError(f"{self.name}: {msg}")
+
+    def _num(self, key, lo=None, hi=None, lo_open=False, hi_open=False):
+        x = self.p[key]
+        self._need(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x),
+                   f"{key} must be a finite number, got {x!r}")
+        if lo is not None:
+            self._need(x > lo if lo_open else x >= lo, f"{key} must be {'>' if lo_open else '>='} {lo}, got {x}")
+        if hi is not None:
+            self._need(x < hi if hi_open else x <= hi, f"{key} must be {'<' if hi_open else '<='} {hi}, got {x}")
+
+    def _vector(self, key, positive):
+        v = self.p[key]
+        self._need(isinstance(v, (tuple, list)), f"{key} must be a tuple/list of {K} numbers, got {v!r}")
+        self._need(len(v) == K, f"{key} needs {K} values, got {len(v)}")
+        self._need(all(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+                       and (Q_LO <= x <= Q_HI if positive else 0 <= x <= 1e6) for x in v),
+                   f"{key} values must be finite and in {'[0.01, 1e9] bytes' if positive else '[0, 1e6]'}, got {v}")
 
     def bind(self, view):
         self.v = view
@@ -63,6 +93,9 @@ class StrictPriority(Scheduler):
 class DRR(Scheduler):
     name = "DRR"
     defaults = {"quanta": BASE_Q}
+
+    def validate(self):
+        self._vector("quanta", positive=True)
 
     def bind(self, view):
         super().bind(view)
@@ -131,10 +164,12 @@ class RLSPDRR(DRR):
     name = "RL-SP+DRR"
     defaults = {"quanta": BASE_Q, "rate_frac": 0.3}
 
+    def validate(self):
+        super().validate()
+        self._num("rate_frac", lo=1e-6, hi=1e3)   # below 1e-6 C, shaped departure times outgrow float precision
+
     def bind(self, view):
         super().bind(view)
-        if not self.p["rate_frac"] > 0:
-            raise ValueError("RL-SP+DRR needs rate_frac > 0 (class 0 is only ever served by the shaper)")
         self.rate_Bps = self.p["rate_frac"] * view.link_rate / 8
         self.last_dep = float("-inf")
         self.dep = deque()          # departure times of queued HPQ packets, FIFO
@@ -151,7 +186,7 @@ class RLSPDRR(DRR):
         return self.dep[0] if self.dep else float("inf")
 
     def select(self, now):
-        if self.dep and self.dep[0] <= now + 1e-12:
+        if self.dep and self.dep[0] <= now + TIE_EPS:   # same tie tolerance as the engine
             self.dep.popleft()
             return 0
         if any(self.v.queues[c] for c in range(1, K)):
@@ -166,6 +201,12 @@ class _AdaptiveDRR(DRR):
 class SQDRR(_AdaptiveDRR):
     name = "DR-DRR"
     defaults = {"kappa": 4.0, "theta": 0.5, "qmax_mult": 8.0, "smooth": 1.0}
+
+    def validate(self):
+        self._num("kappa", lo=0)
+        self._num("theta", lo=0)
+        self._num("qmax_mult", lo=1, hi=1e6)
+        self._num("smooth", lo=0, hi=1, lo_open=True)
 
     def bind(self, view):
         self.p = {**self.p, "quanta": BASE_Q}
@@ -189,6 +230,12 @@ class CQDRRVariant(_AdaptiveDRR):
     variant outside the main 8 after the paper turned out to use a different rule (deviation 5)."""
     name = "CQDRR-draft"
     defaults = {"alpha": 1.0, "beta": 0.5, "qmin": 300.0, "smooth": 1.0}
+
+    def validate(self):
+        self._num("alpha", lo=0, hi=50)
+        self._num("beta", lo=0, hi=50)
+        self._num("qmin", lo=Q_LO, hi=Q_HI)
+        self._num("smooth", lo=0, hi=1, lo_open=True)
     EPS = 1500.0
 
     def bind(self, view):
@@ -240,6 +287,16 @@ class CQDRR(_AdaptiveDRR):
     name = "CQDRR"
     defaults = {"scale": 1500.0, "w": 0.5, "alpha_fair": 0.0, "rbar_gain": 0.1, "p_viol": 0.05,
                 "rate_ewma": 0.1, "qmin": 64.0, "qmax": 64000.0}
+
+    def validate(self):
+        self._num("scale", lo=0, hi=Q_HI)
+        self._num("w", lo=0, hi=1)
+        self._num("alpha_fair", lo=0, hi=10)   # the alpha-fair family is numerically degenerate far beyond this
+        self._num("rbar_gain", lo=0, hi=1, lo_open=True)
+        self._num("p_viol", lo=0, hi=1, lo_open=True, hi_open=True)
+        self._num("rate_ewma", lo=0, hi=1, lo_open=True)
+        self._num("qmin", lo=Q_LO, hi=Q_HI)
+        self._num("qmax", lo=self.p["qmin"], hi=Q_HI)
     LMAX = tuple(float(c.size_max) for c in CLASSES)
     MEAN = tuple(c.mean_size for c in CLASSES)
 
@@ -354,6 +411,11 @@ class FuzzyDRR(_AdaptiveDRR):
     name = "FuzzyDRR"
     defaults = {"gain": 1.0, "delay_span": 2.0, "qmin": 300.0}
 
+    def validate(self):
+        self._num("gain", lo=0, hi=100)
+        self._num("delay_span", lo=0, lo_open=True)
+        self._num("qmin", lo=Q_LO, hi=Q_HI)
+
     def bind(self, view):
         self.p = {**self.p, "quanta": BASE_Q}
         super().bind(view)
@@ -382,6 +444,13 @@ class FuzzyDRR(_AdaptiveDRR):
 class RevenueDRR(_AdaptiveDRR):
     name = "RevenueDRR"
     defaults = {"guar": (0.2, 0.3, 0.2), "tau": 0.1, "ewma": 0.1, "qmin": 150.0, "guar_scale": 1.0}
+
+    def validate(self):
+        self._vector("guar", positive=False)
+        self._num("tau", lo=0, lo_open=True)
+        self._num("ewma", lo=0, hi=1, lo_open=True)
+        self._num("qmin", lo=Q_LO, hi=Q_HI)
+        self._num("guar_scale", lo=0, hi=1e6)
 
     def bind(self, view):
         self.p = {**self.p, "quanta": BASE_Q}

@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-22 21:59 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `25a76923270ebf2e`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-22 22:43 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `8f00f25789c80934`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -17,6 +17,7 @@ Generated 2026-10-22 21:59 by `scripts/make_report.py` from `results/*/runs.csv`
 4. **Shared tail-drop buffer fixes throughput shares**: Jain's index >= 0.9981 for every scheduler and run in E1 ON/OFF; fairness differences appear only with a partitioned buffer (E8).
 5. **Weight oscillation** helps under bursts and hurts under smooth overload (E9 + control E9C); damping (lambda = 0.5) lowers W by up to 51%.
 6. **Paper-trend checks**: RL-SP+DRR reproduced; CQDRR not reproduced (4/8); SCRR latency reproduced (8/8), fairness reproduced.
+7. **Real-life stress (E11, 8 scenarios)**: SP still gives the lowest latency in all 8; DR-DRR beats DRR in all 8 and is the most robust non-SP scheduler; a non-work-conserving shaper (RL-SP+DRR) behind a shared buffer lets one mislabelled class waste link capacity and raise everyone's loss (section E11).
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -312,6 +313,63 @@ W by arrival process (load 0.9, E3):
 Facts:
 - Best non-SP scheduler on W across these points: DR-DRR 14/29, RL-SP+DRR 5/29, RevenueDRR 4/29, CQDRR 4/29, FuzzyDRR 2/29.
 - Low-load control E7 (Poisson 0.3): W spans 0.089–0.110 across schedulers; latency-class p95 spans 0.89–1.10 ms (differences vanish as expected).
+
+## E11 — Do the findings survive real-life conditions? (pre-registered)
+
+Eight conditions the model did not cover (protocol section E11), all 8 schedulers + SCRR, tuned parameters frozen, 20 paired seeds each. Rules for 'holds' were fixed before the code for these scenarios existed.
+
+![E11 heatmap](figures/fig12_reallife_heatmap.png)
+
+Mean W per scenario (lower is better; W <= 1 means every class met its p95 target):
+
+| scenario | FIFO | SP | DRR | RL-SP+DRR | DR-DRR | CQDRR | FuzzyDRR | RevenueDRR | SCRR |
+|---|---|---|---|---|---|---|---|---|---|
+| jumbo | 9.80 | **0.63** | 2.97 | 3.00 | 1.46 | 1.95 | 2.74 | 1.64 | 3.17 |
+| tiny | 9.92 | **0.54** | 3.14 | 3.17 | 1.34 | 1.75 | 2.72 | 1.41 | 3.17 |
+| heavy-tail | 9.94 | **0.62** | 4.75 | 3.55 | 1.44 | 1.34 | 4.21 | 1.73 | 4.88 |
+| sync | 9.98 | **0.53** | 3.06 | 3.08 | 1.40 | 2.39 | 2.88 | 1.47 | 3.09 |
+| flash-crowd | 9.87 | **1.07** | 3.18 | 3.19 | 1.97 | 2.22 | 3.03 | 2.47 | 3.21 |
+| link-fade | 24.89 | **1.17** | 25.62 | 7.23 | 7.17 | 4.52 | 23.61 | 3.97 | 25.26 |
+| abuse | 9.93 | **2.82** | 18.96 | 24.89 | 9.07 | 5.71 | 17.46 | 12.68 | 19.04 |
+| ramp | 9.97 | **0.68** | 5.77 | 3.85 | 1.86 | 2.14 | 5.80 | 2.00 | 5.80 |
+
+| scenario | F1 lowest latency p95 | F2 starving schedulers | F4 drop-rate spread (pp) | F5 DR-DRR - DRR in W (p) | best non-SP on W |
+|---|---|---|---|---|---|
+| jumbo | SP (holds) | CQDRR, FIFO, SP (**fails**) | 0.63 (holds) | -1.51 (p=1.9e-06; holds) | DR-DRR |
+| tiny | SP (holds) | CQDRR, FIFO, SP (**fails**) | 0.28 (holds) | -1.80 (p=1.9e-06; holds) | DR-DRR |
+| heavy-tail | SP (holds) | CQDRR, FIFO, SP (**fails**) | 0.57 (holds) | -3.32 (p=1.9e-06; holds) | CQDRR |
+| sync | SP (holds) | CQDRR, SP (holds) | 0.78 (holds) | -1.66 (p=1.9e-06; holds) | DR-DRR |
+| flash-crowd | SP (holds) | CQDRR, FIFO, SP (**fails**) | 0.27 (holds) | -1.21 (p=1.9e-06; holds) | DR-DRR |
+| link-fade | SP (holds) | CQDRR, FIFO, SP (**fails**) | 0.80 (holds) | -18.45 (p=1.9e-06; holds) | RevenueDRR |
+| abuse | SP (holds) | CQDRR, SP (holds) | 19.38 (**fails**) | -9.89 (p=1.9e-06; holds) | CQDRR |
+| ramp | SP (holds) | CQDRR, FIFO, SP (**fails**) | 0.62 (holds) | -3.90 (p=1.9e-06; holds) | DR-DRR |
+
+**Pre-registered verdicts across the 8 scenarios:**
+
+- **F1** SP gives the lowest latency-class p95: holds in 8/8.
+- **F2** only SP and CQDRR ever starve a class: holds in 2/8.
+- **F3** no single best non-SP scheduler: **holds** (winners: DR-DRR 5, CQDRR 2, RevenueDRR 1).
+- **F4** shared buffer makes drop rates scheduler-independent (spread <= 1 pp): holds in 7/8.
+- **F5** DR-DRR beats DRR on W: holds in 8/8.
+
+**Why the failures happen (computed from the same runs):**
+
+- F2: in 6 of the 6 failing scenarios the only extra scheduler is FIFO, whose episodes are long waits in one FIFO queue (longest 251 ms), not service denial; the pre-registered wording omitted FIFO, which shows the same behaviour in the main study. The DRR-family schedulers (DRR, RL-SP+DRR, DR-DRR, FuzzyDRR, RevenueDRR, SCRR) have 0 starvation episodes in all 8 scenarios.
+- F4 in 'abuse': excluding RL-SP+DRR, the only non-work-conserving scheduler, the drop-rate spread is 0.60 pp, so the shared-buffer finding holds for every work-conserving scheduler. RL-SP+DRR holds the mislabelled class's excess (its shaper allows less than the class sends) inside the shared buffer: its drop rates rise to 35 % and total throughput falls to 7.89 Mb/s versus 9.51 Mb/s for the others: the link idles while its buffer is full of packets the shaper will not release.
+
+Robustness of each scheduler across the 8 scenarios (rank by mean W, 1 = best of 9):
+
+| scheduler | mean rank | worst rank | scenarios with all targets met (W <= 1) |
+|---|---|---|---|
+| SP | 1.0 | 1 | 5/8 |
+| DR-DRR | 2.5 | 4 | 0/8 |
+| CQDRR | 3.2 | 4 | 0/8 |
+| RevenueDRR | 3.4 | 5 | 0/8 |
+| FuzzyDRR | 5.6 | 7 | 0/8 |
+| DRR | 6.6 | 9 | 0/8 |
+| RL-SP+DRR | 6.6 | 9 | 0/8 |
+| SCRR | 7.9 | 8 | 0/8 |
+| FIFO | 8.1 | 9 | 0/8 |
 
 ## Measurement adequacy and robustness
 

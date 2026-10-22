@@ -1,17 +1,17 @@
 # Mutation check
 
-25/25 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+34/34 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
 | E1 | arrival processed before a completion at the same instant | killed | `tests/test_edge_cases.py::test_completion_before_arrival_at_equal_time` |
 | E2 | off-by-one: a packet that exactly fills the buffer is dropped | killed | `tests/test_edge_cases.py::test_buffer_exactly_full_is_admitted_one_more_byte_is_dropped` |
 | E3 | wrong partition size | killed | `tests/test_core.py::test_partitioned_buffer_isolates_classes` |
-| E4 | arrival processed before a wake-up at the same instant | killed | `tests/test_edge_cases.py::test_wake_is_processed_before_an_arrival_at_the_same_instant` |
+| E4 | near-tie wake-up recorded after the arrival it precedes | killed | `tests/test_robustness.py::test_extreme_but_valid_inputs[tie_storm-RL-SP+DRR]` |
 | E5 | bit/byte conversion error | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | E6 | buffer occupancy not released when a packet starts service | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S1 | DRR keeps its deficit after the queue empties | equivalent | `` |
-| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_reference_agreement_on_realistic_traces[0.6-onoff]` |
+| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_drr_matches_textbook_reference` |
 | S3 | new DRR class jumps the round-robin queue | killed | `tests/test_core.py::test_accounting_and_fifo_within_class[DRR]` |
 | S4 | FIFO serves the newest head first | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S5 | strict priority order reversed | killed | `tests/test_core.py::test_toy_sp_exact` |
@@ -28,9 +28,18 @@
 | M4 | max-min share boundary | equivalent | `` |
 | M5 | starvation gap uses the wrong previous packet | killed | `tests/test_core.py::test_starvation_gaps_hand` |
 | M6 | zero changes counted as sign flips | killed | `tests/test_edge_cases.py::test_oscillation_flip_count_ignores_unchanged_steps` |
-| T1 | largest packet size never generated | killed | `tests/test_core.py::test_trace_deterministic_and_sorted[poisson]` |
+| T1 | largest packet size never generated | killed | `ERROR tests/test_robustness.py` |
 | T2 | ON/OFF duty cycle inverted | killed | `tests/test_theory.py::test_onoff_duty_cycle_is_respected[0.25]` |
 | T3 | trace sorted by class instead of time | killed | `tests/test_core.py::test_trace_deterministic_and_sorted[poisson]` |
+| V1 | unsorted traces silently accepted | killed | `tests/test_robustness.py::test_hostile_traces_are_refused[FIFO-trace0-sorted]` |
+| V2 | infinite / NaN traffic parameters accepted | killed | `tests/test_robustness.py::test_hostile_traffic_configs_are_refused[kw0]` |
+| T4 | wake-up within the tie tolerance processed after an arrival | killed | `tests/test_robustness.py::test_extreme_but_valid_inputs[tie_storm-RL-SP+DRR]` |
+| C1 | capacity schedule ignored | killed | `tests/test_scenarios.py::test_capacity_fade_exact_and_non_preemptive` |
+| C2 | capacity segment end treated as inclusive | killed | `tests/test_scenarios.py::test_capacity_boundary_is_half_open` |
+| G1 | Pareto periods with the wrong mean | killed | `tests/test_scenarios.py::test_onoff_period_means[pareto]` |
+| G2 | synchronised bursts ignored | killed | `tests/test_scenarios.py::test_sync_all_classes_share_one_onoff_process` |
+| G3 | load-profile thinning wrong | killed | `tests/test_scenarios.py::test_profile_scales_rate_inside_segment_only` |
+| G4 | packet-size override ignored | killed | `tests/test_scenarios.py::test_size_override_exact_and_byte_load_preserved` |
 
 **Equivalent mutants**
 

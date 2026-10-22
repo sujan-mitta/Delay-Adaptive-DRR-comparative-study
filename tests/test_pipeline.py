@@ -78,7 +78,7 @@ def test_code_hash_format_and_stability():
 
 # ---------------- experiment definitions ----------------
 EXPECTED = {"E1": 2240, "E2": 480, "E3": 640, "E4": 480, "E5": 160, "E6": 1720, "E7": 160, "E8": 640,
-            "E9": 240, "E10": 960, "DEVD": 140, "E1D": 280, "E1V": 280, "ES": 720}
+            "E9": 240, "E10": 960, "DEVD": 140, "E1D": 280, "E1V": 280, "ES": 720, "E11": 1440}
 
 
 @pytest.mark.parametrize("exp", sorted(EXPECTED))
@@ -206,7 +206,7 @@ def test_figures_regenerate(tmp_path, monkeypatch):
         if name.startswith("fig") and callable(getattr(fig, name)):
             getattr(fig, name)()
     pngs = sorted(p.stem for p in tmp_path.glob("*.png"))
-    assert len(pngs) == 11 and all((tmp_path / f"{p}.pdf").exists() for p in pngs)
+    assert len(pngs) in (11, 12) and all((tmp_path / f"{p}.pdf").exists() for p in pngs)
 
 
 @pytest.mark.skipif(not HAVE_RESULTS, reason="needs saved results")

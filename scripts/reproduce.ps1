@@ -11,6 +11,7 @@ Step "python scripts/confirm_damping.py"            # pre-registered rule; non-z
 Step "python scripts/run_experiments.py E1D"        # DR-DRR+damping on reported seeds
 Step "python scripts/run_experiments.py E1V"        # superseded CQDRR draft, for comparison
 Step "python scripts/run_experiments.py ES"         # SCRR, optional ninth scheduler
+Step "python scripts/run_experiments.py E11"        # real-life stress scenarios
 Step "python scripts/timeseries.py"
 Step "python scripts/make_figures.py"
 Step "python scripts/make_report.py"

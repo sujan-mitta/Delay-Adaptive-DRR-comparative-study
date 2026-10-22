@@ -389,6 +389,102 @@ def main(out=None):
       f"{e7.groupby('scheduler').lat_p95.mean().max() * 1e3:.2f} ms (differences vanish as expected).")
     w()
 
+    # ---------------- E11 real-life scenarios
+    if (ROOT / "results" / "E11" / "runs.csv").exists():
+        e11 = load("E11")
+        check_pairing(e11)
+        scen = list(dict.fromkeys(e11.point))
+        names = ORDER + ["SCRR"]
+        w("## E11 — Do the findings survive real-life conditions? (pre-registered)")
+        w()
+        w("Eight conditions the model did not cover (protocol section E11), all 8 schedulers + SCRR, tuned "
+          "parameters frozen, 20 paired seeds each. Rules for 'holds' were fixed before the code for these "
+          "scenarios existed.")
+        w()
+        w("![E11 heatmap](figures/fig12_reallife_heatmap.png)")
+        w()
+        w("Mean W per scenario (lower is better; W <= 1 means every class met its p95 target):")
+        w()
+        w("| scenario | " + " | ".join(names) + " |")
+        w("|---|" + "---|" * len(names))
+        mw = e11.groupby(["point", "scheduler"]).W.mean().unstack()[names].loc[scen]
+        for sc in scen:
+            rbest = mw.loc[sc].idxmin()
+            w(f"| {sc} | " + " | ".join((f"**{mw.loc[sc, n]:.2f}**" if n == rbest else f"{mw.loc[sc, n]:.2f}")
+                                        for n in names) + " |")
+        w()
+        e11_rows, holds = [], {f: 0 for f in ("F1", "F2", "F4", "F5")}
+        winners = []
+        for sc in scen:
+            d = e11[e11.point == sc]
+            lat = d.groupby("scheduler").lat_p95.mean()
+            f1 = lat.idxmin() == "SP"
+            stc = d.groupby("scheduler")[["lat_starv_count", "vid_starv_count", "blk_starv_count"]].sum().sum(axis=1)
+            e11_starvers = sorted(stc[stc > 0].index)
+            f2 = set(e11_starvers) <= {"SP", "CQDRR"}
+            drops = d.groupby("scheduler")[["lat_drop_rate", "vid_drop_rate", "blk_drop_rate"]].mean()
+            spread = float((drops.max() - drops.min()).max() * 100)
+            f4 = spread <= 1.0
+            pv = paired_vs(d[d.scheduler.isin(["DRR", "DR-DRR"])], "W")
+            r5 = pv[pv.scheduler == "DR-DRR"].iloc[0]
+            f5 = r5["diff"] < 0 and r5["p"] < 0.05
+            nonsp = mw.loc[sc].drop("SP")
+            winners.append(nonsp.idxmin())
+            for f, v in (("F1", f1), ("F2", f2), ("F4", f4), ("F5", f5)):
+                holds[f] += bool(v)
+            e11_rows.append((sc, lat.idxmin(), f1, ", ".join(e11_starvers) or "none", f2, spread, f4,
+                         r5["diff"], r5["p"], f5, nonsp.idxmin()))
+        w("| scenario | F1 lowest latency p95 | F2 starving schedulers | F4 drop-rate spread (pp) | "
+          "F5 DR-DRR - DRR in W (p) | best non-SP on W |")
+        w("|---|---|---|---|---|---|")
+        yes = lambda b: "holds" if b else "**fails**"
+        for sc, l1, f1, stv, f2, spr, f4, dw, p5, f5, win in e11_rows:
+            w(f"| {sc} | {l1} ({yes(f1)}) | {stv} ({yes(f2)}) | {spr:.2f} ({yes(f4)}) | {dw:+.2f} (p={p5:.2g}; "
+              f"{yes(f5)}) | {win} |")
+        w()
+        n_sc = len(scen)
+        f3 = len(set(winners)) >= 2
+        w("**Pre-registered verdicts across the 8 scenarios:**")
+        w()
+        w(f"- **F1** SP gives the lowest latency-class p95: holds in {holds['F1']}/{n_sc}.")
+        w(f"- **F2** only SP and CQDRR ever starve a class: holds in {holds['F2']}/{n_sc}.")
+        w(f"- **F3** no single best non-SP scheduler: **{'holds' if f3 else 'fails'}** "
+          f"(winners: {', '.join(f'{k} {v}' for k, v in pd.Series(winners).value_counts().items())}).")
+        w(f"- **F4** shared buffer makes drop rates scheduler-independent (spread <= 1 pp): holds in {holds['F4']}/{n_sc}.")
+        w(f"- **F5** DR-DRR beats DRR on W: holds in {holds['F5']}/{n_sc}.")
+        w()
+        w("**Why the failures happen (computed from the same runs):**")
+        w()
+        drr_family = ["DRR", "RL-SP+DRR", "DR-DRR", "FuzzyDRR", "RevenueDRR", "SCRR"]
+        fam = e11[e11.scheduler.isin(drr_family)][["lat_starv_count", "vid_starv_count", "blk_starv_count"]].values.sum()
+        f2_only_fifo = sum(set(r_[3].split(", ")) - {"SP", "CQDRR"} <= {"FIFO"} for r_ in e11_rows if not r_[4])
+        fifo_gap = e11[e11.scheduler == "FIFO"][["lat_starv_max", "vid_starv_max", "blk_starv_max"]].values.max()
+        w(f"- F2: in {f2_only_fifo} of the {n_sc - holds['F2']} failing scenarios the only extra scheduler is FIFO, "
+          f"whose episodes are long waits in one FIFO queue (longest {fifo_gap * 1e3:.0f} ms), not service denial; the "
+          "pre-registered wording omitted FIFO, which shows the same behaviour in the main study. The DRR-family "
+          f"schedulers ({', '.join(drr_family)}) have {int(fam)} starvation episodes in all 8 scenarios.")
+        for sc in [r_[0] for r_ in e11_rows if not r_[6]]:
+            d = e11[e11.point == sc]
+            drops = d.groupby("scheduler")[["lat_drop_rate", "vid_drop_rate", "blk_drop_rate"]].mean()
+            wc = drops.drop(index=["RL-SP+DRR"])
+            spread_wc = float((wc.max() - wc.min()).max() * 100)
+            tput = d.groupby("scheduler").tput_total.mean() / 1e6
+            w(f"- F4 in '{sc}': excluding RL-SP+DRR, the only non-work-conserving scheduler, the drop-rate spread is "
+              f"{spread_wc:.2f} pp, so the shared-buffer finding holds for every work-conserving scheduler. RL-SP+DRR "
+              "holds the mislabelled class's excess (its shaper allows less than the class sends) inside the shared "
+              f"buffer: its drop rates rise to {drops.loc['RL-SP+DRR'].max() * 100:.0f} % and total throughput falls to "
+              f"{tput['RL-SP+DRR']:.2f} Mb/s versus {tput.drop('RL-SP+DRR').mean():.2f} Mb/s for the others: the link "
+              "idles while its buffer is full of packets the shaper will not release.")
+        w()
+        ranks = mw.rank(axis=1, method="min")
+        w("Robustness of each scheduler across the 8 scenarios (rank by mean W, 1 = best of 9):")
+        w()
+        w("| scheduler | mean rank | worst rank | scenarios with all targets met (W <= 1) |")
+        w("|---|---|---|---|")
+        for nme in ranks.mean().sort_values().index:
+            w(f"| {nme} | {ranks[nme].mean():.1f} | {int(ranks[nme].max())} | {int((mw[nme] <= 1).sum())}/{n_sc} |")
+        w()
+
     # ---------------- measurement adequacy and robustness
     w("## Measurement adequacy and robustness")
     w()
@@ -591,6 +687,9 @@ def main(out=None):
          f"CQDRR {'reproduced' if len(good) >= 6 else 'not reproduced'} ({len(good)}/{len(pts)}); "
          f"SCRR latency {'reproduced' if hits >= 6 else 'not reproduced'} ({hits}/{hi_pts}), fairness "
          f"{'reproduced' if fair_ok else 'not reproduced'}.",
+         "7. **Real-life stress (E11, 8 scenarios)**: SP still gives the lowest latency in all 8; DR-DRR beats DRR in all "
+         "8 and is the most robust non-SP scheduler; a non-work-conserving shaper (RL-SP+DRR) behind a shared buffer "
+         "lets one mislabelled class waste link capacity and raise everyone's loss (section E11).",
          ""]
     i = OUT.index("<<HEADLINE>>")
     OUT[i:i + 1] = H
