@@ -41,9 +41,6 @@ class View:
         q = self.queues[c]
         return now - self.arr_t[q[0]] if q else 0.0
 
-    def head_size(self, c: int) -> int:
-        return self.size[self.queues[c][0]]
-
 
 @dataclass
 class RunLog:
@@ -86,6 +83,9 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
     decisions = 0
     i = 0
     now = 0.0
+    # hot-loop locals (bound after bind(), so per-instance overrides are honoured)
+    select, on_enqueue, update, quanta = scheduler.select, scheduler.on_enqueue, scheduler.update, scheduler.quanta
+    drain, horizon = cfg.drain, tc.horizon
     wall0 = time.perf_counter()
 
     while True:
@@ -93,7 +93,7 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
         if not busy and total == 0 and ta == INF:
             break
         tcmp = t_free if busy else INF
-        if not cfg.drain and min(ta, tcmp, next_upd, t_wake) > tc.horizon:
+        if not drain and min(ta, tcmp, next_upd, t_wake) > horizon:
             break
         if busy and tcmp <= ta and tcmp <= next_upd and tcmp <= t_wake:
             now = tcmp
@@ -103,9 +103,9 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
             t_wake = INF
         elif next_upd <= ta:
             now = next_upd
-            scheduler.update(now)
+            update(now)
             q_times.append(now)
-            q_values.append(tuple(scheduler.quanta()))
+            q_values.append(tuple(quanta()))
             next_upd += upd
         else:
             now = ta
@@ -118,10 +118,10 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
                 queues[c].append(i)
                 qbytes[c] += s
                 total += s
-                scheduler.on_enqueue(c, now)
+                on_enqueue(c, now)
             i += 1
         if not busy and total > 0:
-            c = scheduler.select(now)
+            c = select(now)
             if c is None:     # backlog exists but nothing is eligible yet
                 t_wake = scheduler.wake_time()
                 if not t_wake > now:

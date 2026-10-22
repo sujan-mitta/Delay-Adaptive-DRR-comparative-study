@@ -164,3 +164,12 @@ Paper-trend checks:
 - **(b) fairness** — paper: flow fairness on par with DRR. *Reproduced* if |Jain(SCRR) − Jain(DRR)|
   ≤ 0.01 at all three E8 partitioned points (shared-buffer Jain is uninformative, see E8).
 - Reported, not used for a verdict: W, per-class p95, rank among the 8 + SCRR.
+
+## Deviation 7 — fixes found by the extended test suite (2026-10-22)
+- **SCRR**: Algorithm 4's idle-reset could move the global virtual clock backwards, contradicting the
+  paper's stated invariant; every clock update is now `max(old, new)` (ALGORITHM_SPEC §9). The SCRR arm
+  `ES` was re-run; earlier ES runs are archived in `results/_superseded_scrr_clock/`.
+- **CQDRR**: the select loop's fixed iteration cap was replaced by an exact, lazily computed bound.
+  Behaviour is unchanged for every reported run (none came near the old cap).
+- **Runner**: manifest file names now carry microseconds and a collision counter (never overwritten).
+All other results were re-produced from a clean copy and compared bit-for-bit (see docs/TESTING.md).

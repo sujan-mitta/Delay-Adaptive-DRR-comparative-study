@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-22 19:28 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `73b4993ab915ae0b`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-22 21:59 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `25a76923270ebf2e`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -213,15 +213,15 @@ Paper-faithful SCRR with enhancements (Appendix A, Algorithms 3-4), parameter-fr
 
 | point | latency mean, SCRR (ms) | latency mean, DRR-9000 (ms) | paired p | W SCRR | W DRR-1500 | W DRR-9000 | SCRR rank among 9 |
 |---|---|---|---|---|---|---|---|
-| onoff 0.4 | 0.33 | 0.50 | 1.9e-06 | 0.14 | 0.14 | 0.24 | 4 |
-| onoff 0.6 | 0.60 | 1.94 | 1.9e-06 | 0.42 | 0.39 | 0.91 | 6 |
-| onoff 0.8 | 1.62 | 4.55 | 1.9e-06 | 1.98 | 1.94 | 1.90 | 8 |
+| onoff 0.4 | 0.32 | 0.50 | 1.9e-06 | 0.14 | 0.14 | 0.24 | 4 |
+| onoff 0.6 | 0.60 | 1.94 | 1.9e-06 | 0.41 | 0.39 | 0.91 | 6 |
+| onoff 0.8 | 1.63 | 4.55 | 1.9e-06 | 1.98 | 1.94 | 1.90 | 8 |
 | onoff 0.9 | 3.67 | 6.98 | 1.9e-06 | 2.89 | 2.85 | 2.82 | 8 |
-| onoff 0.95 | 5.40 | 8.67 | 1.9e-06 | 3.16 | 3.13 | 3.09 | 8 |
-| onoff 1.05 | 10.20 | 13.24 | 1.9e-06 | 3.81 | 3.75 | 3.87 | 7 |
-| onoff 1.2 | 20.02 | 22.31 | 1.9e-06 | 6.34 | 6.35 | 6.42 | 7 |
-| poisson 0.4 | 0.27 | 0.29 | 1.9e-06 | 0.12 | 0.12 | 0.13 | 8 |
-| poisson 0.6 | 0.48 | 0.64 | 1.9e-06 | 0.18 | 0.17 | 0.25 | 7 |
+| onoff 0.95 | 5.41 | 8.67 | 1.9e-06 | 3.16 | 3.13 | 3.09 | 8 |
+| onoff 1.05 | 10.22 | 13.24 | 1.9e-06 | 3.80 | 3.75 | 3.87 | 7 |
+| onoff 1.2 | 20.02 | 22.31 | 1.9e-06 | 6.35 | 6.35 | 6.42 | 7 |
+| poisson 0.4 | 0.27 | 0.29 | 1.9e-06 | 0.12 | 0.12 | 0.13 | 6 |
+| poisson 0.6 | 0.48 | 0.64 | 1.9e-06 | 0.17 | 0.17 | 0.25 | 7 |
 | poisson 0.8 | 0.73 | 1.61 | 1.9e-06 | 0.23 | 0.22 | 0.64 | 6 |
 | poisson 0.9 | 0.82 | 3.02 | 1.9e-06 | 0.35 | 0.33 | 1.02 | 7 |
 | poisson 0.95 | 0.82 | 4.47 | 1.9e-06 | 0.73 | 0.69 | 1.23 | 8 |
@@ -233,7 +233,7 @@ Paper-faithful SCRR with enhancements (Appendix A, Algorithms 3-4), parameter-fr
 | (a) much lower application latency than DRR with a large quantum | latency-class mean delay below DRR-9000, paired p<0.05, at E1 loads >= 0.9 | 8/8 | **reproduced** |
 | (b) fairness on par with DRR | |Jain(SCRR) - Jain(DRR)| <= 0.01 at the 3 E8 partitioned points | 0.95: -0.0000, 1.2: -0.0000, stress: -0.0003 | **reproduced** |
 
-Facts: on this study's deadline-aware metric W, SCRR differs from DRR with a 1500 B quantum by -3% to +8% across the 14 E1 points and ranks 4-8 of 9 (median 7). SCRR targets fairness and sparse-flow latency without parameters; it does not use per-class delay targets, so a class-level, deadline-aware comparison is not where its advantages show. Its latency gain over a large-quantum DRR is large (table above).
+Facts: on this study's deadline-aware metric W, SCRR differs from DRR with a 1500 B quantum by -4% to +7% across the 14 E1 points and ranks 4-8 of 9 (median 7). SCRR targets fairness and sparse-flow latency without parameters; it does not use per-class delay targets, so a class-level, deadline-aware comparison is not where its advantages show. Its latency gain over a large-quantum DRR is large (table above).
 
 ## RQ4 — Parameter sensitivity (E6) and burstiness (E3)
 

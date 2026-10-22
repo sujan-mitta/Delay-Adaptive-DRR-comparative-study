@@ -64,7 +64,7 @@ def paired_vs(df, metric, ref="DRR", point_col="point") -> pd.DataFrame:
             m, h, n = ci95(d)
             try:
                 pval = stats.wilcoxon(d).pvalue if np.any(d != 0) else 1.0
-            except ValueError:
+            except ValueError:  # pragma: no cover  (older SciPy versions raise on degenerate samples)
                 pval = np.nan
             rows.append({point_col: p, "scheduler": s, "diff": m, "ci": h, "n": n, "p": pval,
                          "wins": int((d < 0).sum())})

@@ -87,38 +87,37 @@ class DRR(Scheduler):
         self.deficit[c] = 0.0
         self.current = None
 
-    def _serve(self, c):
-        q = self.v.queues[c]
-        self.deficit[c] -= self.v.size[q[0]]
-        if len(q) == 1:          # queue empties with this packet
-            self._leave_front(c)
-        else:
-            self.current = c
-        return c
-
     def select(self, now):
-        queues, size = self.v.queues, self.v.size
+        queues, size, deficit, active = self.v.queues, self.v.size, self.deficit, self.active
+        # invariant: a class is on the active list exactly while its queue is non-empty (it joins on
+        # enqueue and leaves when its last packet is served), so every head below exists
         c = self.current
-        if c is not None:
+        if c is not None:                         # continue the visit in progress
             q = queues[c]
-            if q and self.deficit[c] >= size[q[0]]:
-                return self._serve(c)
+            head = size[q[0]]
+            if deficit[c] >= head:
+                deficit[c] -= head
+                if len(q) == 1:                   # queue empties with this packet
+                    self._leave_front(c)
+                return c
             self.current = None
-            if q:
-                self.active.rotate(-1)
-            else:                # emptied by someone else (RL-SP bypass)
-                self._leave_front(c)
-        while self.active:
-            c = self.active[0]
+            active.rotate(-1)
+        if not active:
+            raise RuntimeError("DRR select() with no backlogged class")
+        Q = self.Q
+        while True:                               # start the next visit: add the quantum once
+            c = active[0]
+            deficit[c] += Q[c]
             q = queues[c]
-            if not q:
-                self._leave_front(c)
-                continue
-            self.deficit[c] += self.Q[c]
-            if self.deficit[c] >= size[q[0]]:
-                return self._serve(c)
-            self.active.rotate(-1)
-        raise RuntimeError("DRR select() with no backlogged class")
+            head = size[q[0]]
+            if deficit[c] >= head:
+                deficit[c] -= head
+                if len(q) == 1:
+                    self._leave_front(c)
+                else:
+                    self.current = c
+                return c
+            active.rotate(-1)
 
 
 class RLSPDRR(DRR):
@@ -258,37 +257,46 @@ class CQDRR(_AdaptiveDRR):
         """DRR with rounds in fixed priority order 0, 1, 2 (paper: 'prioritise CurrentList')."""
         queues, size = self.v.queues, self.v.size
         c = self.current
-        if c is not None:
+        if c is not None:                    # 'current' is only kept while its queue still has packets
             q = queues[c]
-            if q and self.deficit[c] >= size[q[0]]:
+            if self.deficit[c] >= size[q[0]]:
                 self.deficit[c] -= size[q[0]]
                 if len(q) == 1:
                     self.deficit[c] = 0.0
                     self.current = None
                     self.cursor = (c + 1) % K
                 return c
-            if not q:
-                self.deficit[c] = 0.0
             self.current = None
             self.cursor = (c + 1) % K
-        for _ in range(64 * K):
-            c = self.cursor
+        if not any(queues):
+            raise RuntimeError("CQDRR select() with empty buffer")
+        deficit, Q = self.deficit, self.Q
+        c = self.cursor
+        visits, limit = 0, None
+        while True:
             q = queues[c]
-            if not q:
-                self.deficit[c] = 0.0
-                self.cursor = (c + 1) % K
-                continue
-            self.deficit[c] += self.Q[c]
-            if self.deficit[c] >= size[q[0]]:
-                self.deficit[c] -= size[q[0]]
-                if len(q) == 1:
-                    self.deficit[c] = 0.0
-                    self.cursor = (c + 1) % K
-                else:
-                    self.current = c
-                return c
-            self.cursor = (c + 1) % K
-        raise RuntimeError("CQDRR select() found no servable class")
+            if q:
+                d = deficit[c] + Q[c]
+                head = size[q[0]]
+                if d >= head:
+                    if len(q) == 1:
+                        deficit[c] = 0.0
+                        self.cursor = (c + 1) % K
+                    else:
+                        deficit[c] = d - head
+                        self.current = c
+                        self.cursor = c
+                    return c
+                deficit[c] = d
+            else:
+                deficit[c] = 0.0
+            c = (c + 1) % K
+            visits += 1
+            if visits >= 10_000:     # safety net only: every visit adds Q_c > 0, so a head becomes servable
+                if limit is None:    # within ceil(largest head / smallest quantum) rounds; reaching this
+                    limit = K * (int(max(size[x[0]] for x in queues if x) // min(Q)) + 2)   # means limit > 10 000
+                if visits > limit:   # pragma: no cover  (unreachable by the bound)
+                    raise RuntimeError("CQDRR select() found no servable class")
 
     def on_enqueue(self, c, now):
         pass   # fixed-order rounds: no active list needed
@@ -422,7 +430,9 @@ class SCRR(Scheduler):
     Parameter-free; unweighted. Each traffic class is one sub-queue. Virtual times are in bytes.
     Our reading where the pseudo-code is implicit: nq = number of sub-queues in the schedule;
     a sub-queue leaves the schedule when it empties (the paper's 'keep newly empty sub-queues one
-    more round' refinement of SFO is not in Algorithm 4 and is not modelled).
+    more round' refinement of SFO is not in Algorithm 4 and is not modelled); global-clock updates
+    take max(old, new) because the paper states the clock "can only go forward" (Appendix A.1)
+    while Algorithm 4's idle-reset line can otherwise move it back after Initial Advance.
     """
     name = "SCRR"
 
@@ -465,13 +475,13 @@ class SCRR(Scheduler):
         if self.np_ == 0:                                                 # global clock advance
             self.virtual_dequeue = v_pkt + length
             self.virtual_previous = self.virtual_clock
-            self.virtual_clock = self.virtual_dequeue
+            self.virtual_clock = max(self.virtual_clock, self.virtual_dequeue)   # "clock can only go forward" (§A.1)
         elif v_pkt > self.virtual_dequeue:
             self.virtual_dequeue = v_pkt
         if v_next > self.virtual_clock or empty_after:                   # sub-queue round robin
             if self.rounds <= 0:
                 self.virtual_previous = self.virtual_clock
-                self.virtual_clock = self.virtual_dequeue
+                self.virtual_clock = max(self.virtual_clock, self.virtual_dequeue)
                 self.rounds = self.nq
             self.rounds -= 1
             lst.popleft()

@@ -11,7 +11,7 @@ protocol + deviation log: [docs/EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL
 
 ```powershell
 python -m pip install -r requirements-lock.txt   # or requirements.txt for any recent versions
-python -m pytest                       # 51 tests: toy cases, invariants, scheduler properties
+python -m pytest                       # 256 tests (needs requirements-dev.txt); see docs/TESTING.md
 python scripts/tune.py                 # dev seeds 1–5; verifies config/tuned_params.json is reproduced
 python scripts/run_experiments.py      # E1–E10, seeds 101–120 (~7 min on 16 cores); resumable
 python scripts/e9_control.py           # E9C: static DRR at DR-DRR mean quanta (needs E9)
@@ -51,8 +51,9 @@ skipped, nothing is overwritten. To start a clean run, move `results/` aside (ne
 | `drrsim/experiments.py` | all experiments (index in docs/EXPERIMENT_PROTOCOL.md), tuning grid, sensitivity knobs |
 | `drrsim/analysis.py` | 95 % CIs, paired Wilcoxon tests, rank stability, pairing check |
 | `scripts/` | tuning, experiment runs, controls, figures, report, `reproduce.ps1` |
-| `tests/` | pytest suite: hand-checked toy cases, invariants, per-scheduler properties |
-| `docs/` | algorithm spec, protocol + deviation log, reference check |
+| `tests/` | 256 tests: toy cases, edge cases, property-based, reference implementations, queueing theory, pipeline (docs/TESTING.md) |
+| `tools/mutation_check.py` | plants realistic bugs in temp copies to check the tests catch them |
+| `docs/` | algorithm spec, protocol + deviation log, reference check, testing and mutation report |
 | `results/` | every run as CSV + manifests; `_superseded*/` keeps earlier runs (never deleted) |
 
 ## Metric definitions (one definition for every scheduler)

@@ -137,4 +137,8 @@ the scheduler stays on a sub-queue while `clock_f ≤ global clock`.
 **[Interpretation]** `nq` = sub-queues in the schedule; a sub-queue leaves the schedule as soon as it
 empties (the paper's "keep newly empty sub-queues for one more round" refinement is described in §3.3.1
 but absent from Algorithm 4, so it is not modelled).
+**[Reconciliation]** Algorithm 4 sets the global clock to the last packet's finish time when the scheduler
+empties; with Initial Advance this can move the clock *backwards*, contradicting the paper's statement that
+"the clock can only go forward" (Appendix A.1). We follow the stated invariant: every global-clock update is
+`max(old, new)`. Found by the edge-case test suite (2026-10-22); the SCRR arm was re-run afterwards.
 

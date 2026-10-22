@@ -47,7 +47,7 @@ def table(df, metrics, point, scale=1e3, nd=1, names=None):
     w()
 
 
-def main():
+def main(out=None):
     tuned = load_tuned()
     data = {e: load(e) for e in EXPERIMENTS if e not in ("E9", "E10")}
     n_runs = sum(len(d) for d in data.values())
@@ -594,7 +594,7 @@ def main():
          ""]
     i = OUT.index("<<HEADLINE>>")
     OUT[i:i + 1] = H
-    (ROOT / "RESULTS.md").write_text("\n".join(OUT), encoding="utf-8")
+    (Path(out) if out else ROOT / "RESULTS.md").write_text("\n".join(OUT), encoding="utf-8")
     print("wrote RESULTS.md", len(OUT), "lines")
 
 

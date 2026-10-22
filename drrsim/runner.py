@@ -71,14 +71,17 @@ def run_tasks(exp_dir, tasks, workers=None, chunksize=4):
     keys = [key(t) for t in tasks]
     if len(set(keys)) != len(keys):
         raise ValueError("duplicate task keys")
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
     manifest = {
         "started": stamp, "code_hash": code_hash(), "python": sys.version, "platform": platform.platform(),
         "numpy": np.__version__, "n_tasks": len(tasks), "n_skipped_already_done": len(tasks) - len(todo),
         "configs": sorted({json.dumps({"point": t["point"], "cfg": asdict(t["cfg"])}, default=str) for t in tasks}),
         "params": sorted({json.dumps({"scheduler": t["scheduler"], "params": t["params"]}, sort_keys=True) for t in tasks}),
     }
-    (exp_dir / f"manifest_{stamp}.json").write_text(json.dumps(manifest, indent=1))
+    mpath, n = exp_dir / f"manifest_{stamp}.json", 1
+    while mpath.exists():                                   # never overwrite an earlier manifest
+        mpath, n = exp_dir / f"manifest_{stamp}_{n}.json", n + 1
+    mpath.write_text(json.dumps(manifest, indent=1))
     print(f"[{exp_dir.name}] {len(todo)} to run, {len(tasks) - len(todo)} already done", flush=True)
     if not todo:
         return
