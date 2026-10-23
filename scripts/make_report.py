@@ -842,6 +842,49 @@ def main(out=None):
                     f"{sum(v[2] for v in res.values())}/3; the best non-SP scheduler is "
                     f"{', '.join(sorted(set(v[3] for v in res.values())))} (on synthetic traffic it is usually DR-DRR).")
 
+    # ---------------- E17c: second, independent backbone trace (pre-registered replication of E17)
+    e17c_head = None
+    if (ROOT / "results" / "E17c" / "runs.csv").exists():
+        rc = pd.read_csv(ROOT / "results" / "E17c" / "runs.csv")
+        pmc = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
+        w("## E17c — a second backbone trace (pre-registered replication of E17)")
+        w()
+        shc = np.array(pmc["class_share_bytes"]) / sum(pmc["class_share_bytes"])
+        w(f"Source: {pmc['source']} (first {pmc['prefix_bytes'] / 1e6:.0f} MB, sha256 {pmc['prefix_sha256'][:16]}..., "
+          f"{pmc['packets']:,} packets over {pmc['span_s']:.1f} s; byte shares latency/video/bulk "
+          f"{shc[0]:.1%}/{shc[1]:.1%}/{shc[2]:.1%}). Same mapping, windows, loads and schedulers as E17.")
+        w()
+        resc = {}
+        for ldc, gc in rc.groupby("load"):
+            m = gc.groupby("scheduler")[["W", "lat_p95", "vid_p95", "blk_p95"]].mean()
+            st = gc.groupby("scheduler")[[f"{c.name}_starv_count" for c in CLASSES]].sum().sum(axis=1)
+            dd = gc[gc.scheduler == "DR-DRR"].set_index("window").W - gc[gc.scheduler == "DRR"].set_index("window").W
+            pv = _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0
+            others = set(st[st > 0].index) - {"SP", "CQDRR", "FIFO"}
+            resc[ldc] = (m.lat_p95.idxmin() == "SP", dd.mean() < 0 and pv < 0.05, not others, m.drop("SP").W.idxmin(), dd.mean())
+            w(f"**Load {ldc}**")
+            w()
+            w("| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |")
+            w("|---|---|---|---|---|---|")
+            for sc in m.sort_values("W").index:
+                w(f"| {sc} | {m.W[sc]:.3f} | {m.lat_p95[sc] * 1e3:.2f} | {m.vid_p95[sc] * 1e3:.1f} | "
+                  f"{m.blk_p95[sc] * 1e3:.1f} | {int(st[sc])} |")
+            w()
+        w(f"- **R1c** SP lowest latency p95: {sum(v[0] for v in resc.values())}/3 loads.")
+        w(f"- **R2c** DR-DRR beats DRR on W (paired over windows, p < 0.05): {sum(v[1] for v in resc.values())}/3 loads "
+          f"(differences {', '.join(f'{v[4]:+.3f}' for v in resc.values())}).")
+        w(f"- **R3c** no scheduler other than SP, CQDRR and FIFO starves a class: {sum(v[2] for v in resc.values())}/3 loads.")
+        w(f"- Best non-SP scheduler on mean W (descriptive; E17: CQDRR): {', '.join(f'{k}: {v[3]}' for k, v in resc.items())}.")
+        tied = ["DRR", "DR-DRR", "CQDRR", "FuzzyDRR", "RL-SP+DRR", "SP", "SCRR"]
+        wtie = max(np.ptp(g_.groupby("scheduler").W.mean()[tied].to_numpy()) for _, g_ in rc.groupby("load"))
+        w(f"- Caveat: this trace is {shc[2]:.0%} bulk bytes, so W is set by the bulk class and seven schedulers (all but RevenueDRR and FIFO) "
+          f"tie to within {wtie:.4f} in W at every load. R2c cannot be decided by W here, and the 'best non-SP' line above "
+          f"names a tie, not a winner. The per-class latency ordering is the informative result.")
+        w()
+        e17c_head = (f"19. **Second backbone trace (E17c)**: SP lowest latency {sum(v[0] for v in resc.values())}/3 loads; "
+                     f"DR-DRR beats DRR {sum(v[1] for v in resc.values())}/3; no other starvation {sum(v[2] for v in resc.values())}/3; "
+                     f"best non-SP: {', '.join(sorted(set(v[3] for v in resc.values())))}.")
+
     # ---------------- E18: is the ranking an artefact of W?
     e18_head = None
     pts18 = []
@@ -1253,7 +1296,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")

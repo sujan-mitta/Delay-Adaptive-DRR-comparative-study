@@ -409,3 +409,22 @@ better at the heavy and bursty points, DR-DRR better at light load) repeats, i.e
 Tuning budgets, for the record: DR-DRR's kappa was chosen among 5 grid values (no edge extension was needed); the static
 quanta among 16 settings (4 x 4 grid), with the same objective, constraint, tie rule and development seeds. The static search was
 therefore larger, not smaller.
+
+## E17c — a second, independent backbone trace (pre-registered 2026-10-23, before downloading)
+E17 used one 6.7-second prefix of one MAWI trace. To check that its conclusions are not specific to it, the same procedure is
+repeated on the first ~150 MB of a trace from another year: https://mawi.wide.ad.jp/mawi/samplepoint-F/2022/202201011400.pcap.gz
+(samplepoint F, 2022-01-01 14:00). Nothing is changed: the registered port-to-class mapping of E17, 10 windows of 100,000
+packets, loads 0.8 / 0.95 / 1.2, the same schedulers, tuned parameters and delay targets.
+- R1c: SP has the lowest latency-class p95 at 3/3 loads. R2c: DR-DRR beats DRR on mean W (paired over windows, p < 0.05) at 3/3
+  loads. R3c: no scheduler other than SP, CQDRR and FIFO starves a class at any load.
+- Replication question (descriptive): is the best non-SP scheduler by mean W the same as in E17 (CQDRR)?
+- If the prefix holds fewer than 1,000,000 IPv4/IPv6 packets, the window size is reduced to what it holds and this is reported.
+
+### E17c outcome (2026-10-23)
+- Deviation 4: 42 MB of the trace (not 150 MB) already held the required 1,000,000 IPv4/IPv6 packets (27.5 s; the 2022 file keeps
+  headers only), so the download was stopped there. The prefix is exactly 41,943,040 bytes; sha256 in `results/E17c/parse_meta.json`.
+- This trace is 97.3 % bulk by bytes (latency 2.5 %, video 0.2 %). R1c holds (3/3). R3c holds (3/3). R2c fails (0/3), but not
+  because DR-DRR loses: W is set by the bulk class (p95 about 100 ms against a 500 ms target), and DRR, DR-DRR, CQDRR, FuzzyDRR,
+  RL-SP+DRR, SP and SCRR tie to within 0.0001 in mean W. The replication question about the best non-SP scheduler therefore has no answer
+  on W for this trace. Reported as is; it is a weaker check than E17 because it barely exercises the latency and video classes.
+

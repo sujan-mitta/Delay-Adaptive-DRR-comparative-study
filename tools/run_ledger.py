@@ -45,7 +45,7 @@ def build():
     cat = lambda names: sum(rows[e]["runs"] for e in names if e in rows)
     main, further, tuning = cat(MAIN), cat(FURTHER), cat(TUNING)
     kernel = sum(len(pd.read_csv(p)) // 3 for p in sorted((ROOT / "results").glob("E16*/*/summary.csv")))
-    replay = sum(len(pd.read_csv(p)) for p in [ROOT / "results/E17/runs.csv", *sorted((ROOT / "results/E17b").glob("*/runs.csv"))])
+    replay = sum(len(pd.read_csv(p)) for p in [ROOT / "results/E17/runs.csv", *sorted((ROOT / "results/E17b").glob("*/runs.csv")), *sorted((ROOT / "results/E17c").glob("runs.csv"))])
     archived = sum(len(pd.read_csv(p)) for p in (ROOT / "results").glob("_*/**/runs.csv"))
     return rows, {"main": main, "further": further, "tuning": tuning, "simulator_total": main + further + tuning,
                   "kernel_runs": kernel, "replay_runs": replay, "archived": archived,
@@ -76,7 +76,7 @@ def render(rows, t):
             f"| further reported arms | {t['further']:,} |", f"| tuning on development seeds | {t['tuning']:,} |",
             f"| **simulator runs in total** | **{t['simulator_total']:,}** |",
             f"| kernel runs (E16, E16b), not in the total | {t['kernel_runs']} |",
-            f"| replay runs (E17, E17b), not in the total | {t['replay_runs']} |",
+            f"| replay runs (E17, E17b, E17c), not in the total | {t['replay_runs']} |",
             f"| archived runs superseded by fixes, not reported | {t['archived']:,} |"]
     return "\n".join(out) + "\n"
 

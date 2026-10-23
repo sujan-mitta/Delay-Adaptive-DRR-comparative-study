@@ -73,3 +73,19 @@ report generator (175 checks with the paper source, 117 without it). It found, a
   class" (CQDRR is one), the Holm families, the gap bound (at most 21.6 ms, not exactly), "about as well as the best static
   setting" (it loses at heavy load), "ranks the kernel's schedulers correctly" (it ranks them as the kernel does).
 
+
+## Final technical audit (this entry)
+- Proposition 1 (DR-DRR service-gap bound) is now written out with its assumptions and a step-by-step proof in
+  `docs/PROPOSITION.md`: integer sizes, non-preemptive work-conserving link, quanta always in [Q0, M Q0], Q0 at least the largest
+  packet. `tests/test_proposition.py` searches adversarially (Hypothesis, tie-heavy arrivals, four variants, extreme parameters)
+  and also shows the bound fails without the packet-size assumption. The paper states the assumptions and that the bound is
+  per class and not specific to DR-DRR.
+- `scripts/make_paper_tables.py` regenerates Tables III-VI from the released `runs.csv` files alone (`docs/PAPER_TABLES.md`);
+  `tests/test_paper_tables.py` checks it, and `tools/claims_audit.py` still compares the paper's own tables with the data.
+- `tools/release_check.py` checks that every promised piece is tracked, that nothing private is, and lists identifying strings
+  (for the double-blind mirror).
+- Reference 4 (Alsahag et al.) corrected to vol. 39, pp. 17-25, 2014 (confirmed through Crossref).
+- E17c (pre-registered replication of E17 on a 2022 MAWI trace): R1c and R3c hold; R2c cannot be decided because the trace is
+  97.3 % bulk by bytes and seven schedulers tie in W within 0.0001. Reported as a weaker check, not as a replication of E17's
+  ranking. Deviation 4: 42 MB of the file already held the one million packets, so the download stopped there.
+  Replay runs are now 1,080 (E17, E17b, E17c); simulator runs are unchanged at 16,520.

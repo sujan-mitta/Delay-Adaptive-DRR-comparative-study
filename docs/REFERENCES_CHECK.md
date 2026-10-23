@@ -25,4 +25,4 @@ Sayenko papers; reference lists citing doi:10.1016/j.jnca.2013.04.004.
 | Soni, Li, Scharbarg & Fraboul, "Optimizing network calculus for switched Ethernet network with deficit round robin" | IEEE RTSS 2018, pp. 300-311 | DBLP; reference list of Tabatabaee & Le Boudec |
 | Bouillard, "Individual service curves for bandwidth-sharing policies using network calculus" | IEEE Networking Letters, vol. 3, no. 2, pp. 80-83, 2021 | reference list of Tabatabaee & Le Boudec; author preprint |
 | Sharafzadeh, Matson, Tourrilhes, Sharma & Ghorbani, "Self-Clocked Round-Robin Packet Scheduling" | USENIX NSDI 2025 | USENIX program page |
-| Alsahag et al. (fuzzy adaptive DRR) | doi:10.1016/j.jnca.2013.04.004, online 2013; volume still not confirmed | landing page read earlier; not found by web search on 2026-10-23 |
+| Alsahag et al. (fuzzy adaptive DRR) | doi:10.1016/j.jnca.2013.04.004; vol. 39, pp. 17-25, March 2014 | confirmed through Crossref on 2026-10-23 |

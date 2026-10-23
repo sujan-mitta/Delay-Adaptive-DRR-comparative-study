@@ -69,7 +69,7 @@ def main(paper):
     # ------------------------------------------------------------------ ledger and set-up
     rows, t = run_ledger.build()
     for k, v in (("main", 6520), ("main_paired_groups", 600), ("main_paired_runs", 4800), ("main_single_runs", 1720),
-                 ("further", 9200), ("tuning", 800), ("simulator_total", 16520), ("kernel_runs", 54), ("replay_runs", 810),
+                 ("further", 9200), ("tuning", 800), ("simulator_total", 16520), ("kernel_runs", 54), ("replay_runs", 1080),
                  ("archived", 33140)):
         check(f"ledger {k}", t[k], v)
     check("E6 distinct traces", rows["E6"]["distinct_traces"], 40)
@@ -490,6 +490,28 @@ def main(paper):
         sp17 += g_.groupby("scheduler").lat_p95.mean().idxmin() == "SP"
         check(f"E17 load {load}: best non-SP is CQDRR", g_.groupby("scheduler").W.mean().drop("SP").idxmin(), "CQDRR")
     check("E17 DR-DRR minus DRR in W: -0.336 to -0.505, p < 0.01", (round(max(diffs17), 3), round(min(diffs17), 3), max(pv17) < 0.01), (-0.336, -0.505, True))
+    # E17c: second backbone trace
+    metac = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
+    check("E17c: 1,000,000 packets in 27.5 s; 97.3 % bulk bytes", (metac["packets"], round(metac["span_s"], 1), round(metac["class_share_bytes"][2] / sum(metac["class_share_bytes"]) * 100, 1)),
+          (1000000, 27.5, 97.3))
+    rc = pd.read_csv(ROOT / "results" / "E17c" / "runs.csv")
+    check("E17c: 270 replay runs", len(rc), 270)
+    spc, wspread, others, fifo_worse = 0, 0.0, set(), True
+    for load, g_ in rc.groupby("load"):
+        spc += g_.groupby("scheduler").lat_p95.mean().idxmin() == "SP"
+        mw = g_.groupby("scheduler").W.mean()
+        wspread = max(wspread, mw[["DRR", "DR-DRR", "CQDRR", "FuzzyDRR", "RL-SP+DRR", "SP", "SCRR"]].max() - mw[["DRR", "DR-DRR", "CQDRR", "FuzzyDRR", "RL-SP+DRR", "SP", "SCRR"]].min())
+        fifo_worse &= mw.idxmax() == "FIFO"
+        stc = g_.groupby("scheduler")[[f"{c}_starv_count" for c in CLS]].sum().sum(axis=1)
+        others |= set(stc[stc > 0].index) - {"SP", "CQDRR", "FIFO"}
+    check("E17c R1c: SP lowest latency p95 at 3/3 loads", spc, 3)
+    l95 = rc[rc.load == 0.95].groupby("scheduler").lat_p95.mean() * 1e3
+    check("E17c load 0.95 latency p95 (ms): SP 1.1, CQDRR 1.2, DRR 1.4, DR-DRR 1.5; RevenueDRR 6x DRR",
+          ([round(l95[x], 1) for x in ("SP", "CQDRR", "DRR", "DR-DRR")], round(l95["RevenueDRR"] / l95["DRR"])), ([1.1, 1.2, 1.4, 1.5], 6))
+    check("E17c R3c: nobody besides SP, CQDRR, FIFO starves", others, set())
+    check("E17c: seven schedulers tie in mean W within 0.0001; FIFO worst", (round(wspread, 4), fifo_worse), (0.0001, True))
+    diffc = [float((g_[g_.scheduler == "DR-DRR"].set_index("window").W - g_[g_.scheduler == "DRR"].set_index("window").W).mean()) for _, g_ in rc.groupby("load")]
+    check("E17c R2c: DR-DRR minus DRR in W is below 0.001 in size at all loads (not significant)", max(abs(x) for x in diffc) < 0.001, True)
     check("E17 SP lowest latency at 3/3 loads", sp17, 3)
     for mp in ("strict", "size"):
         rb = pd.read_csv(ROOT / "results" / "E17b" / mp / "runs.csv")

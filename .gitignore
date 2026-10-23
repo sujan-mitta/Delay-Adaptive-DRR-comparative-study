@@ -24,3 +24,5 @@ paper_draft/
 
 # derived from the MAWI trace: regenerate with scripts/e17_realtrace.py parse (source URL and sha256 in parse_meta.json)
 results/E17/mawi_windows.npz
+results/E17c/mawi_windows.npz
+.coverage

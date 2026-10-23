@@ -11,6 +11,7 @@ offered load on the 10 Mb/s link equals the target, and packet sizes (wire lengt
 import gzip
 import hashlib
 import json
+import os
 import struct
 import sys
 import zlib
@@ -27,11 +28,14 @@ from drrsim.experiments import load_tuned  # noqa: E402
 from drrsim.runner import code_hash  # noqa: E402
 from drrsim.traffic import Trace  # noqa: E402
 
-OUT = ROOT / "results" / "E17"
+# E17 is the 2024 trace; E17c (pre-registered replication) is the 2022 trace, selected with E17_TRACE=c
+TRACE_C = os.environ.get("E17_TRACE") == "c"
+OUT = ROOT / "results" / ("E17c" if TRACE_C else "E17")
 WINDOWS, WINDOW_PKTS = 10, 100_000
 LOADS = (0.8, 0.95, 1.2)
 SCHEDS = ["FIFO", "SP", "DRR", "RL-SP+DRR", "DR-DRR", "CQDRR", "FuzzyDRR", "RevenueDRR", "SCRR"]
-SOURCE = "https://mawi.wide.ad.jp/mawi/samplepoint-F/2024/202401011400.pcap.gz"
+SOURCE = ("https://mawi.wide.ad.jp/mawi/samplepoint-F/2022/202201011400.pcap.gz" if TRACE_C
+          else "https://mawi.wide.ad.jp/mawi/samplepoint-F/2024/202401011400.pcap.gz")
 
 
 def classify(proto, sport, dport):

@@ -39,5 +39,5 @@ Definitions: a *trace* is one generated packet sequence; a *group* is one (opera
 | tuning on development seeds | 800 |
 | **simulator runs in total** | **16,520** |
 | kernel runs (E16, E16b), not in the total | 54 |
-| replay runs (E17, E17b), not in the total | 810 |
+| replay runs (E17, E17b, E17c), not in the total | 1080 |
 | archived runs superseded by fixes, not reported | 33,140 |
