@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
           "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py",
           "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py", "tests/test_literature.py",
-          "tests/test_drr_theory.py"]
+          "tests/test_drr_theory.py", "tests/test_matrix.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
@@ -118,12 +118,19 @@ MUTANTS = [
      "SCRR probe never ends a visit (bursts summed across visits)"),
     ("P1", "drrsim/schedulers.py", "for c in self.active) - 2", "for c in self.active) + 1",
      "DRR skip-ahead jumps past the pass in which a class can send"),
-    ("P2", "drrsim/schedulers.py", "        if r >= SKIP_MIN:\n", "        if False:\n",
+    ("P2", "drrsim/schedulers.py", "        if r >= SKIP_MIN:\n            for c in self.active:", "        if False:\n            for c in self.active:",
      "DRR skip-ahead disabled (tiny quanta hang again)"),
     ("P3", "drrsim/schedulers.py", "        self.order.append(c)", "        self.order.appendleft(c)",
      "FIFO serves the newest packet (LIFO)"),
     ("L5", "drrsim/literature.py", "    d = [l - eps for l in lmax]", "    d = [l for l in lmax]",
      "Boyer bound computed without the 1-byte residual-deficit correction"),
+    ("C3", "drrsim/schedulers.py", "for c in live) - 2", "for c in live) + 1",
+     "CQDRR skip-ahead jumps past the round in which a class can send"),
+    ("C4", "drrsim/schedulers.py", "            if visits % K == 0:", "            if False:",
+     "CQDRR skip-ahead disabled (tiny quanta hang again: the round-6 bug)"),
+    ("C5", "drrsim/schedulers.py", "            for c in live:\n                deficit[c] += r * Q[c]",
+     "            for c in live[:1]:\n                deficit[c] += r * Q[c]",
+     "CQDRR skip credits only one class"),
 ]
 
 

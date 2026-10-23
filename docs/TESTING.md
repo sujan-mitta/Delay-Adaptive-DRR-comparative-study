@@ -1,12 +1,12 @@
 # Testing and verification
 
-649 automated tests in thirteen layers, a regression guard over every saved run, and mutation testing of the suite itself.
+871 automated tests in fourteen layers, a regression guard over every saved run, and mutation testing of the suite itself.
 
 ```powershell
 python -m pip install -r requirements-dev.txt
 python -m pytest                                   # all tests (a few minutes; theory, property and fuzz tests dominate)
 python -m pytest --cov=drrsim --cov=scripts        # with coverage
-python tools/mutation_check.py                     # plants 51 bugs in temp copies (in parallel); writes docs/MUTATION_REPORT.md
+python tools/mutation_check.py                     # plants 54 bugs in temp copies (in parallel); writes docs/MUTATION_REPORT.md
 python tools/regress_check.py                      # re-simulates every saved run; all metrics must match exactly
 ```
 
@@ -24,6 +24,7 @@ python tools/regress_check.py                      # re-simulates every saved ru
 | `test_scenarios.py` | 51 | E11 scenario features: validation, packet-size overrides, Pareto ON/OFF (mean and heavy tail), synchronised ON/OFF, load profiles (rate inside/outside, silencing, other classes untouched), link-capacity schedules (exact, half-open, non-preemptive; agreement with the reference simulator and full invariants for every scheduler on random schedules), and every scenario run for every scheduler |
 | `test_aqm_imix.py` | 33 | IMIX size distributions (sizes, 7:4:1 proportions by chi-square, byte load, validation) and RED active queue management (hand-computed trace with known random draws, reduces to tail drop with unreachable thresholds, seeded pairing, early-drop effect, **exact agreement with an independent RED in the reference simulator**, invariants for all 11 schedulers) |
 | `test_metamorphic.py` | 27 | Laws between runs: **causality** (removing future arrivals changes no earlier decision, all 11 schedulers), **class-relabelling symmetry** (FIFO, DRR, SCRR), **time-shift invariance** (bit-exact), **worker-count invariance** of the runner |
+| `test_matrix.py` | 222 | Round-6 matrix over **all 12 scheduler variants**: smallest/largest allowed quanta and 1-byte + 9000-byte packets (each run must finish in < 5 s and keep every invariant); **a reused scheduler object behaves like a fresh one**; **no state leaks between runs**; independent oracles for any class count (**textbook DRR Algorithm 1**, strict priority, one-line FIFO); long-run DRR shares follow the quanta and SCRR shares are equal; **history is forgotten after a long idle period** (FIFO, SP, DRR, DRR-EOS, RL-SP+DRR) and SCRR's carry-over is bounded; four **combinations of scenario options** (RED + link fade, IMIX + partitioned + synchronised bursts, Pareto + flash crowd + RED, jumbo + partitioned + link boost) with every scheduler; boundaries of the public helpers |
 | `test_drr_theory.py` | 44 | DRR theory for any number of classes: **every packet within the Boyer et al. delay bound** (the formula reproduces the published 146.228 µs and Table 1 values; Hypothesis-generated systems and token-bucket inputs, both DRR rules); the **DRR fairness lemma** for backlogged classes; deficits stay below the largest packet; **skip-ahead over empty passes makes identical decisions** (integer, fractional and tiny quanta) and tiny quanta no longer hang; one class = FIFO for every rule; 4096 classes; **busy periods identical** for all work-conserving rules; class relabelling; **doubling the link rate halves every time exactly** |
 | `test_literature.py` | 42 | E13 published examples: any number of classes (FIFO, SP, DRR, DRR-EOS, SCRR serve everything in per-class order; 3-class schedulers refuse other counts; partitions split by the class count), **DRR-EOS vs DRR differ exactly when a packet arrives during the class's last packet**, token-bucket sources conform (greedy shape exact), **B1 trajectory delay = 119.256 µs and the paper's service order**, B2 within the published bounds, B3/B4 shares, the SCRR probe does not change decisions, a minimal case where SCRR as printed exceeds Theorem 1 |
 | `test_scripts.py` | 16 | miniature end-to-end runs of `tune.py` (incl. the `--force` overwrite guard), `run_experiments.py`, `e9_control.py`, `timeseries.py`, `confirm_damping.py` (exit codes) in temporary folders; guard paths; backlog reconstruction vs brute force |
@@ -48,6 +49,7 @@ temporary copies and records whether the suite fails. Result: see `docs/MUTATION
 | input handling | negative sizes and zero / negative DRR quanta hung forever; unsorted, NaN or negative arrival times gave silently wrong timings; other bad inputs crashed with IndexError / ZeroDivisionError; infinite loads were accepted | none (strict validation added; all 9 400 saved runs re-simulate identically) |
 | RL-SP + engine | the 1e-12 s tie tolerance applied to RL-SP eligibility but not to wake-up vs. arrival ordering; in an adversarial tie storm a held packet could leave up to 1e-12 s early after an arrival had already been refused | none (unified tie rule; all 810 RL-SP runs re-simulate identically) |
 | fuzzing | an RL-SP shaping rate of 1e-52 pushed departure times to 1e50 s, beyond float precision | none (rate_frac bounded to [1e-6, 1e3]) |
+| matrix | CQDRR at its smallest allowed quanta took ~94 ms per packet (a 65-s run would take hours): it has its own fixed-order round loop, which the round-5 DRR fix did not cover | none (no saved run used such quanta); same skip-ahead added; all saved runs re-simulate exactly |
 | scaling | DRR added one quantum per pass even when no class could send for many passes: with the allowed minimum quantum (0.01 B) a 65-s run took ~15 min (an effective hang; adaptive schedulers can also reach small quanta through `qmin`) | none (no saved run used such quanta); fixed by skipping whole empty passes, identical decisions, all saved runs re-simulate exactly |
 | runner | the CSV header was fixed by whichever result finished first, so an experiment mixing tag columns crashed mid-run (found by E12) | none for earlier runs (each used one tag set); E12 re-run, partial output archived |
 
@@ -66,9 +68,17 @@ A later round replaced two per-event branches in the engine loop with sentinels 
 packet; an INF completion time while idle). Bit-exact (all saved runs identical) but only ~2 % faster in an
 isolated A/B test (within noise), confirming that the pure-Python loop is at its practical limit.
 Round 5: DRR skips whole passes in which no class can send (O(classes) instead of O(passes × classes)); with
-0.01 B quanta a 65-s run went from ~15 min to 0.5 s, with identical decisions and all saved runs bit-exact. FIFO
+0.01 B quanta a 65-s run went from ~15 min to 0.5 s, and all saved runs are bit-exact. Decisions are identical whenever the float arithmetic is exact (whole-byte or binary-fraction quanta); with quanta such as 0.02 B one multiplication replaces many roundings, so a send can move by one round only where the exact deficit equals a packet size, and there the skip is the more accurate (round 6 found 2 such cases in 60 CQDRR runs). FIFO
 now remembers the class of each queued packet in arrival order instead of scanning every queue head (O(1)
 instead of O(classes) per decision; ~30 % faster at 3 classes in an interleaved A/B test (best of 5, four
 alternations), and 4096-class runs no longer crawl); DRR and DR-DRR speed is unchanged within noise. The
 mutation check runs mutants in parallel (`--jobs`, default a quarter of the CPUs): all 51 mutants in 16 min on a 16-CPU machine, against about an hour for the previous sequential run of 41.
+
+## Findings about the published algorithms (not bugs in this code)
+- **SCRR does not forget at idle (round 6).** Each flow's virtual clock survives an empty system of any length;
+  Algorithm 4 resets nothing when the packet count reaches zero, and the algorithm exactly as printed behaves the
+  same as ours. After 10 s of silence the schedule still depends on earlier traffic in 180 of 200 random cases; a
+  class's served bytes differ from a fresh start by up to 3.03 maximum-size packets (74 ms at 1 Mb/s). FIFO, SP,
+  DRR, DRR-EOS and RL-SP+DRR forget completely.
+- **SCRR's printed Algorithm 4 exceeds its Theorems 1-2 (E13, B5)**, because the round is closed one dequeue late.
 

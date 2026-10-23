@@ -145,9 +145,10 @@ class DRR(Scheduler):
     def _skip_empty_passes(self):
         """Called after a full pass over the active list in which no class could send. Adds r quanta to every
         active class at once, r = (fewest passes any class still needs) - 2, so the passes in which some class
-        can send are still taken one at a time and in order. Identical to adding one quantum per pass when the
-        quanta and deficits are whole numbers of bytes (exact float arithmetic); with fractional quanta the
-        deficits can differ in the last bits, which can move a send by one pass only at an exact tie."""
+        can send are still taken one at a time and in order. Identical to adding one quantum per pass whenever
+        that float arithmetic is exact (whole-byte or binary-fraction quanta). Otherwise one multiplication
+        replaces r roundings; decisions can then differ only where the exact deficit equals a packet size
+        (e.g. 10 000 x 0.02 B = 200 B), and there the single rounding is the more accurate of the two."""
         queues, size, deficit, Q = self.v.queues, self.v.size, self.deficit, self.Q
         r = min(math.ceil((size[queues[c][0]] - deficit[c]) / Q[c]) for c in self.active) - 2
         if r >= SKIP_MIN:
@@ -436,11 +437,23 @@ class CQDRR(_AdaptiveDRR):
                 deficit[c] = 0.0
             c = (c + 1) % K
             visits += 1
+            if visits % K == 0:      # a full round without a send: skip the rounds in which none can send
+                self._skip_empty_rounds()
             if visits >= 10_000:     # safety net only: every visit adds Q_c > 0, so a head becomes servable
                 if limit is None:    # within ceil(largest head / smallest quantum) rounds; reaching this
                     limit = K * (int(max(size[x[0]] for x in queues if x) // min(Q)) + 2)   # means limit > 10 000
                 if visits > limit:   # pragma: no cover  (unreachable by the bound)
                     raise RuntimeError("CQDRR select() found no servable class")
+
+    def _skip_empty_rounds(self):
+        """As DRR._skip_empty_passes, for CQDRR's fixed-order rounds: add r quanta to every non-empty class,
+        r = (fewest rounds any class still needs) - 2 (empty classes keep deficit 0, as each visit sets it)."""
+        queues, size, deficit, Q = self.v.queues, self.v.size, self.deficit, self.Q
+        live = [c for c in range(K) if queues[c]]
+        r = min(math.ceil((size[queues[c][0]] - deficit[c]) / Q[c]) for c in live) - 2
+        if r >= SKIP_MIN:
+            for c in live:
+                deficit[c] += r * Q[c]
 
     def on_enqueue(self, c, now):
         pass   # fixed-order rounds: no active list needed

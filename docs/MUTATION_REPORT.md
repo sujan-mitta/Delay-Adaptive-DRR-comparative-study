@@ -1,6 +1,6 @@
 # Mutation check
 
-49/49 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+52/52 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
@@ -21,7 +21,7 @@
 | S9 | SCRR clock may run backwards | killed | `tests/test_edge_cases.py::test_scrr_virtual_clock_never_goes_backwards` |
 | S10 | fuzzy rule table row reversed | killed | `tests/test_core.py::test_fuzzy_multiplier_corners` |
 | S11 | DR-DRR loses its upper bound | killed | `tests/test_properties.py::test_adaptive_quanta_finite_positive_bounded[DR-DRR]` |
-| S12 | CQDRR fixed iteration cap (the original bug) | killed | `tests/test_edge_cases.py::test_cqdrr_tiny_quantum_regression` |
+| S12 | CQDRR fixed iteration cap (the original bug) | killed | `tests/test_matrix.py::test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta` |
 | M1 | p95 computed as p90 | killed | `tests/test_core.py::test_toy_metrics_exact` |
 | M2 | starvation threshold not strict | killed | `tests/test_edge_cases.py::test_starvation_threshold_is_strict` |
 | M3 | Jain's index formula wrong | killed | `tests/test_core.py::test_maxmin_and_jain` |
@@ -43,7 +43,7 @@
 | R1 | RED average forgets its history | killed | `tests/test_aqm_imix.py::test_red_seed_pairs_runs_and_changes_draws` |
 | R2 | RED inter-drop count correction missing | killed | `tests/test_aqm_imix.py::test_red_matches_reference` |
 | R3 | RED admits packets into a full buffer | killed | `tests/test_aqm_imix.py::test_red_with_unreachable_thresholds_equals_tail_drop` |
-| I1 | IMIX weights ignored | killed | `tests/test_robustness.py::test_fuzzed_parameters_are_refused_or_simulate_correctly[FuzzyDRR]` |
+| I1 | IMIX weights ignored | killed | `tests/test_aqm_imix.py::test_imix_sizes_proportions_and_byte_load` |
 | U1 | runner header fixed by the first row (the bug found in round 3) | killed | `tests/test_pipeline.py::test_tasks_with_different_tag_columns_share_one_file` |
 | K1 | a 3-class-only scheduler accepts another number of classes | killed | `tests/test_literature.py::test_three_class_schedulers_refuse_other_k[RL-SP+DRR]` |
 | K2 | partition size ignores the number of classes | killed | `tests/test_literature.py::test_partitioned_buffer_splits_by_the_scheduler_class_count` |
@@ -51,10 +51,13 @@
 | L2 | DRR-EOS never ends an opportunity on an empty queue | killed | `tests/test_properties.py::test_invariants_every_scheduler[DRR-EOS]` |
 | L3 | token bucket not capped at its burst size | killed | `tests/test_literature.py::test_token_bucket_sources_conform[0.5]` |
 | L4 | SCRR probe never ends a visit (bursts summed across visits) | killed | `tests/test_literature.py::test_scrr_round_first_meets_theorems_on_random_traces` |
-| P1 | DRR skip-ahead jumps past the pass in which a class can send | killed | `tests/test_reference.py::test_drr_matches_textbook_reference` |
+| P1 | DRR skip-ahead jumps past the pass in which a class can send | killed | `tests/test_drr_theory.py::test_skip_ahead_makes_identical_decisions[integer-DRR-_NoSkip]` |
 | P2 | DRR skip-ahead disabled (tiny quanta hang again) | killed | `tests/test_drr_theory.py::test_tiny_quanta_do_not_hang` |
 | P3 | FIFO serves the newest packet (LIFO) | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | L5 | Boyer bound computed without the 1-byte residual-deficit correction | killed | `tests/test_drr_theory.py::test_boyer_bound_reproduces_published_values` |
+| C3 | CQDRR skip-ahead jumps past the round in which a class can send | killed | `tests/test_matrix.py::test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta` |
+| C4 | CQDRR skip-ahead disabled (tiny quanta hang again: the round-6 bug) | killed | `tests/test_matrix.py::test_extreme_parameters_finish_fast_and_keep_invariants[CQDRR-tiny]` |
+| C5 | CQDRR skip credits only one class | killed | `tests/test_matrix.py::test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta` |
 
 **Equivalent mutants**
 
