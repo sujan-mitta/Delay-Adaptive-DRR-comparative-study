@@ -15,7 +15,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 MAIN = ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8"]
-FURTHER = ["E1D", "E1V", "E9", "E9C", "E10", "E11", "E12", "E14", "E15", "E19", "E19H", "ES"]
+FURTHER = ["E1D", "E1V", "E9", "E9C", "E10", "E11", "E12", "E14", "E15", "E19", "E19H", "E20", "E20B", "ES"]
 TUNING = ["TUNE", "DEVD", "E14TUNE", "E19TUNE"]
 
 

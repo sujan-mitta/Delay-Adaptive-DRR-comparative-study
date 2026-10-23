@@ -15,7 +15,7 @@ import pytest
 
 from conftest import ALL_SCHEDULERS, WORK_CONSERVING, trace_from
 from drrsim import SimConfig, TrafficConfig, make, simulate
-from reference import RefDRR, RefFIFO, RefRLSP, RefSP, ref_simulate
+from reference import RefDRR, RefFIFO, RefMDRR, RefRLSP, RefSP, ref_simulate
 from test_properties import check_common, check_work_conserving
 
 CELLS = [(t, c, s) for t in (0.0, 0.5, 1.0) for c in (0, 1, 2) for s in (500, 1500)]
@@ -46,6 +46,8 @@ REFERENCES = {
     "DRR q=500": (lambda: make("DRR", quanta=(500.0,) * 3), lambda cfg: RefDRR((500.0,) * 3)),
     "DRR q=1500": (lambda: make("DRR", quanta=(1500.0,) * 3), lambda cfg: RefDRR((1500.0,) * 3)),
     "DRR q=mixed": (lambda: make("DRR", quanta=(100.0, 1500.0, 3000.0)), lambda cfg: RefDRR((100.0, 1500.0, 3000.0))),
+    "MDRR-SP": (lambda: make("MDRR-SP"), lambda cfg: RefMDRR((1500.0,) * 3, False)),
+    "MDRR-ALT": (lambda: make("MDRR-ALT"), lambda cfg: RefMDRR((1500.0,) * 3, True)),
     "RL-SP r=0.25": (lambda: make("RL-SP+DRR", rate_frac=0.25),
                      lambda cfg: RefRLSP(0.25 * cfg.traffic.link_rate / 8, (1500.0,) * 3)),
     "RL-SP r=1": (lambda: make("RL-SP+DRR", rate_frac=1.0),

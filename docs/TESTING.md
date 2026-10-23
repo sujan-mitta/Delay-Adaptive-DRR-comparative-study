@@ -1,6 +1,6 @@
 # Testing and verification
 
-1,035 automated tests in seventeen layers, a regression guard over every saved run, and mutation testing of the suite itself.
+1,141 automated tests in seventeen layers, a regression guard over every saved run, and mutation testing of the suite itself.
 
 ```powershell
 python -m pip install -r requirements-dev.txt

@@ -69,7 +69,7 @@ def main(paper):
     # ------------------------------------------------------------------ ledger and set-up
     rows, t = run_ledger.build()
     for k, v in (("main", 6520), ("main_paired_groups", 600), ("main_paired_runs", 4800), ("main_single_runs", 1720),
-                 ("further", 9200), ("tuning", 800), ("simulator_total", 16520), ("kernel_runs", 54), ("replay_runs", 1080),
+                 ("further", 10040), ("tuning", 800), ("simulator_total", 17360), ("kernel_runs", 54), ("replay_runs", 1080),
                  ("archived", 33140)):
         check(f"ledger {k}", t[k], v)
     check("E6 distinct traces", rows["E6"]["distinct_traces"], 40)
@@ -490,6 +490,24 @@ def main(paper):
         sp17 += g_.groupby("scheduler").lat_p95.mean().idxmin() == "SP"
         check(f"E17 load {load}: best non-SP is CQDRR", g_.groupby("scheduler").W.mean().drop("SP").idxmin(), "CQDRR")
     check("E17 DR-DRR minus DRR in W: -0.336 to -0.505, p < 0.01", (round(max(diffs17), 3), round(min(diffs17), 3), max(pv17) < 0.01), (-0.336, -0.505, True))
+    # E20 / E20b: Modified DRR baselines
+    e20, e20b = rd("E20"), rd("E20B")
+    for var, want in (("MDRR-SP", (4, 10)), ("MDRR-ALT", (1, 13))):
+        pv_, df_ = [], []
+        for pt_, g_ in e20[e20.scheduler == var].groupby("point"):
+            ref_ = e1[(e1.point == pt_) & (e1.scheduler == "DR-DRR")].set_index("seed").sort_index().W
+            dd_ = (g_.set_index("seed").sort_index().W - ref_).dropna()
+            pv_.append(stats.wilcoxon(dd_).pvalue if np.any(dd_ != 0) else 1.0)
+            df_.append(dd_.mean())
+        ad_ = holm(pv_)
+        check(f"E20 {var} vs DR-DRR: MDRR better / worse", (sum(1 for d_, a_ in zip(df_, ad_) if d_ < 0 and a_ < 0.05), sum(1 for d_, a_ in zip(df_, ad_) if d_ > 0 and a_ < 0.05)), want)
+    lat20 = pd.concat([e1[e1.scheduler == "SP"], e20]).groupby(["point", "scheduler"]).lat_p95.mean().unstack()
+    check("E20 M1: MDRR-SP latency within 10 % of SP at 14/14", int((abs(lat20["MDRR-SP"] / lat20["SP"] - 1) <= 0.10).sum()), 14)
+    check("E20 M3: MDRR-ALT latency above MDRR-SP at 14/14", int((lat20["MDRR-ALT"] > lat20["MDRR-SP"]).sum()), 14)
+    check("E20 M2: no MDRR starvation", int(e20[[f"{c}_starv_count" for c in CLS]].sum().sum() + e20b[[f"{c}_starv_count" for c in CLS]].sum().sum()), 0)
+    check("E20 MDRR-ALT latency p95 at ON/OFF 0.95: about 320 ms", round(lat20["MDRR-ALT"]["onoff|0.95"] * 1e3), 320)
+    v_ = e20b[e20b.point == "onoff|0.95"]
+    check("E20b MDRR-ALT-V at ON/OFF 0.95: latency 2.3 ms, W 3.17", (round(v_.lat_p95.mean() * 1e3, 1), round(v_.W.mean(), 2)), (2.3, 3.17))
     # E17c: second backbone trace
     metac = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
     check("E17c: 1,000,000 packets in 27.5 s; 97.3 % bulk bytes", (metac["packets"], round(metac["span_s"], 1), round(metac["class_share_bytes"][2] / sum(metac["class_share_bytes"]) * 100, 1)),

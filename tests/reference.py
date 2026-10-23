@@ -104,6 +104,29 @@ class RefRLSP:
         return None, (self.dep[0] if self.dep else None)
 
 
+class RefMDRR:
+    """Modified DRR (E20): class 0 is the low-latency queue, DRR over classes 1, 2. alternate=False: class 0 first whenever
+    backlogged. alternate=True: packets alternate between class 0 and the DRR side; an empty side is skipped."""
+
+    def __init__(self, quanta, alternate):
+        self.drr = RefDRR(quanta, classes=(1, 2))
+        self.alternate = alternate
+        self.low_last = False
+
+    def arrive(self, i, c, t):
+        self.drr.arrive(i, c, t)
+
+    def next(self, t, queues, size):
+        rest = bool(queues[1] or queues[2])
+        if queues[0] and (not self.alternate or not self.low_last or not rest):
+            self.low_last = True
+            return queues[0][0], None
+        if rest:
+            self.low_last = False
+            return self.drr.next(t, queues, size)
+        return None, None
+
+
 def ref_simulate(t, cls, size, link_rate, buffer_bytes, policy, sched, capacity=(), red=None, red_seed=0):
     """red: (min_th, max_th, max_p, w_q) when policy == "red" (classic RED, written out independently)."""
     n = len(t)

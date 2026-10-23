@@ -89,3 +89,15 @@ report generator (175 checks with the paper source, 117 without it). It found, a
   97.3 % bulk by bytes and seven schedulers tie in W within 0.0001. Reported as a weaker check, not as a replication of E17's
   ranking. Deviation 4: 42 MB of the file already held the one million packets, so the download stopped there.
   Replay runs are now 1,080 (E17, E17b, E17c); simulator runs are unchanged at 16,520.
+
+## Modified DRR baselines (E20, E20b)
+- Prompted by the related-work check: router vendors ship Modified DRR, and the study had no such baseline. E20 was
+  pre-registered before any code: MDRR-SP (low-latency queue first, DRR over the rest) and MDRR-ALT (packet-level alternation).
+  Both are reconstructions from vendor descriptions; Proportional Nested DRR is not implemented (known from its abstract only).
+- Results (14 E1 points x 20 seeds): MDRR-SP vs DR-DRR mixed (MDRR-SP better at the 4 light-load points, worse at 10);
+  MDRR-ALT worse than DR-DRR at 13; M1, M2, M3 hold. MDRR-ALT's 300+ ms latency tails are an artefact of alternating single
+  packets, so a turn-level variant (MDRR-ALT-V, E20b) was added post hoc and is labelled as such: latency 2.3 ms at ON/OFF 0.95,
+  W the same as MDRR-SP.
+- MDRR-SP and MDRR-ALT match the independent reference simulator on all 21,945 x 3 small cases (tests/reference.py RefMDRR);
+  MDRR-ALT-V is not cross-checked against it. Both join the common invariant, matrix and edge-case test layers.
+- Simulator runs: 17,360 (+840); further arms 10,040. Tests: 1,141. Regression guard and claims audit (189 checks) extended.

@@ -1000,6 +1000,73 @@ def main(out=None):
         e19h_head = (f"18. **Static DRR on fresh seeds (E19H)**: DR-DRR better at {bet}/14, worse at {wor}/14 -> {v} "
                      f"(E19 on the reporting seeds: 6 and 8).")
 
+    e20_head = None
+    if (ROOT / "results" / "E20" / "runs.csv").exists():
+        e20 = load("E20")
+        e20b = load("E20B") if (ROOT / "results" / "E20B" / "runs.csv").exists() else None
+        base20 = load("E1")
+        w("## E20 — Modified DRR baselines (pre-registered; reconstructions)")
+        w()
+        w("MDRR-SP: low-latency queue (class 0) served first, DRR over the other classes. MDRR-ALT: packets alternate between the "
+          "low-latency queue and the DRR classes. Neither has a parameter. Paired by trace with E1's SP and DR-DRR. "
+          "Difference = W(MDRR) - W(DR-DRR); negative favours MDRR.")
+        w()
+        verdicts20 = {}
+        for var in ("MDRR-SP", "MDRR-ALT"):
+            rows20 = []
+            for pt in sorted(e20.point.unique()):
+                a = base20[(base20.point == pt) & (base20.scheduler == "DR-DRR")].set_index("seed").sort_index()
+                b = e20[(e20.point == pt) & (e20.scheduler == var)].set_index("seed").sort_index()
+                assert (a.trace == b.trace).all(), "E20 not paired with E1"
+                dd = (b.W - a.W).dropna()
+                pv = _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0
+                m, h, _ = ci95(dd)
+                rows20.append((pt, a.W.mean(), b.W.mean(), m, h, pv))
+            adj = _holm(np.array([r[5] for r in rows20]))
+            vb = sum(1 for r, x in zip(rows20, adj) if r[3] < 0 and x < 0.05)
+            db = sum(1 for r, x in zip(rows20, adj) if r[3] > 0 and x < 0.05)
+            verdict = f"{var} beats DR-DRR" if vb >= 7 and db <= 2 else f"DR-DRR beats {var}" if db >= 7 and vb <= 2 else "mixed"
+            verdicts20[var] = (vb, db, verdict)
+            w(f"**{var}**: better than DR-DRR at {vb}/14, worse at {db}/14 -> **{verdict}**.")
+            w()
+            w("| point | W DR-DRR | W " + var + " | difference ± 95 % CI | Holm p |")
+            w("|---|---|---|---|---|")
+            for r, x in zip(rows20, adj):
+                w(f"| {r[0]} | {r[1]:.3f} | {r[2]:.3f} | {r[3]:+.3f} ± {r[4]:.3f} | {x:.2g} |")
+            w()
+        pts20 = sorted(e20.point.unique())
+        lat = lambda sc: {pt: float(pd.concat([base20, e20])[lambda d: (d.point == pt) & (d.scheduler == sc)].lat_p95.mean()) for pt in pts20}
+        l_sp, l_ms, l_ma = lat("SP"), lat("MDRR-SP"), lat("MDRR-ALT")
+        m1 = sum(abs(l_ms[p_] / l_sp[p_] - 1) <= 0.10 for p_ in pts20)
+        m3 = sum(l_ma[p_] > l_ms[p_] for p_ in pts20)
+        stv = lambda d, sc: int(d[d.scheduler == sc][["lat_starv_count", "vid_starv_count", "blk_starv_count"]].values.sum())
+        m2 = stv(e20, "MDRR-SP") <= stv(base20, "SP")
+        w(f"- **M1** MDRR-SP latency p95 within 10 % of SP's: {m1}/14 points. **M2** MDRR-SP starvation episodes {stv(e20, 'MDRR-SP')} vs "
+          f"SP {stv(base20, 'SP')}: {'holds' if m2 else 'fails'}. **M3** MDRR-ALT latency p95 above MDRR-SP's: {m3}/14 points.")
+        w(f"- Latency-class p95 (ms) at ON/OFF 0.95: SP {l_sp['onoff|0.95'] * 1e3:.1f}, MDRR-SP {l_ms['onoff|0.95'] * 1e3:.1f}, "
+          f"MDRR-ALT {l_ma['onoff|0.95'] * 1e3:.1f}.")
+        w("- MDRR-ALT's large latency tails come from our packet-level alternation: 200-byte latency packets get about 12 % of the "
+          "bytes while the class offers 20 %. A vendor implementation alternates turns, so this reading is probably unfair to MDRR.")
+        if e20b is not None:
+            w()
+            w("**E20b (post-hoc, not pre-registered): MDRR-ALT-V**, the low-latency queue takes one DRR turn between turns of the other "
+              "classes. Mean W and latency p95 (ms) at four points:")
+            w()
+            w("| point | MDRR-ALT-V W | latency p95 | DR-DRR W | DRR W |")
+            w("|---|---|---|---|---|")
+            allb = pd.concat([base20, e20b])
+            for pt in ("onoff|0.95", "onoff|1.2", "poisson|0.95", "poisson|1.2"):
+                g_ = allb[allb.point == pt]
+                v_ = g_[g_.scheduler == "MDRR-ALT-V"]
+                w(f"| {pt} | {v_.W.mean():.2f} | {v_.lat_p95.mean() * 1e3:.1f} | {g_[g_.scheduler == 'DR-DRR'].W.mean():.2f} | "
+                  f"{g_[g_.scheduler == 'DRR'].W.mean():.2f} |")
+            w()
+            w(f"Starvation episodes: {stv(e20b, 'MDRR-ALT-V')}.")
+        w()
+        e20_head = (f"20. **Modified DRR baselines (E20, reconstructions)**: MDRR-SP vs DR-DRR {verdicts20['MDRR-SP'][2]} "
+                    f"({verdicts20['MDRR-SP'][0]} better / {verdicts20['MDRR-SP'][1]} worse of 14); MDRR-ALT: {verdicts20['MDRR-ALT'][2]}; "
+                    f"M1 {m1}/14, M2 {'holds' if m2 else 'fails'}, M3 {m3}/14.")
+
     e16b_head = e17b_head = None
     e16b_dirs = sorted(d for d in (ROOT / "results" / "E16b").glob("*") if d.is_dir()) if (ROOT / "results" / "E16b").exists() else []
     if e16b_dirs:
@@ -1296,7 +1363,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")

@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-23 22:12 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `9ae5c371db290ba7`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-24 00:57 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `30f704be1acf84a5`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -30,6 +30,7 @@ Generated 2026-10-23 22:12 by `scripts/make_report.py` from `results/*/runs.csv`
 17. **Class-mapping sensitivity (E17b)**: with two alternative mappings (strict ports; packet size), SP is still lowest at every load and DR-DRR still beats DRR: robust.
 18. **Static DRR on fresh seeds (E19H)**: DR-DRR better at 6/14, worse at 8/14 -> mixed (E19 on the reporting seeds: 6 and 8).
 19. **Second backbone trace (E17c)**: SP lowest latency 3/3 loads; DR-DRR beats DRR 0/3; no other starvation 3/3; best non-SP: DR-DRR, FuzzyDRR.
+20. **Modified DRR baselines (E20, reconstructions)**: MDRR-SP vs DR-DRR mixed (4 better / 10 worse of 14); MDRR-ALT: DR-DRR beats MDRR-ALT; M1 14/14, M2 holds, M3 14/14.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -769,6 +770,63 @@ Same quanta as E19 (no retuning), paired by trace with DR-DRR's E15 runs. Differ
 | onoff|1.2 | 2.009 | 1.461 | -0.548 ± 0.090 | 2.7e-05 |
 
 **Verdict: DR-DRR better at 6/14, worse at 8/14 -> mixed.** Static DRR is better at: onoff|0.8, onoff|0.9, poisson|0.95, onoff|0.95, poisson|1.05, onoff|1.05, poisson|1.2, onoff|1.2.
+
+## E20 — Modified DRR baselines (pre-registered; reconstructions)
+
+MDRR-SP: low-latency queue (class 0) served first, DRR over the other classes. MDRR-ALT: packets alternate between the low-latency queue and the DRR classes. Neither has a parameter. Paired by trace with E1's SP and DR-DRR. Difference = W(MDRR) - W(DR-DRR); negative favours MDRR.
+
+**MDRR-SP**: better than DR-DRR at 4/14, worse at 10/14 -> **mixed**.
+
+| point | W DR-DRR | W MDRR-SP | difference ± 95 % CI | Holm p |
+|---|---|---|---|---|
+| onoff|0.4 | 0.144 | 0.098 | -0.046 ± 0.002 | 2.7e-05 |
+| onoff|0.6 | 0.361 | 0.398 | +0.038 ± 0.007 | 2.7e-05 |
+| onoff|0.8 | 0.843 | 1.953 | +1.110 ± 0.086 | 2.7e-05 |
+| onoff|0.9 | 1.181 | 2.882 | +1.701 ± 0.072 | 2.7e-05 |
+| onoff|0.95 | 1.326 | 3.172 | +1.846 ± 0.076 | 2.7e-05 |
+| onoff|1.05 | 1.577 | 3.654 | +2.076 ± 0.068 | 2.7e-05 |
+| onoff|1.2 | 1.990 | 4.135 | +2.145 ± 0.065 | 2.7e-05 |
+| poisson|0.4 | 0.119 | 0.096 | -0.024 ± 0.000 | 2.7e-05 |
+| poisson|0.6 | 0.172 | 0.104 | -0.068 ± 0.001 | 2.7e-05 |
+| poisson|0.8 | 0.216 | 0.159 | -0.058 ± 0.004 | 2.7e-05 |
+| poisson|0.9 | 0.311 | 0.335 | +0.023 ± 0.005 | 2.7e-05 |
+| poisson|0.95 | 0.447 | 0.697 | +0.249 ± 0.054 | 2.7e-05 |
+| poisson|1.05 | 0.901 | 4.313 | +3.411 ± 0.063 | 2.7e-05 |
+| poisson|1.2 | 1.326 | 4.915 | +3.589 ± 0.014 | 2.7e-05 |
+
+**MDRR-ALT**: better than DR-DRR at 1/14, worse at 13/14 -> **DR-DRR beats MDRR-ALT**.
+
+| point | W DR-DRR | W MDRR-ALT | difference ± 95 % CI | Holm p |
+|---|---|---|---|---|
+| onoff|0.4 | 0.144 | 0.300 | +0.156 ± 0.006 | 2.7e-05 |
+| onoff|0.6 | 0.361 | 3.022 | +2.661 ± 0.130 | 2.7e-05 |
+| onoff|0.8 | 0.843 | 17.376 | +16.533 ± 1.192 | 2.7e-05 |
+| onoff|0.9 | 1.181 | 27.908 | +26.728 ± 1.039 | 2.7e-05 |
+| onoff|0.95 | 1.326 | 32.012 | +30.685 ± 0.994 | 2.7e-05 |
+| onoff|1.05 | 1.577 | 36.633 | +35.056 ± 1.060 | 2.7e-05 |
+| onoff|1.2 | 1.990 | 39.872 | +37.883 ± 1.000 | 2.7e-05 |
+| poisson|0.4 | 0.119 | 0.116 | -0.003 ± 0.001 | 2.7e-05 |
+| poisson|0.6 | 0.172 | 0.259 | +0.088 ± 0.002 | 2.7e-05 |
+| poisson|0.8 | 0.216 | 0.994 | +0.778 ± 0.028 | 2.7e-05 |
+| poisson|0.9 | 0.311 | 3.481 | +3.170 ± 0.198 | 2.7e-05 |
+| poisson|0.95 | 0.447 | 10.231 | +9.784 ± 0.950 | 2.7e-05 |
+| poisson|1.05 | 0.901 | 47.192 | +46.291 ± 0.106 | 2.7e-05 |
+| poisson|1.2 | 1.326 | 43.973 | +42.647 ± 0.087 | 2.7e-05 |
+
+- **M1** MDRR-SP latency p95 within 10 % of SP's: 14/14 points. **M2** MDRR-SP starvation episodes 0 vs SP 3366: holds. **M3** MDRR-ALT latency p95 above MDRR-SP's: 14/14 points.
+- Latency-class p95 (ms) at ON/OFF 0.95: SP 1.1, MDRR-SP 1.1, MDRR-ALT 320.1.
+- MDRR-ALT's large latency tails come from our packet-level alternation: 200-byte latency packets get about 12 % of the bytes while the class offers 20 %. A vendor implementation alternates turns, so this reading is probably unfair to MDRR.
+
+**E20b (post-hoc, not pre-registered): MDRR-ALT-V**, the low-latency queue takes one DRR turn between turns of the other classes. Mean W and latency p95 (ms) at four points:
+
+| point | MDRR-ALT-V W | latency p95 | DR-DRR W | DRR W |
+|---|---|---|---|---|
+| onoff|0.95 | 3.17 | 2.3 | 1.33 | 3.13 |
+| onoff|1.2 | 4.12 | 5.7 | 1.99 | 6.35 |
+| poisson|0.95 | 0.69 | 1.4 | 0.45 | 0.69 |
+| poisson|1.2 | 4.91 | 1.7 | 1.33 | 4.90 |
+
+Starvation episodes: 0.
 
 ## E16b — kernel check at 1 Mb/s (pre-registered)
 

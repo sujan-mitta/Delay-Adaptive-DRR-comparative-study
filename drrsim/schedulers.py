@@ -686,8 +686,98 @@ class SCRR(Scheduler):
         return c
 
 
+class MDRRStrict(DRR):
+    """Modified DRR in its strict-priority (low-latency) mode, as router vendors describe it (our reconstruction; E20).
+    Class 0 is the low-latency queue and is served first whenever it is backlogged; classes 1..K-1 share the link by DRR.
+    Work-conserving and not rate-limited, so the low-latency queue can starve the others."""
+    name = "MDRR-SP"
+    any_k = False
+
+    def on_enqueue(self, c, now):
+        if c != 0:
+            super().on_enqueue(c, now)
+
+    def select(self, now):
+        if self.v.queues[0]:
+            return 0
+        if any(self.v.queues[c] for c in range(1, self.k)):
+            return super().select(now)
+        return None
+
+
+class MDRRAlternate(MDRRStrict):
+    """Modified DRR in its alternate-priority mode (our reconstruction; E20): packets alternate between the low-latency
+    queue (class 0) and the DRR classes. A side with nothing queued is skipped."""
+    name = "MDRR-ALT"
+
+    def bind(self, view):
+        super().bind(view)
+        self.last_low = False
+
+    def select(self, now):
+        others = any(self.v.queues[c] for c in range(1, self.k))
+        if self.v.queues[0] and (not self.last_low or not others):
+            self.last_low = True
+            return 0
+        if others:
+            self.last_low = False
+            return DRR.select(self, now)
+        return None
+
+
+class MDRRAlternateVisit(MDRRStrict):
+    """Modified DRR, alternate-priority mode read at the level of turns (post-hoc variant, E20b): the low-latency queue (class 0)
+    takes one DRR turn (its own quantum, 1500 B) between consecutive turns of the other classes, instead of one packet.
+    Added after E20 showed that per-packet alternation starves small latency packets of bytes; not pre-registered."""
+    name = "MDRR-ALT-V"
+    defaults = {"quanta": BASE_Q}
+
+    def bind(self, view):
+        super().bind(view)
+        self.d0 = 0.0
+        self.low_active = False     # a turn of the low-latency queue is in progress
+        self.low_next = True        # the low-latency queue takes the next turn
+        self.served_rest = False    # the last packet came from the DRR classes
+
+    def select(self, now):
+        queues, size = self.v.queues, self.v.size
+        q0 = queues[0]
+        rest = any(queues[c] for c in range(1, self.k))
+        if self.low_active:                                   # continue the low-latency turn
+            if q0 and self.d0 >= size[q0[0]]:
+                self.d0 -= size[q0[0]]
+                if len(q0) == 1:
+                    self.d0, self.low_active = 0.0, False
+                return 0
+            self.low_active = False
+            if not q0:
+                self.d0 = 0.0
+        c = self.current
+        if c is not None and self.deficit[c] >= size[queues[c][0]]:
+            self.served_rest = True
+            return DRR.select(self, now)                      # the DRR turn in progress continues
+        if self.served_rest:                                  # a DRR turn just ended
+            self.served_rest, self.low_next = False, True
+        if q0 and (self.low_next or not rest):
+            self.low_next = False
+            self.d0 += self.Q[0]
+            if not rest and self.d0 < size[q0[0]]:            # nothing else to serve: take the missing quanta at once
+                self.d0 += math.ceil((size[q0[0]] - self.d0) / self.Q[0]) * self.Q[0]
+            if self.d0 >= size[q0[0]]:
+                self.d0 -= size[q0[0]]
+                if len(q0) == 1:
+                    self.d0 = 0.0
+                else:
+                    self.low_active = True
+                return 0
+        if rest:
+            self.served_rest = True
+            return DRR.select(self, now)
+        return None
+
+
 MAIN = (FIFO, StrictPriority, DRR, RLSPDRR, SQDRR, CQDRR, FuzzyDRR, RevenueDRR)
-REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService, SQDRRBacklog, SQDRRHol)}
+REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService, SQDRRBacklog, SQDRRHol, MDRRStrict, MDRRAlternate, MDRRAlternateVisit)}
 SCHEDULERS = [cls.name for cls in MAIN]   # the 8 compared schedulers; variants are run separately
 ADAPTIVE = [c.name for c in MAIN if c.adaptive]
 

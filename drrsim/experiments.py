@@ -11,6 +11,8 @@ DEV_SEEDS = list(range(1, 6))
 SEEDS = list(range(101, 121))
 HELDOUT_SEEDS = list(range(201, 221))     # E15: never used before the held-out check
 ABLATION = ["DR-DRR-backlog", "DR-DRR-hol"]
+MDRR = ["MDRR-SP", "MDRR-ALT"]
+MDRR_POSTHOC = ["MDRR-ALT-V"]      # E20b: added after E20, not pre-registered
 LOADS = [0.4, 0.6, 0.8, 0.9, 0.95, 1.05, 1.2]
 BURSTS = {"small": 0.01, "medium": 0.05, "large": 0.2}
 MIXES = {"A": (0.2, 0.4, 0.4), "B": (0.4, 0.3, 0.3), "C": (0.1, 0.2, 0.7)}
@@ -214,6 +216,14 @@ def experiment_tasks(exp: str, tuned: dict):
         for load in LOADS:
             t += _all("E15", f"poisson|{load}", poisson(load), tuned, seeds=HELDOUT_SEEDS)
             t += _all("E15", f"onoff|{load}", onoff(load), tuned, seeds=HELDOUT_SEEDS)
+    elif exp == "E20":  # pre-registered Modified DRR baselines (protocol section E20); paired with E1 traces
+        for load in LOADS:
+            for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
+                t += [task("E20", pt, n, s, cfg, {}) for n in MDRR for s in SEEDS]
+    elif exp == "E20B":  # post-hoc turn-level alternate Modified DRR (labelled as such in the protocol and the paper)
+        for load in LOADS:
+            for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
+                t += [task("E20B", pt, n, s, cfg, {}) for n in MDRR_POSTHOC for s in SEEDS]
     elif exp == "E19TUNE":  # E19: tune static DRR quanta (Q_lat, Q_vid; Q_blk = 1500) on dev seeds, protocol E19
         for ql in STATIC_GRID:
             for qv in STATIC_GRID:

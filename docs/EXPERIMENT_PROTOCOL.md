@@ -428,3 +428,37 @@ packets, loads 0.8 / 0.95 / 1.2, the same schedulers, tuned parameters and delay
   RL-SP+DRR, SP and SCRR tie to within 0.0001 in mean W. The replication question about the best non-SP scheduler therefore has no answer
   on W for this trace. Reported as is; it is a weaker check than E17 because it barely exercises the latency and video classes.
 
+
+## E20 — Modified DRR baselines (pre-registered 2026-10-23, before any code for them)
+Why: a related-work check found that router vendors ship Modified DRR (MDRR), analysed by Lenzini, Mingozzi and Stea, and that
+our comparison had no such baseline. We implement it from the vendor description as we understand it; we have not read the
+analysis papers in full, so these are **reconstructions**.
+- **MDRR-SP** (strict-priority low-latency mode): class 0 (latency) is a low-latency queue served first whenever it is
+  backlogged; classes 1 and 2 share the link by DRR with quanta 1500 B. The queue is not rate-limited (so it can starve the others,
+  as SP can).
+- **MDRR-ALT** (alternate-priority mode): packets alternate between the low-latency queue and the DRR classes: after one
+  low-latency packet, one packet from the DRR classes goes next if any is backlogged, and vice versa. If only one side is
+  backlogged it is served.
+- Neither has a tunable parameter (quanta 1500 B for classes 1-2, as DRR), so there is no tuning step.
+- Not implemented: Proportional Nested DRR (Shiravi, Kim, Min). We know it only from its abstract, which is too little to
+  reconstruct it faithfully. Listed as a gap.
+- Runs: the 14 E1 points, seeds 101-120, paired with the saved SP, DRR and DR-DRR runs (same traces).
+- Statistic: per point, paired difference in W, MDRR variant minus DR-DRR; paired Wilcoxon, Holm-corrected over the 14 points
+  for each variant.
+- Verdict per variant V (same rule shape as E14): "V beats DR-DRR" if V is significantly better at >= 7 points and DR-DRR at
+  <= 2; "DR-DRR beats V" if DR-DRR is significantly better at >= 7 and V at <= 2; otherwise "mixed".
+- M1: MDRR-SP's latency-class p95 is within 10 % of SP's at >= 12 of 14 points (both serve that class first).
+- M2: MDRR-SP starves no class more than SP does (starvation episodes, summed over runs, not above SP's).
+- M3: MDRR-ALT's latency-class p95 is above MDRR-SP's at >= 12 of 14 points (it gives up some priority).
+- Also reported (descriptive): per-class p95, starvation episodes, largest service gap.
+
+### E20 outcome and E20b (post-hoc, added 2026-10-23 after seeing E20)
+- E20 verdicts (rules above): MDRR-SP vs DR-DRR: DR-DRR better at 10 points, MDRR-SP at 4 -> "DR-DRR beats MDRR-SP" is not met
+  (needs >= 7 and <= 2), so **mixed**. MDRR-ALT vs DR-DRR: DR-DRR better at 13, MDRR-ALT at 1 -> **DR-DRR beats MDRR-ALT**.
+  M1 holds (14/14), M2 holds (no starvation at all), M3 holds (14/14).
+- MDRR-ALT's latency tails are hundreds of milliseconds under load. The cause is our packet-level reading: alternating single
+  packets gives 200-byte latency packets about 12 % of the bytes while the class offers 20 %, so it overloads. A vendor
+  implementation alternates turns, not packets, so this reading is probably unfair to MDRR. We therefore added **MDRR-ALT-V**
+  (low-latency queue takes one DRR turn, quantum 1500 B, between turns of the other classes) and ran it on the same 14 points
+  and seeds as **E20b**. It is post-hoc: it was written after seeing E20, it has no pre-registered criteria, and it is not checked
+  against the independent reference simulator (unit tests and the common invariants only). Its numbers are descriptive.
