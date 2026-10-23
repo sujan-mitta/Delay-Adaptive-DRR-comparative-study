@@ -63,6 +63,9 @@ def _poisson_times(rng, rate: float, horizon: float) -> np.ndarray:
     return t[t < horizon]
 
 
+MAX_PERIODS = 5e7    # ON/OFF periods per trace (same order as MAX_PACKETS)
+
+
 def _onoff_periods(rng, horizon: float, on_mean: float, duty: float, dist: str = "exp", alpha: float = 1.5):
     """Alternating ON/OFF periods up to `horizon`, starting in the stationary state. Returns (starts, ends) of ON."""
     off_mean = on_mean * (1 - duty) / duty
@@ -72,6 +75,10 @@ def _onoff_periods(rng, horizon: float, on_mean: float, duty: float, dist: str =
             return rng.exponential(mean)
         return mean * (alpha - 1) / alpha * (1.0 + rng.pareto(alpha))   # Pareto with the given mean
 
+    expected = 2 * horizon / (on_mean + off_mean) + 2
+    if expected > MAX_PERIODS:
+        raise ValueError(f"ON/OFF settings would need ~{expected:.3g} periods (limit {MAX_PERIODS:.0e}); "
+                         "on_mean is too small for this horizon")
     on = rng.random() < duty
     starts, ends = [], []
     t = 0.0

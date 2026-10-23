@@ -1,12 +1,12 @@
 # Testing and verification
 
-871 automated tests in fourteen layers, a regression guard over every saved run, and mutation testing of the suite itself.
+914 automated tests in fifteen layers, a regression guard over every saved run, and mutation testing of the suite itself.
 
 ```powershell
 python -m pip install -r requirements-dev.txt
 python -m pytest                                   # all tests (a few minutes; theory, property and fuzz tests dominate)
 python -m pytest --cov=drrsim --cov=scripts        # with coverage
-python tools/mutation_check.py                     # plants 54 bugs in temp copies (in parallel); writes docs/MUTATION_REPORT.md
+python tools/mutation_check.py                     # plants 57 bugs in temp copies (in parallel); writes docs/MUTATION_REPORT.md
 python tools/regress_check.py                      # re-simulates every saved run; all metrics must match exactly
 ```
 
@@ -24,7 +24,8 @@ python tools/regress_check.py                      # re-simulates every saved ru
 | `test_scenarios.py` | 51 | E11 scenario features: validation, packet-size overrides, Pareto ON/OFF (mean and heavy tail), synchronised ON/OFF, load profiles (rate inside/outside, silencing, other classes untouched), link-capacity schedules (exact, half-open, non-preemptive; agreement with the reference simulator and full invariants for every scheduler on random schedules), and every scenario run for every scheduler |
 | `test_aqm_imix.py` | 33 | IMIX size distributions (sizes, 7:4:1 proportions by chi-square, byte load, validation) and RED active queue management (hand-computed trace with known random draws, reduces to tail drop with unreachable thresholds, seeded pairing, early-drop effect, **exact agreement with an independent RED in the reference simulator**, invariants for all 11 schedulers) |
 | `test_metamorphic.py` | 27 | Laws between runs: **causality** (removing future arrivals changes no earlier decision, all 11 schedulers), **class-relabelling symmetry** (FIFO, DRR, SCRR), **time-shift invariance** (bit-exact), **worker-count invariance** of the runner |
-| `test_matrix.py` | 222 | Round-6 matrix over **all 12 scheduler variants**: smallest/largest allowed quanta and 1-byte + 9000-byte packets (each run must finish in < 5 s and keep every invariant); **a reused scheduler object behaves like a fresh one**; **no state leaks between runs**; independent oracles for any class count (**textbook DRR Algorithm 1**, strict priority, one-line FIFO); long-run DRR shares follow the quanta and SCRR shares are equal; **history is forgotten after a long idle period** (FIFO, SP, DRR, DRR-EOS, RL-SP+DRR) and SCRR's carry-over is bounded; four **combinations of scenario options** (RED + link fade, IMIX + partitioned + synchronised bursts, Pareto + flash crowd + RED, jumbo + partitioned + link boost) with every scheduler; boundaries of the public helpers |
+| `test_matrix.py` | 245 | Round-6 matrix over **all 12 scheduler variants**: smallest/largest allowed quanta and 1-byte + 9000-byte packets (each run must finish in < 5 s and keep every invariant); **a reused scheduler object behaves like a fresh one**; **no state leaks between runs**; independent oracles for any class count (**textbook DRR Algorithm 1**, strict priority, one-line FIFO); long-run DRR shares follow the quanta and SCRR shares are equal; **history is forgotten after a long idle period** (FIFO, SP, DRR, DRR-EOS, RL-SP+DRR) and SCRR's carry-over is bounded; four **combinations of scenario options** (RED + link fade, IMIX + partitioned + synchronised bursts, Pareto + flash crowd + RED, jumbo + partitioned + link boost) with every scheduler; boundaries of the public helpers; round 7 adds the hazard audit: **every parameter of every scheduler at 13 extremes (1e-300 to 1e300)** must be rejected or run correctly, link-rate and ON/OFF limits, and the engine's own overflow guard |
+| `test_exhaustive.py` | 20 | **Exhaustive small-scope check, not sampling**: every trace of up to 4 packets on a grid built for exact ties (7,315 traces x 3 buffers = 21,945 cases); every scheduler keeps every invariant on every case (263,340 runs), and FIFO, SP, DRR (3 quanta settings) and RL-SP+DRR (2 rates) match the independent reference packet for packet on every case (153,615 comparisons). `EXHAUSTIVE_N=5` extends it to 33,649 traces (run once in round 7: 1,211,364 invariant runs and 706,629 reference comparisons, all correct, 11 min) |
 | `test_drr_theory.py` | 44 | DRR theory for any number of classes: **every packet within the Boyer et al. delay bound** (the formula reproduces the published 146.228 µs and Table 1 values; Hypothesis-generated systems and token-bucket inputs, both DRR rules); the **DRR fairness lemma** for backlogged classes; deficits stay below the largest packet; **skip-ahead over empty passes makes identical decisions** (integer, fractional and tiny quanta) and tiny quanta no longer hang; one class = FIFO for every rule; 4096 classes; **busy periods identical** for all work-conserving rules; class relabelling; **doubling the link rate halves every time exactly** |
 | `test_literature.py` | 42 | E13 published examples: any number of classes (FIFO, SP, DRR, DRR-EOS, SCRR serve everything in per-class order; 3-class schedulers refuse other counts; partitions split by the class count), **DRR-EOS vs DRR differ exactly when a packet arrives during the class's last packet**, token-bucket sources conform (greedy shape exact), **B1 trajectory delay = 119.256 µs and the paper's service order**, B2 within the published bounds, B3/B4 shares, the SCRR probe does not change decisions, a minimal case where SCRR as printed exceeds Theorem 1 |
 | `test_scripts.py` | 16 | miniature end-to-end runs of `tune.py` (incl. the `--force` overwrite guard), `run_experiments.py`, `e9_control.py`, `timeseries.py`, `confirm_damping.py` (exit codes) in temporary folders; guard paths; backlog reconstruction vs brute force |
@@ -49,6 +50,8 @@ temporary copies and records whether the suite fails. Result: see `docs/MUTATION
 | input handling | negative sizes and zero / negative DRR quanta hung forever; unsorted, NaN or negative arrival times gave silently wrong timings; other bad inputs crashed with IndexError / ZeroDivisionError; infinite loads were accepted | none (strict validation added; all 9 400 saved runs re-simulate identically) |
 | RL-SP + engine | the 1e-12 s tie tolerance applied to RL-SP eligibility but not to wake-up vs. arrival ordering; in an adversarial tie storm a held packet could leave up to 1e-12 s early after an arrival had already been refused | none (unified tie rule; all 810 RL-SP runs re-simulate identically) |
 | fuzzing | an RL-SP shaping rate of 1e-52 pushed departure times to 1e50 s, beyond float precision | none (rate_frac bounded to [1e-6, 1e3]) |
+| audit | ON/OFF traffic with a 1 ns mean ON period looped ~10^8 times per trace (a hang); no limit on the number of periods | none (saved runs use 10-200 ms periods); refused with a clear message above 5e7 periods |
+| audit | a link rate below ~1e-308 b/s made a service time overflow to infinity, which the engine uses to mean 'idle': three packets were 'on the link' at once | none (all runs use 10 Mb/s or more); link rate limited to [1, 1e15] b/s and the engine refuses any infinite completion time by itself |
 | matrix | CQDRR at its smallest allowed quanta took ~94 ms per packet (a 65-s run would take hours): it has its own fixed-order round loop, which the round-5 DRR fix did not cover | none (no saved run used such quanta); same skip-ahead added; all saved runs re-simulate exactly |
 | scaling | DRR added one quantum per pass even when no class could send for many passes: with the allowed minimum quantum (0.01 B) a 65-s run took ~15 min (an effective hang; adaptive schedulers can also reach small quanta through `qmin`) | none (no saved run used such quanta); fixed by skipping whole empty passes, identical decisions, all saved runs re-simulate exactly |
 | runner | the CSV header was fixed by whichever result finished first, so an experiment mixing tag columns crashed mid-run (found by E12) | none for earlier runs (each used one tag set); E12 re-run, partial output archived |
@@ -81,4 +84,18 @@ mutation check runs mutants in parallel (`--jobs`, default a quarter of the CPUs
   class's served bytes differ from a fresh start by up to 3.03 maximum-size packets (74 ms at 1 Mb/s). FIFO, SP,
   DRR, DRR-EOS and RL-SP+DRR forget completely.
 - **SCRR's printed Algorithm 4 exceeds its Theorems 1-2 (E13, B5)**, because the round is closed one dequeue late.
+
+## Hunting whole classes of bugs, not single cases (round 7)
+Rounds 5 and 6 each found the same kind of bug in a different place (a loop whose length grows with a parameter:
+DRR, then CQDRR). Round 7 therefore audited the code by hazard class instead of by test case:
+- **Every loop** (9 in the library) was checked for a bound that does not depend on parameter values. DRR,
+  DRR-EOS and CQDRR are bounded by the skip-ahead; the engine by the number of events and the 5e7 update limit;
+  max-min water-filling by the number of classes; trace generation by MAX_PACKETS and, new, MAX_PERIODS.
+- **Every risky expression** (exp, log, powers, divisions; 7 places) was checked against the validated parameter
+  ranges, then confirmed by boundary-value analysis: every parameter of every scheduler at 13 extremes (1e-300 to
+  1e300) is either rejected by validation or runs correctly (no crash, hang, NaN or infinity).
+- **Every special value** used as a sentinel was checked for collisions with real data (the overflow-to-INF case
+  above was found this way).
+- **Every small input** is checked exhaustively (test_exhaustive.py), so correctness on tiny cases is shown for all
+  of them rather than for a random sample.
 

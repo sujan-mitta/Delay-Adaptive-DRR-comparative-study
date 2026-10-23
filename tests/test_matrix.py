@@ -361,3 +361,67 @@ def test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta():
         a = simulate(tr, S.CQDRR(qmin=q, qmax=q), c)
         b = simulate(tr, NoSkip(qmin=q, qmax=q), c)
         assert np.array_equal(np.nan_to_num(a.start, nan=-1), np.nan_to_num(b.start, nan=-1))
+
+
+# ---------------------------------------------------------------- 7. hazard audit (round 7)
+CANDIDATES = [1e-300, 1e-12, 1e-6, 0.0, 0.01, 0.5, 1.0, 10.0, 100.0, 1e6, 1e9, 1e12, 1e300]
+
+
+@pytest.mark.parametrize("name", ALL_SCHEDULERS)
+def test_every_accepted_parameter_extreme_runs_correctly(name):
+    """Boundary-value analysis over the whole parameter space: for every parameter and every candidate extreme,
+    the value is either rejected by validation (ValueError) or the run finishes quickly with no pending packets
+    and finite positive quanta. Nothing in between (no crash, hang, NaN or infinity)."""
+    c = SimConfig(TrafficConfig(load=1.1, duration=0.5, warmup=0.0, arrival="onoff"), update_interval=0.001)
+    tr = generate_trace(c.traffic, 3)
+    tried = 0
+    for key, dv in REGISTRY[name].defaults.items():
+        for v in CANDIDATES:
+            val = (v,) * len(dv) if isinstance(dv, tuple) else v
+            try:
+                s = make(name, **{key: val})
+            except ValueError:
+                continue
+            tried += 1
+            t0 = time.perf_counter()
+            log = simulate(tr, s, c)
+            assert time.perf_counter() - t0 < 5.0, (key, v)
+            assert log.pending == 0, (key, v)
+            if len(log.q_values):
+                assert np.isfinite(log.q_values).all() and (log.q_values > 0).all(), (key, v)
+    assert tried > 0 or not REGISTRY[name].defaults
+
+
+@pytest.mark.parametrize("rate", [0.0, 0.5, 1e-310, 1e16, 1e300])
+def test_link_rate_outside_physical_range_rejected(rate):
+    with pytest.raises(ValueError):
+        TrafficConfig(link_rate=rate)
+
+
+@pytest.mark.parametrize("rate", [1.0, 1e15])
+def test_link_rate_range_limits_accepted(rate):
+    TrafficConfig(link_rate=rate)
+
+
+@pytest.mark.parametrize("on_mean", [1e-300, 1e-9])
+def test_onoff_periods_too_short_rejected_not_hung(on_mean):
+    """Round 7: a 1 ns ON period made trace generation loop ~10^8+ times (a hang); now refused up front."""
+    t0 = time.perf_counter()
+    with pytest.raises(ValueError, match="ON/OFF settings would need"):
+        generate_trace(TrafficConfig(arrival="onoff", on_mean=on_mean, duration=0.2, warmup=0.0), 1)
+    assert time.perf_counter() - t0 < 2.0
+
+
+def test_short_but_feasible_onoff_periods_still_work():
+    tr = generate_trace(TrafficConfig(arrival="onoff", on_mean=1e-6, duration=0.2, warmup=0.0), 1)
+    assert len(tr) > 0
+
+
+def test_engine_refuses_overflowing_completion_even_if_validation_is_bypassed():
+    """Round 7: with a subnormal link rate a service time overflows to infinity, which this loop uses to mean
+    'idle' - three packets were then 'on the link' at once. Validation now forbids such rates; the engine also
+    refuses any infinite completion time by itself."""
+    c = cfg()
+    object.__setattr__(c.traffic, "link_rate", 1e-310)            # bypass the frozen, validated config
+    with pytest.raises(ValueError, match="completion time overflows"):
+        simulate(trace([0.0, 0.0], [0, 1], [1500, 1500]), make("FIFO"), c)

@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
           "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py",
           "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py", "tests/test_literature.py",
-          "tests/test_drr_theory.py", "tests/test_matrix.py"]
+          "tests/test_drr_theory.py", "tests/test_matrix.py", "tests/test_exhaustive.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
@@ -131,6 +131,12 @@ MUTANTS = [
     ("C5", "drrsim/schedulers.py", "            for c in live:\n                deficit[c] += r * Q[c]",
      "            for c in live[:1]:\n                deficit[c] += r * Q[c]",
      "CQDRR skip credits only one class"),
+    ("H1", "drrsim/traffic.py", "    if expected > MAX_PERIODS:", "    if expected > MAX_PERIODS * 1e3:",
+     "ON/OFF period limit too loose (1 ns ON periods hang generation again)"),
+    ("H2", "drrsim/config.py", "        if not (1.0 <= self.link_rate <= 1e15):", "        if False:",
+     "link rate below 1 b/s accepted (service times can overflow)"),
+    ("H3", "drrsim/engine.py", "            if t_free == INF:    # INF means", "            if False:    # INF means",
+     "engine accepts an overflowing completion time as 'idle'"),
 ]
 
 

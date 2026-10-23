@@ -168,6 +168,8 @@ def simulate(trace: Trace, scheduler, cfg: SimConfig) -> RunLog:
             total -= s
             start[j] = now
             t_free = now + s / rate_Bps if rate_factor is None else now + s / (rate_Bps * rate_factor(now))
+            if t_free == INF:    # INF means "idle" in this loop: an overflowing completion time must never pass as one
+                raise ValueError(f"completion time overflows (packet {j} of {s} B starting at {now} s)")
             end[j] = t_free
             view.t_free = t_free
             decisions += 1

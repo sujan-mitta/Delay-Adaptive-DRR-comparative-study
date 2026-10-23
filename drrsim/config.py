@@ -58,6 +58,8 @@ class TrafficConfig:
             raise ValueError(f"mix must be {K} non-negative shares summing to 1, got {self.mix}")
         if self.class_loads is not None and (len(self.class_loads) != K or any(x < 0 for x in self.class_loads)):
             raise ValueError("class_loads must be K non-negative values")
+        if not (1.0 <= self.link_rate <= 1e15):      # below 1 b/s a 9000 B packet's service time can overflow
+            raise ValueError(f"link_rate must be in [1, 1e15] bit/s, got {self.link_rate}")
         if not (self.load > 0 and self.link_rate > 0 and self.duration > 0 and self.warmup >= 0):
             raise ValueError("load, link_rate, duration must be > 0 and warmup >= 0")
         if not (0 < self.duty <= 1 and self.on_mean > 0):
