@@ -26,3 +26,11 @@ Sayenko papers; reference lists citing doi:10.1016/j.jnca.2013.04.004.
 | Bouillard, "Individual service curves for bandwidth-sharing policies using network calculus" | IEEE Networking Letters, vol. 3, no. 2, pp. 80-83, 2021 | reference list of Tabatabaee & Le Boudec; author preprint |
 | Sharafzadeh, Matson, Tourrilhes, Sharma & Ghorbani, "Self-Clocked Round-Robin Packet Scheduling" | USENIX NSDI 2025 | USENIX program page |
 | Alsahag et al. (fuzzy adaptive DRR) | doi:10.1016/j.jnca.2013.04.004; vol. 39, pp. 17-25, March 2014 | confirmed through Crossref on 2026-10-23 |
+
+## Added 2026-10-23 (related work)
+| Reference | Details | Status |
+|---|---|---|
+| Lenzini, Mingozzi, Stea, "Tradeoffs between low complexity, low latency, and fairness with deficit round-robin schedulers" | IEEE/ACM Trans. Netw. 12(4), 681-693, 2004, doi:10.1109/TNET.2004.833131 | metadata via Crossref; content known from a search snippet only (publisher page not read) |
+| Lenzini, Mingozzi, Stea, "Performance analysis of Modified Deficit Round Robin schedulers" | J. High Speed Netw. 16(4), 399-422, 2007, doi:10.3233/HSN-2007-325 | metadata via Crossref; abstract seen in a search snippet only |
+| Mukherjee, Kuri, Singh, "Convexity and optimization in DRR scheduling for delay-constrained systems" | arXiv:2503.23366, 30 Mar 2025 (preprint, no venue listed) | arXiv abstract page read |
+
