@@ -228,3 +228,28 @@ def test_double_link_rate_halves_time_exactly(name):
     tr2 = L.make_trace(tr.t / 2, tr.cls, tr.size)
     b = simulate(tr2, make(name, k=k, **p), L.config(2e7))
     assert np.array_equal(b.start, a.start / 2) and np.array_equal(b.end, a.end / 2)
+
+
+# ---------------------------------------------------------------- DR-DRR service-gap bound (proposition)
+@pytest.mark.parametrize("name", ["DR-DRR", "DR-DRR+damping", "DR-DRR-backlog", "DR-DRR-hol"])
+@pytest.mark.parametrize("seed", range(5))
+def test_dr_drr_service_gap_bound(name, seed):
+    """Quanta clipped to [Q0, M Q0] with Q0 >= every packet: a backlogged class's head packet waits at most
+    sum over the other classes of (M Q0 + Lmax_j - 1) * 8 / C (each other class gets at most one visit, and a
+    visit sends less than its quantum plus the largest packet). Checked on random overloaded traffic."""
+    from drrsim.metrics import starvation_gaps
+    rng = np.random.default_rng(700 + seed)
+    rate = float(rng.choice([1e6, 1e7]))
+    n = 4000
+    tr = L.make_trace(np.sort(rng.uniform(0, n * 900 * 8 / rate / 1.3, n)), rng.integers(0, 3, n),
+                      rng.integers(40, 1501, n))
+    M = float(rng.choice([2.0, 8.0, 20.0]))
+    cfg = L.config(rate)
+    cfg = type(cfg)(traffic=cfg.traffic, buffer_bytes=10 ** 9, update_interval=float(rng.choice([0.001, 0.01])))
+    log = simulate(tr, make(name, qmax_mult=M), cfg)
+    lmax = [int(tr.size[tr.cls == c].max()) for c in range(3)]
+    for c in range(3):
+        idx = np.flatnonzero(tr.cls == c)
+        _, gap = starvation_gaps(tr.t[idx], log.start[idx], log.end[idx])
+        bound = sum(M * 1500 + lmax[j] - 1 for j in range(3) if j != c) * 8 / rate
+        assert gap.max() <= bound * (1 + 1e-9), (c, gap.max(), bound)

@@ -284,3 +284,28 @@ classes (default 3, bit-exact with all saved runs); the adaptive schedulers stay
   sends; that case cannot test fairness. A **post-hoc** variant scales the link to the same overload as with random
   sizes (offered / link = 1.24) for the constant and bimodal cases. Its rows are labelled "post hoc" and are
   descriptive. Nothing else changed between the two runs.
+
+## E14 — DR-DRR ablation (pre-registered 2026-10-23, before any code for the variants)
+Question: does each part of DR-DRR's risk estimate d_i = max(H_i, 8 B_i / (C phi_i)) add value?
+- Variants (same bounds Q0 = 1500 B, M = 8, theta = 0.5): **DR-DRR-backlog** (d_i = 8 B_i / (C phi_i) only) and
+  **DR-DRR-hol** (d_i = H_i only). Their kappa is tuned exactly like DR-DRR's (same grid, same rule, dev seeds 1-5,
+  extended once at an edge) so that no variant is handicapped by DR-DRR's tuning.
+- Runs: all 14 E1 points, seeds 101-120, paired with the saved DRR, DR-DRR and DR-DRR+damping runs (same traces).
+- Statistic: per point, paired difference W(variant) - W(DR-DRR) over 20 seeds; paired Wilcoxon, Holm-corrected over
+  the 14 points of each variant; effect size = mean paired difference with a 95 % t-interval.
+- Verdict per variant V: "the full rule adds value over V" if DR-DRR is significantly better at >= 7 points and
+  significantly worse at <= 2; "V suffices" if DR-DRR is significantly better at <= 2 points; otherwise "mixed".
+- Also reported (descriptive): starvation episodes, the largest service gap, and quantum oscillation of each variant.
+
+## E15 — held-out seeds (pre-registered 2026-10-23)
+Question: do the headline results hold on seeds never seen during development or reporting?
+- Runs: all 8 schedulers at the 14 E1 points with fresh seeds 201-220 (tuned parameters unchanged).
+- H1: SP has the lowest latency-class p95 at 14/14 points.
+- H2: at >= 11 of 14 points the best non-SP scheduler on mean W is the same as with seeds 101-120.
+- H3: for each scheduler, the held-out mean W lies inside the 101-120 95 % interval at >= 11 of 14 points.
+
+## Proposition — bounded service gap of DR-DRR (derived 2026-10-23, then checked on saved runs)
+With base quantum Q0 >= the largest packet, quanta clipped to [Q0, M Q0], K classes and link rate C, the head packet of
+a backlogged class waits at most sum over the other classes of (M Q0 + Lmax_j - 1) * 8 / C before service (21.6 ms for
+the study's settings). Checked against all 1,680 saved DR-DRR and DR-DRR+damping runs at 10 Mb/s: 0 violations,
+largest gap 89-95 % of the bound (M = 4, 8, 12).

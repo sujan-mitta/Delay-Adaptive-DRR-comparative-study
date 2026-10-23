@@ -11,7 +11,7 @@
 | E5 | bit/byte conversion error | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | E6 | buffer occupancy not released when a packet starts service | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S1 | DRR keeps its deficit after the queue empties | equivalent | `` |
-| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_rlsp_matches_reference` |
+| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_reference_agreement_on_realistic_traces[0.6-onoff]` |
 | S3 | new DRR class jumps the round-robin queue | killed | `tests/test_core.py::test_accounting_and_fifo_within_class[DRR]` |
 | S4 | FIFO serves the class of the newest queued packet | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S5 | strict priority order reversed | killed | `tests/test_core.py::test_toy_sp_exact` |
@@ -20,7 +20,7 @@
 | S8 | M/M/1/K blocking formula sign error | killed | `tests/test_core.py::test_mm1k_blocking_hand_values` |
 | S9 | SCRR clock may run backwards | killed | `tests/test_edge_cases.py::test_scrr_virtual_clock_never_goes_backwards` |
 | S10 | fuzzy rule table row reversed | killed | `tests/test_core.py::test_fuzzy_multiplier_corners` |
-| S11 | DR-DRR loses its upper bound | killed | `tests/test_properties.py::test_adaptive_quanta_finite_positive_bounded[DR-DRR]` |
+| S11 | DR-DRR loses its upper bound | killed | `tests/test_properties.py::test_invariants_every_scheduler[DR-DRR-backlog]` |
 | S12 | CQDRR fixed iteration cap (the original bug) | killed | `tests/test_matrix.py::test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta` |
 | M1 | p95 computed as p90 | killed | `tests/test_core.py::test_toy_metrics_exact` |
 | M2 | starvation threshold not strict | killed | `tests/test_edge_cases.py::test_starvation_threshold_is_strict` |
@@ -36,7 +36,7 @@
 | T4 | wake-up within the tie tolerance processed after an arrival | killed | `tests/test_robustness.py::test_extreme_but_valid_inputs[tie_storm-RL-SP+DRR]` |
 | C1 | capacity schedule ignored | killed | `tests/test_scenarios.py::test_capacity_fade_exact_and_non_preemptive` |
 | C2 | capacity segment end treated as inclusive | killed | `tests/test_scenarios.py::test_capacity_boundary_is_half_open` |
-| G1 | Pareto periods with the wrong mean | killed | `tests/test_scenarios.py::test_onoff_period_means[pareto]` |
+| G1 | Pareto periods with the wrong mean | killed | `tests/test_robustness.py::test_fuzzed_parameters_are_refused_or_simulate_correctly[FuzzyDRR]` |
 | G2 | synchronised bursts ignored | killed | `tests/test_scenarios.py::test_sync_all_classes_share_one_onoff_process` |
 | G3 | load-profile thinning wrong | killed | `tests/test_scenarios.py::test_profile_scales_rate_inside_segment_only` |
 | G4 | packet-size override ignored | killed | `tests/test_scenarios.py::test_size_override_exact_and_byte_load_preserved` |

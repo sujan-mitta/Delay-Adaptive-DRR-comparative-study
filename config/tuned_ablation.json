@@ -1,0 +1,14 @@
+{
+ "created": "2026-10-23T15:45:21",
+ "code_hash": "5cf6ad9dbe9b4c84",
+ "rule": "same as DR-DRR (tune.py v2): min W@0.95 s.t. Jain@1.2>=0.98; ties within 1%",
+ "seeds": "1-5",
+ "params": {
+  "DR-DRR-backlog": {
+   "kappa": 4.0
+  },
+  "DR-DRR-hol": {
+   "kappa": 8.0
+  }
+ }
+}

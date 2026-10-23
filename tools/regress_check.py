@@ -18,7 +18,22 @@ sys.path.insert(0, str(ROOT))
 from drrsim.experiments import EXPERIMENTS, experiment_tasks, load_tuned, tuning_tasks  # noqa: E402
 from drrsim.runner import _execute, key  # noqa: E402
 
-ALL_EXPS = ["TUNE"] + EXPERIMENTS + ["DEVD", "E1D", "E1V", "ES", "E11", "E12"]
+ALL_EXPS = ["TUNE"] + EXPERIMENTS + ["E9C", "DEVD", "E1D", "E1V", "ES", "E11", "E12", "E14TUNE", "E14", "E15"]
+
+
+def _tasks_for(e, tuned):
+    if e == "TUNE":     # base grid plus every extension value tune.py may have added at an edge
+        from drrsim.experiments import TUNE_GRID
+        return tuning_tasks({n: list(lo) + list(hi) for n, (_, _, lo, hi) in TUNE_GRID.items()})
+    if e == "E9C":      # static-DRR control built by scripts/e9_control.py from the saved E9 mean quanta
+        import json
+        from drrsim.experiments import SEEDS, SQ_SMOOTH, onoff, poisson
+        from drrsim.runner import task
+        means = json.loads((ROOT / "results" / "E9C" / "control_quanta.json").read_text())
+        cfg = {"onoff|0.95": onoff(0.95), "onoff|1.2": onoff(1.2), "poisson|1.2": poisson(1.2)}
+        return [task("E9C", f"{bp}|smooth={lam}", "DRR", s, c, {"quanta": tuple(means[f"{bp}|{lam}"])},
+                     {"base_point": bp, "smooth": lam}) for bp, c in cfg.items() for lam in SQ_SMOOTH for s in SEEDS]
+    return experiment_tasks(e, tuned)
 SKIP = {"wall_time", "decisions_per_s"}
 
 
@@ -30,7 +45,7 @@ def saved_tasks(exps=None, schedulers=None):
         if not path.exists():
             continue
         saved = pd.read_csv(path, float_precision="round_trip").set_index("key").to_dict("index")
-        ts = tuning_tasks() if e == "TUNE" else experiment_tasks(e, tuned)
+        ts = _tasks_for(e, tuned)
         out += [(t, saved[key(t)]) for t in ts if key(t) in saved and (not schedulers or t["scheduler"] in schedulers)]
     return out
 

@@ -3,6 +3,7 @@
 The bullet statements are machine-generated facts for the author to interpret and write up;
 they are not paper prose.
 """
+import json
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -650,6 +651,125 @@ def main(out=None):
                     "reproduced; SCRR as printed exceeds its own Theorems 1–2 because of the order of two steps in "
                     "Algorithm 4.")
 
+    # ---------------- E14: DR-DRR ablation, E15: held-out seeds, effect sizes
+    from scipy import stats as _st
+
+    def _holm(ps):
+        order = np.argsort(ps)
+        adj, run = np.empty(len(ps)), 0.0
+        for rank, i in enumerate(order):
+            run = max(run, min(1.0, (len(ps) - rank) * ps[i]))
+            adj[i] = run
+        return adj
+
+    e14_head = e15_head = None
+    if (ROOT / "results" / "E14" / "runs.csv").exists():
+        e14 = load("E14")
+        e1a = load("E1")
+        e1d = load("E1D")
+        allr = pd.concat([e1a[e1a.scheduler.isin(["DRR", "DR-DRR"])], e1d, e14], ignore_index=True)
+        tr = allr.groupby(["point", "seed"]).trace.nunique()
+        assert (tr == 1).all(), "E14 is not paired with E1"
+        abl = json.loads((ROOT / "config" / "tuned_ablation.json").read_text())["params"]
+        w("## E14 — DR-DRR ablation (pre-registered)")
+        w()
+        w(f"Both simplified variants were tuned with DR-DRR's own rule on dev seeds: {abl}. Same traces as E1 "
+          f"({tr.size} (point, seed) groups, one trace each). Paired difference = W(variant) - W(DR-DRR); "
+          "Holm correction over the 14 points of each variant.")
+        w()
+        names14 = ["DRR", "DR-DRR", "DR-DRR-backlog", "DR-DRR-hol", "DR-DRR+damping"]
+        w("| point | " + " | ".join(names14) + " |")
+        w("|---|" + "---|" * len(names14))
+        for pt in e1a.point.unique():
+            g = allr[allr.point == pt]
+            w(f"| {pt} | " + " | ".join(fmt(*ci95(g[g.scheduler == n].W)[:2], 1, 3) for n in names14) + " |")
+        w()
+        verdicts = {}
+        for v in ("DR-DRR-backlog", "DR-DRR-hol"):
+            rows14 = []
+            for pt in e1a.point.unique():
+                g = allr[allr.point == pt]
+                d = (g[g.scheduler == v].set_index("seed").W - g[g.scheduler == "DR-DRR"].set_index("seed").W).dropna()
+                pv = _st.wilcoxon(d).pvalue if np.any(d != 0) else 1.0
+                m, h, _ = ci95(d)
+                rows14.append((pt, m, h, pv))
+            adj = _holm(np.array([r[3] for r in rows14]))
+            better = sum(1 for r, a in zip(rows14, adj) if r[1] > 0 and a < 0.05)    # DR-DRR significantly lower W
+            worse = sum(1 for r, a in zip(rows14, adj) if r[1] < 0 and a < 0.05)
+            verdict = ("the full rule adds value" if better >= 7 and worse <= 2 else
+                       f"{v} suffices" if better <= 2 else "mixed")
+            verdicts[v] = (better, worse, verdict)
+            w(f"**{v} vs DR-DRR**: DR-DRR significantly better at {better}/14 points, worse at {worse}/14 -> **{verdict}**.")
+            w()
+            w("| point | mean W(variant) - W(DR-DRR) ± 95 % CI | Holm p |")
+            w("|---|---|---|")
+            for r, a in zip(rows14, adj):
+                w(f"| {r[0]} | {r[1]:+.3f} ± {r[2]:.3f} | {a:.2g} |")
+            w()
+        st = allr.groupby("scheduler")[[f"{c.name}_starv_count" for c in CLASSES]].sum().sum(axis=1)
+        gp = allr.groupby("scheduler")[[f"{c.name}_gap_max" for c in CLASSES]].max().max(axis=1)
+        w("Starvation episodes (> 100 ms) and the longest service gap over the 14 points: " +
+          "; ".join(f"{n} {int(st[n])} episodes, longest gap {gp[n] * 1e3:.1f} ms" for n in names14) + ".")
+        w()
+        e14_head = (f"10. **DR-DRR ablation (E14)**: against the backlog-only variant the verdict is "
+                    f"'{verdicts['DR-DRR-backlog'][2]}' ({verdicts['DR-DRR-backlog'][0]} better / "
+                    f"{verdicts['DR-DRR-backlog'][1]} worse of 14), against the head-of-line-only variant "
+                    f"'{verdicts['DR-DRR-hol'][2]}' ({verdicts['DR-DRR-hol'][0]} / {verdicts['DR-DRR-hol'][1]}).")
+
+    if (ROOT / "results" / "E15" / "runs.csv").exists():
+        e15 = load("E15")
+        e1a = load("E1")
+        w("## E15 — held-out seeds 201-220 (pre-registered)")
+        w()
+        h1 = h2 = 0
+        inside = {n: 0 for n in ORDER}
+        for pt in e1a.point.unique():
+            a, b = e1a[e1a.point == pt], e15[e15.point == pt]
+            h1 += b.groupby("scheduler").lat_p95.mean().idxmin() == "SP"
+            ma = a.groupby("scheduler").W.mean().drop("SP")
+            mb = b.groupby("scheduler").W.mean().drop("SP")
+            h2 += ma.idxmin() == mb.idxmin()
+            for n in ORDER:
+                m, h, _ = ci95(a[a.scheduler == n].W)
+                inside[n] += abs(b[b.scheduler == n].W.mean() - m) <= h
+        h3 = all(v >= 11 for v in inside.values())
+        w(f"- **H1** SP lowest latency p95 on held-out seeds: {h1}/14 -> {'holds' if h1 == 14 else '**fails**'}.")
+        w(f"- **H2** same best non-SP scheduler as with seeds 101-120: {h2}/14 -> {'holds' if h2 >= 11 else '**fails**'}.")
+        w(f"- **H3** held-out mean W inside the 101-120 interval (points per scheduler): "
+          + ", ".join(f"{n} {v}/14" for n, v in inside.items()) + f" -> {'holds' if h3 else '**fails**'}.")
+        tot_in = sum(inside.values())
+        n_t = 20
+        p_in = 2 * _st.t.cdf(_st.t.ppf(0.975, n_t - 1) / np.sqrt(2), n_t - 1) - 1
+        w(f"- Why H3 can fail by chance: a new mean is itself noisy, so it falls inside the old 95 % interval with "
+          f"probability about {p_in:.2f} (difference of two independent 20-seed means), i.e. about {14 * p_in:.1f} of 14 "
+          f"points per scheduler. Observed overall: {tot_in}/{14 * len(inside)} = {tot_in / (14 * len(inside)):.2f}. "
+          "The registered threshold (>= 11 of 14 for every one of 8 schedulers) was strict; the verdict stays as registered.")
+        w()
+        e15_head = (f"11. **Held-out seeds (E15)**: SP lowest latency {h1}/14; same best non-SP scheduler {h2}/14; "
+                    f"held-out means inside the original intervals for " + ", ".join(f"{n} {v}/14" for n, v in inside.items()) + ".")
+
+    w("## Effect sizes: paired difference in W against DRR (E1, 20 seeds)")
+    w()
+    w("Mean of W(scheduler) - W(DRR) over paired seeds with a 95 % t-interval; negative = better than DRR. "
+      "No equivalence margin was pre-registered, so differences are reported, not classified.")
+    w()
+    e1a = load("E1")
+    e1d = load("E1D")
+    eff = pd.concat([e1a, e1d], ignore_index=True)
+    names_eff = ["SP", "RL-SP+DRR", "DR-DRR", "DR-DRR+damping", "CQDRR", "FuzzyDRR", "RevenueDRR"]
+    w("| point | " + " | ".join(names_eff) + " |")
+    w("|---|" + "---|" * len(names_eff))
+    for pt in ["onoff|0.95", "onoff|1.2", "poisson|0.95", "poisson|1.2"]:
+        g = eff[eff.point == pt]
+        r = g[g.scheduler == "DRR"].set_index("seed").W
+        cells = []
+        for n in names_eff:
+            d = (g[g.scheduler == n].set_index("seed").W - r).dropna()
+            m, h, _ = ci95(d)
+            cells.append(f"{m:+.3f} ± {h:.3f}")
+        w(f"| {pt} | " + " | ".join(cells) + " |")
+    w()
+
     # ---------------- measurement adequacy and robustness
     w("## Measurement adequacy and robustness")
     w()
@@ -861,6 +981,9 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
+    for extra in (e14_head, e15_head):
+        if extra:
+            H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")
     OUT[i:i + 1] = H
     (Path(out) if out else ROOT / "RESULTS.md").write_text("\n".join(OUT), encoding="utf-8")

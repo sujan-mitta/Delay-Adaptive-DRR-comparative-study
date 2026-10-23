@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-23 11:49 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `803154ed67fe7b29`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-23 15:48 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `5cf6ad9dbe9b4c84`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -20,6 +20,8 @@ Generated 2026-10-23 11:49 by `scripts/make_report.py` from `results/*/runs.csv`
 7. **Real-life stress (E11, 8 scenarios)**: SP still gives the lowest latency in all 8; DR-DRR beats DRR in all 8 and is the most robust non-SP scheduler; a non-work-conserving shaper (RL-SP+DRR) behind a shared buffer lets one mislabelled class waste link capacity and raise everyone's loss (section E11).
 8. **More conditions (E12: IMIX sizes, RED queue management, bulk flood, shallow buffer + jumbo)**: SP lowest latency 4/4, no DRR-family starvation 4/4, DR-DRR beats DRR 4/4. Method checks: 100 seeds agree with the 20-seed intervals (8/8); a 10x longer window changes no mean W by more than 6 % (one statistical tie swaps places).
 9. **Published examples (E13)**: 14/16 pre-registered comparisons pass. The DRR trajectory delay of Tabatabaee & Le Boudec (119.256 µs) is reproduced exactly; Bouillard's bounds hold and are 83.8%–99.8% tight; the original DRR and RL-SP-DRR shares are reproduced; SCRR as printed exceeds its own Theorems 1–2 because of the order of two steps in Algorithm 4.
+10. **DR-DRR ablation (E14)**: against the backlog-only variant the verdict is 'the full rule adds value' (9 better / 0 worse of 14), against the head-of-line-only variant 'mixed' (4 / 6).
+11. **Held-out seeds (E15)**: SP lowest latency 14/14; same best non-SP scheduler 14/14; held-out means inside the original intervals for FIFO 13/14, SP 11/14, DRR 14/14, RL-SP+DRR 12/14, DR-DRR 14/14, CQDRR 9/14, FuzzyDRR 14/14, RevenueDRR 12/14.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -490,6 +492,85 @@ Run `20261023-114848` (code 803154ed67fe7b29). Each benchmark rebuilds a setup p
 - **B5** (SCRR theorems): the global-clock advance per round exceeds M and a visit's burst exceeds 2M for SCRR as printed in Algorithm 4. The cause: the pseudo-code closes a finished round one dequeue late, after the next round's first packet has already raised `virtual_dequeue`. A diagnostic variant that closes the round first (added after this result, not pre-registered) exceeds a bound on 0 trace(s), so the theorems hold for the algorithm they describe and the printed ordering differs from it. Our compared SCRR stays as printed.
 - Registered comparisons that fail: B5 SCRR (as printed) max clock advance per round / M (Thm 1: <= 1); B5 SCRR (as printed) max burst of one visit / M (Thm 2: <= 2).
 - Not reproducible: WiOpt 2025 (Mukherjee et al.) Table II: inconsistent units and no stated arrival process.
+
+## E14 — DR-DRR ablation (pre-registered)
+
+Both simplified variants were tuned with DR-DRR's own rule on dev seeds: {'DR-DRR-backlog': {'kappa': 4.0}, 'DR-DRR-hol': {'kappa': 8.0}}. Same traces as E1 (280 (point, seed) groups, one trace each). Paired difference = W(variant) - W(DR-DRR); Holm correction over the 14 points of each variant.
+
+| point | DRR | DR-DRR | DR-DRR-backlog | DR-DRR-hol | DR-DRR+damping |
+|---|---|---|---|---|---|
+| poisson|0.4 | 0.119 ± 0.000 | 0.119 ± 0.000 | 0.119 ± 0.000 | 0.119 ± 0.000 | 0.119 ± 0.000 |
+| onoff|0.4 | 0.144 ± 0.002 | 0.144 ± 0.002 | 0.144 ± 0.002 | 0.144 ± 0.002 | 0.144 ± 0.002 |
+| poisson|0.6 | 0.172 ± 0.001 | 0.172 ± 0.001 | 0.172 ± 0.001 | 0.172 ± 0.001 | 0.172 ± 0.001 |
+| onoff|0.6 | 0.392 ± 0.018 | 0.361 ± 0.012 | 0.361 ± 0.012 | 0.385 ± 0.016 | 0.366 ± 0.012 |
+| poisson|0.8 | 0.216 ± 0.001 | 0.216 ± 0.001 | 0.216 ± 0.001 | 0.216 ± 0.001 | 0.217 ± 0.001 |
+| onoff|0.8 | 1.936 ± 0.103 | 0.843 ± 0.026 | 0.868 ± 0.026 | 0.895 ± 0.017 | 0.878 ± 0.021 |
+| poisson|0.9 | 0.328 ± 0.012 | 0.311 ± 0.007 | 0.312 ± 0.007 | 0.319 ± 0.009 | 0.312 ± 0.007 |
+| onoff|0.9 | 2.847 ± 0.085 | 1.181 ± 0.026 | 1.206 ± 0.031 | 1.113 ± 0.019 | 1.146 ± 0.023 |
+| poisson|0.95 | 0.689 ± 0.057 | 0.447 ± 0.006 | 0.449 ± 0.007 | 0.505 ± 0.010 | 0.453 ± 0.007 |
+| onoff|0.95 | 3.126 ± 0.084 | 1.326 ± 0.028 | 1.352 ± 0.032 | 1.215 ± 0.018 | 1.263 ± 0.021 |
+| poisson|1.05 | 4.315 ± 0.060 | 0.901 ± 0.035 | 1.138 ± 0.034 | 0.634 ± 0.004 | 0.613 ± 0.005 |
+| onoff|1.05 | 3.754 ± 0.151 | 1.577 ± 0.026 | 1.621 ± 0.029 | 1.416 ± 0.021 | 1.484 ± 0.020 |
+| poisson|1.2 | 4.897 ± 0.014 | 1.326 ± 0.014 | 1.393 ± 0.018 | 0.646 ± 0.004 | 0.652 ± 0.005 |
+| onoff|1.2 | 6.351 ± 0.383 | 1.990 ± 0.028 | 1.993 ± 0.034 | 1.735 ± 0.027 | 1.897 ± 0.024 |
+
+**DR-DRR-backlog vs DR-DRR**: DR-DRR significantly better at 9/14 points, worse at 0/14 -> **the full rule adds value**.
+
+| point | mean W(variant) - W(DR-DRR) ± 95 % CI | Holm p |
+|---|---|---|
+| poisson|0.4 | +0.000 ± 0.000 | 1 |
+| onoff|0.4 | +0.000 ± 0.000 | 1 |
+| poisson|0.6 | +0.000 ± 0.000 | 1 |
+| onoff|0.6 | +0.000 ± 0.000 | 0.0068 |
+| poisson|0.8 | -0.000 ± 0.000 | 0.54 |
+| onoff|0.8 | +0.025 ± 0.007 | 2.7e-05 |
+| poisson|0.9 | +0.001 ± 0.000 | 0.0039 |
+| onoff|0.9 | +0.025 ± 0.014 | 0.0071 |
+| poisson|0.95 | +0.002 ± 0.001 | 0.0043 |
+| onoff|0.95 | +0.025 ± 0.016 | 0.029 |
+| poisson|1.05 | +0.237 ± 0.030 | 2.7e-05 |
+| onoff|1.05 | +0.044 ± 0.013 | 4.6e-05 |
+| poisson|1.2 | +0.067 ± 0.019 | 0.0001 |
+| onoff|1.2 | +0.003 ± 0.030 | 1 |
+
+**DR-DRR-hol vs DR-DRR**: DR-DRR significantly better at 4/14 points, worse at 6/14 -> **mixed**.
+
+| point | mean W(variant) - W(DR-DRR) ± 95 % CI | Holm p |
+|---|---|---|
+| poisson|0.4 | +0.000 ± 0.000 | 1 |
+| onoff|0.4 | +0.000 ± 0.000 | 0.95 |
+| poisson|0.6 | +0.000 ± 0.000 | 1 |
+| onoff|0.6 | +0.024 ± 0.004 | 2.7e-05 |
+| poisson|0.8 | -0.000 ± 0.000 | 0.26 |
+| onoff|0.8 | +0.052 ± 0.014 | 4.8e-05 |
+| poisson|0.9 | +0.008 ± 0.002 | 2.7e-05 |
+| onoff|0.9 | -0.068 ± 0.016 | 2.7e-05 |
+| poisson|0.95 | +0.058 ± 0.004 | 2.7e-05 |
+| onoff|0.95 | -0.112 ± 0.017 | 2.7e-05 |
+| poisson|1.05 | -0.267 ± 0.034 | 2.7e-05 |
+| onoff|1.05 | -0.162 ± 0.017 | 2.7e-05 |
+| poisson|1.2 | -0.679 ± 0.013 | 2.7e-05 |
+| onoff|1.2 | -0.255 ± 0.033 | 2.7e-05 |
+
+Starvation episodes (> 100 ms) and the longest service gap over the 14 points: DRR 0 episodes, longest gap 4.6 ms; DR-DRR 0 episodes, longest gap 20.3 ms; DR-DRR-backlog 0 episodes, longest gap 20.3 ms; DR-DRR-hol 0 episodes, longest gap 20.3 ms; DR-DRR+damping 0 episodes, longest gap 19.8 ms.
+
+## E15 — held-out seeds 201-220 (pre-registered)
+
+- **H1** SP lowest latency p95 on held-out seeds: 14/14 -> holds.
+- **H2** same best non-SP scheduler as with seeds 101-120: 14/14 -> holds.
+- **H3** held-out mean W inside the 101-120 interval (points per scheduler): FIFO 13/14, SP 11/14, DRR 14/14, RL-SP+DRR 12/14, DR-DRR 14/14, CQDRR 9/14, FuzzyDRR 14/14, RevenueDRR 12/14 -> **fails**.
+- Why H3 can fail by chance: a new mean is itself noisy, so it falls inside the old 95 % interval with probability about 0.84 (difference of two independent 20-seed means), i.e. about 11.8 of 14 points per scheduler. Observed overall: 99/112 = 0.88. The registered threshold (>= 11 of 14 for every one of 8 schedulers) was strict; the verdict stays as registered.
+
+## Effect sizes: paired difference in W against DRR (E1, 20 seeds)
+
+Mean of W(scheduler) - W(DRR) over paired seeds with a 95 % t-interval; negative = better than DRR. No equivalence margin was pre-registered, so differences are reported, not classified.
+
+| point | SP | RL-SP+DRR | DR-DRR | DR-DRR+damping | CQDRR | FuzzyDRR | RevenueDRR |
+|---|---|---|---|---|---|---|---|
+| onoff|0.95 | -2.591 ± 0.074 | +0.034 ± 0.007 | -1.799 ± 0.071 | -1.863 ± 0.072 | -1.342 ± 0.083 | -0.400 ± 0.045 | -1.701 ± 0.072 |
+| onoff|1.2 | -5.539 ± 0.391 | -2.297 ± 0.362 | -4.362 ± 0.386 | -4.454 ± 0.384 | -3.839 ± 0.416 | -0.029 ± 0.188 | -3.966 ± 0.422 |
+| poisson|0.95 | -0.557 ± 0.048 | +0.007 ± 0.002 | -0.242 ± 0.053 | -0.236 ± 0.053 | -0.292 ± 0.055 | -0.063 ± 0.026 | -0.275 ± 0.057 |
+| poisson|1.2 | -4.318 ± 0.013 | +0.013 ± 0.007 | -3.571 ± 0.014 | -4.245 ± 0.013 | -4.314 ± 0.013 | -2.942 ± 0.041 | -4.316 ± 0.013 |
 
 ## Measurement adequacy and robustness
 

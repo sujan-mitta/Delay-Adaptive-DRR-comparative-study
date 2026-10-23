@@ -23,6 +23,7 @@ python scripts/run_experiments.py ES   # SCRR (NSDI 2025), optional ninth schedu
 python scripts/run_experiments.py E11  # real-life stress scenarios (jumbo, tiny, heavy-tail, sync, flash, fade, abuse, ramp)
 python scripts/run_experiments.py E12  # IMIX, RED AQM, bulk flood, shallow buffer + jumbo; window and seed-count checks
 python scripts/run_benchmarks.py       # E13: published examples (DRR trajectory, DRR bounds, original DRR, RL-SP-DRR, SCRR theorems)
+python scripts/e14_ablation.py         # E14: DR-DRR ablation; E15: held-out seeds 201-220
 python scripts/timeseries.py           # quanta traces for Figure 5
 python scripts/make_figures.py         # figures/ from results/*.csv only
 python scripts/make_report.py          # RESULTS.md from results/*.csv only
@@ -58,7 +59,7 @@ skipped, nothing is overwritten. To start a clean run, move `results/` aside (ne
 | `tools/mutation_check.py` | plants realistic bugs in temp copies to check the tests catch them |
 | `tools/regress_check.py` | re-simulates every saved run; all metrics must match exactly |
 | `drrsim/literature.py`, `scripts/run_benchmarks.py` | E13: setups from published papers rebuilt and compared with their numbers |
-| `docs/` | algorithm spec, protocol + deviation log, reference check, testing and mutation report |
+| `docs/` | algorithm spec, protocol + deviation log, reference check, testing and mutation report, changelog |
 | `results/` | every run as CSV + manifests; `_superseded*/` keeps earlier runs (never deleted) |
 
 ## Metric definitions (one definition for every scheduler)

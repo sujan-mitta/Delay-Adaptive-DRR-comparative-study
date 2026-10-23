@@ -9,6 +9,8 @@ from .schedulers import ADAPTIVE, SCHEDULERS
 
 DEV_SEEDS = list(range(1, 6))
 SEEDS = list(range(101, 121))
+HELDOUT_SEEDS = list(range(201, 221))     # E15: never used before the held-out check
+ABLATION = ["DR-DRR-backlog", "DR-DRR-hol"]
 LOADS = [0.4, 0.6, 0.8, 0.9, 0.95, 1.05, 1.2]
 BURSTS = {"small": 0.01, "medium": 0.05, "large": 0.2}
 MIXES = {"A": (0.2, 0.4, 0.4), "B": (0.4, 0.3, 0.3), "C": (0.1, 0.2, 0.7)}
@@ -56,6 +58,15 @@ def tuning_tasks(extra=None):
         for s in DEV_SEEDS:
             out.append(task("TUNE", f"ref|load={load}", "DRR", s, onoff(load), {}, {"knob": "", "value": ""}))
     return out
+
+
+ABLATION_TUNED_PATH = ROOT / "config" / "tuned_ablation.json"
+
+
+def load_ablation_tuned() -> dict:
+    if not ABLATION_TUNED_PATH.exists():
+        raise SystemExit("config/tuned_ablation.json missing: run scripts/e14_ablation.py first")
+    return json.loads(ABLATION_TUNED_PATH.read_text())["params"]
 
 
 def load_tuned() -> dict:
@@ -178,6 +189,23 @@ def experiment_tasks(exp: str, tuned: dict):
                   for name in SCHEDULERS for s in range(101, 111)]
         t += [task("E12", "seeds|0.95", name, s, onoff(0.95), tuned.get(name, {}), {"check": "seeds", "base": "onoff|0.95"})
               for name in SCHEDULERS for s in range(101, 201)]   # M2: 100 seeds
+    elif exp == "E14TUNE":  # E14: tune kappa of the two ablation variants exactly like DR-DRR (dev seeds)
+        knob, values, lo, hi = TUNE_GRID["DR-DRR"]
+        for name in ABLATION:
+            for v in list(values) + list(lo) + list(hi):
+                for load in (0.95, 1.2):
+                    for s in DEV_SEEDS:
+                        t.append(task("E14TUNE", f"{knob}={v}|load={load}", name, s, onoff(load), {knob: v},
+                                      {"knob": knob, "value": v}))
+    elif exp == "E14":  # pre-registered DR-DRR ablation (protocol section E14); paired with E1 traces
+        abl = load_ablation_tuned()
+        for load in LOADS:
+            for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
+                t += [task("E14", pt, n, s, cfg, abl[n]) for n in ABLATION for s in SEEDS]
+    elif exp == "E15":  # pre-registered held-out seeds (protocol section E15)
+        for load in LOADS:
+            t += _all("E15", f"poisson|{load}", poisson(load), tuned, seeds=HELDOUT_SEEDS)
+            t += _all("E15", f"onoff|{load}", onoff(load), tuned, seeds=HELDOUT_SEEDS)
     elif exp == "E7":
         t += _all("E7", "poisson|0.3", poisson(0.3), tuned)
     else:

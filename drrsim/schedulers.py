@@ -306,11 +306,16 @@ class SQDRR(_AdaptiveDRR):
         for c in range(K):
             phi = self.Q[c] / tot
             drain = 8.0 * v.qbytes[c] / (v.link_rate * phi)
-            risk = max(v.hol(c, now), drain) / D_TARGET[c]
+            risk = self._delay_estimate(v.hol(c, now), drain) / D_TARGET[c]
             q = BASE_Q[c] * (1.0 + p["kappa"] * max(0.0, risk - p["theta"]))
             target = min(max(q, BASE_Q[c]), p["qmax_mult"] * BASE_Q[c])
             lam = p["smooth"]   # E9 damping ablation; 1 = rule as specified
             self.Q[c] = target if lam == 1.0 else (1 - lam) * self.Q[c] + lam * target
+
+    @staticmethod
+    def _delay_estimate(hol, drain):
+        """DR-DRR's delay estimate: the larger of the head-of-line wait and the predicted drain time."""
+        return max(hol, drain)
 
 
 class CQDRRVariant(_AdaptiveDRR):
@@ -586,6 +591,24 @@ class RevenueDRR(_AdaptiveDRR):
             self.Q[c] = min(FRAME, max(p["qmin"], FRAME * alloc[c] / C))
 
 
+class SQDRRBacklog(SQDRR):
+    """E14 ablation: DR-DRR whose delay estimate uses the predicted drain time of the backlog only."""
+    name = "DR-DRR-backlog"
+
+    @staticmethod
+    def _delay_estimate(hol, drain):
+        return drain
+
+
+class SQDRRHol(SQDRR):
+    """E14 ablation: DR-DRR whose delay estimate uses the head-of-line waiting time only."""
+    name = "DR-DRR-hol"
+
+    @staticmethod
+    def _delay_estimate(hol, drain):
+        return hol
+
+
 class SQDRRDamped(SQDRR):
     """DR-DRR with quanta smoothing λ = 0.5 (E9 finding, confirmed on dev seeds; protocol section E1D)."""
     name = "DR-DRR+damping"
@@ -664,7 +687,7 @@ class SCRR(Scheduler):
 
 
 MAIN = (FIFO, StrictPriority, DRR, RLSPDRR, SQDRR, CQDRR, FuzzyDRR, RevenueDRR)
-REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService)}
+REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService, SQDRRBacklog, SQDRRHol)}
 SCHEDULERS = [cls.name for cls in MAIN]   # the 8 compared schedulers; variants are run separately
 ADAPTIVE = [c.name for c in MAIN if c.adaptive]
 
