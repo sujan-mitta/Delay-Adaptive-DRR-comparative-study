@@ -1,6 +1,6 @@
 # Mutation check
 
-52/52 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+55/55 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
@@ -11,7 +11,7 @@
 | E5 | bit/byte conversion error | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | E6 | buffer occupancy not released when a packet starts service | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S1 | DRR keeps its deficit after the queue empties | equivalent | `` |
-| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_reference_agreement_on_realistic_traces[0.6-onoff]` |
+| S2 | DRR needs strictly more deficit than the packet size | killed | `tests/test_reference.py::test_rlsp_matches_reference` |
 | S3 | new DRR class jumps the round-robin queue | killed | `tests/test_core.py::test_accounting_and_fifo_within_class[DRR]` |
 | S4 | FIFO serves the class of the newest queued packet | killed | `tests/test_core.py::test_toy_fifo_exact` |
 | S5 | strict priority order reversed | killed | `tests/test_core.py::test_toy_sp_exact` |
@@ -58,6 +58,9 @@
 | C3 | CQDRR skip-ahead jumps past the round in which a class can send | killed | `tests/test_matrix.py::test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta` |
 | C4 | CQDRR skip-ahead disabled (tiny quanta hang again: the round-6 bug) | killed | `tests/test_matrix.py::test_extreme_parameters_finish_fast_and_keep_invariants[CQDRR-tiny]` |
 | C5 | CQDRR skip credits only one class | killed | `tests/test_matrix.py::test_skip_rounding_note_cqdrr_exact_with_binary_fraction_quanta` |
+| H1 | ON/OFF period limit too loose (1 ns ON periods hang generation again) | killed | `tests/test_matrix.py::test_onoff_periods_too_short_rejected_not_hung[1e-09]` |
+| H2 | link rate below 1 b/s accepted (service times can overflow) | killed | `tests/test_matrix.py::test_link_rate_outside_physical_range_rejected[0.5]` |
+| H3 | engine accepts an overflowing completion time as 'idle' | killed | `tests/test_matrix.py::test_engine_refuses_overflowing_completion_even_if_validation_is_bypassed` |
 
 **Equivalent mutants**
 

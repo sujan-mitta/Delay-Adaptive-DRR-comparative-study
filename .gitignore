@@ -18,3 +18,6 @@ docs/VENUE.md
 **/rerun_log.txt
 **/confirm_out.txt
 .hypothesis/
+
+# paper drafts stay private until the author decides
+paper_draft/
