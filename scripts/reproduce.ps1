@@ -15,6 +15,8 @@ Step "python scripts/run_experiments.py E11"        # real-life stress scenarios
 Step "python scripts/run_experiments.py E12"        # more real-life conditions + checks of the method
 Step "python scripts/run_benchmarks.py"             # E13: published examples (new results folder per run)
 Step "python scripts/e14_ablation.py"               # E14 DR-DRR ablation (tunes variants on dev seeds) + E15 held-out seeds
+Step "python scripts/e19_static.py"               # E18/E19: static DRR tuned on dev seeds; E19H on fresh seeds
+Step "python tools/run_ledger.py"                  # run ledger (every count in the paper)
 Step "python tools/regress_check.py"                # every saved run must re-simulate exactly
 Step "python scripts/timeseries.py"
 Step "python scripts/make_figures.py"

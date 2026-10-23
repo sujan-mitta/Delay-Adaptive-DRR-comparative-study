@@ -44,6 +44,7 @@ def main():
                                                  "ties within 1% -> smallest quanta", "seeds": "1-5",
                                                  "quanta": quanta}, indent=1))
     run_tasks(ROOT / "results" / "E19", experiment_tasks("E19", load_tuned()))
+    run_tasks(ROOT / "results" / "E19H", experiment_tasks("E19H", load_tuned()))
 
 
 if __name__ == "__main__":

@@ -366,7 +366,7 @@ def main(out=None):
     w()
     w("![buffer and mix](figures/fig8_buffer_and_mix.png)")
     w()
-    rows = []
+    rows, win_w = [], []
     for e in ["E1", "E2", "E3", "E4", "E7", "E8"]:
         rs = rank_stability(data[e], "W")
         rs2 = rank_stability(data[e][data[e].scheduler != "SP"], "W", order=[s for s in ORDER if s != "SP"])
@@ -375,14 +375,16 @@ def main(out=None):
             g2 = rs2[rs2.point == p].set_index("scheduler")
             top, nosp = g.mean_rank.idxmin(), g2.mean_rank.idxmin()
             rows.append((e, p, top, g.loc[top, "first_share"], nosp, g2.loc[nosp, "first_share"]))
+            dd_ = data[e][(data[e].point == p) & (data[e].scheduler != "SP")]
+            win_w.append(dd_.groupby("scheduler").W.mean().idxmin())      # same definition as E15, E18 and the paper
     w("| exp | point | best mean rank on W | its share of seeds ranked 1st | best excluding SP | its share of seeds 1st (SP excluded) |")
     w("|---|---|---|---|---|---|")
     for e, p, top, sh, nosp, sh2 in rows:
         w(f"| {e} | {p.replace('|', ' ')} | {top} | {sh:.0%} | {nosp} | {sh2:.0%} |")
     w()
     w("Facts:")
-    cnt = pd.Series([r[4] for r in rows]).value_counts()
-    w("- Best non-SP scheduler on W across these points: " + ", ".join(f"{k} {v}/{len(rows)}" for k, v in cnt.items()) + ".")
+    cnt = pd.Series(win_w).value_counts()
+    w("- Best non-SP scheduler by lowest mean W across these points (the table above ranks by mean rank, which can differ at close points): " + ", ".join(f"{k} {v}/{len(rows)}" for k, v in cnt.items()) + ".")
     e7 = data["E7"]
     span = e7.groupby("scheduler").W.mean()
     w(f"- Low-load control E7 (Poisson 0.3): W spans {span.min():.3f}–{span.max():.3f} across schedulers; "
@@ -923,6 +925,38 @@ def main(out=None):
         e19_head = (f"15. **Tuned static DRR (E19)**: quanta {q19}; DR-DRR better at {better19}/14 points, worse at "
                     f"{worse19}/14 -> {v19}.")
 
+    e19h_head = None
+    if (ROOT / "results" / "E19H" / "runs.csv").exists():
+        e19h = load("E19H")
+        e15b = load("E15")
+        rows19h = []
+        for pt in e15b.point.unique():
+            a = e15b[(e15b.point == pt) & (e15b.scheduler == "DR-DRR")].set_index("seed").sort_index()
+            b = e19h[e19h.point == pt].set_index("seed").sort_index()
+            assert (a.trace == b.trace).all(), "E19H not paired with E15"
+            dd = (b.W - a.W).dropna()
+            pv = _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0
+            m, h, _ = ci95(dd)
+            rows19h.append((pt, a.W.mean(), b.W.mean(), m, h, pv))
+        adj = _holm(np.array([r[5] for r in rows19h]))
+        bet = sum(1 for r, x in zip(rows19h, adj) if r[3] > 0 and x < 0.05)
+        wor = sum(1 for r, x in zip(rows19h, adj) if r[3] < 0 and x < 0.05)
+        v = "adaptation adds value" if bet >= 8 and wor <= 2 else "static suffices" if bet <= 2 else "mixed"
+        w("## E19H — static DRR on fresh seeds 201-220 (pre-registered)")
+        w()
+        w("Same quanta as E19 (no retuning), paired by trace with DR-DRR's E15 runs. Difference = W(static) - W(DR-DRR).")
+        w()
+        w("| point | W DR-DRR | W static DRR | difference ± 95 % CI | Holm p |")
+        w("|---|---|---|---|---|")
+        for r, x in zip(rows19h, adj):
+            w(f"| {r[0]} | {r[1]:.3f} | {r[2]:.3f} | {r[3]:+.3f} ± {r[4]:.3f} | {x:.2g} |")
+        w()
+        e19_better = [r[0] for r, x in zip(rows19h, adj) if r[3] < 0 and x < 0.05]
+        w(f"**Verdict: DR-DRR better at {bet}/14, worse at {wor}/14 -> {v}.** Static DRR is better at: {', '.join(e19_better) or 'none'}.")
+        w()
+        e19h_head = (f"18. **Static DRR on fresh seeds (E19H)**: DR-DRR better at {bet}/14, worse at {wor}/14 -> {v} "
+                     f"(E19 on the reporting seeds: 6 and 8).")
+
     e16b_head = e17b_head = None
     e16b_dirs = sorted(d for d in (ROOT / "results" / "E16b").glob("*") if d.is_dir()) if (ROOT / "results" / "E16b").exists() else []
     if e16b_dirs:
@@ -1219,7 +1253,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")

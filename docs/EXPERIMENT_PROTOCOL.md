@@ -75,6 +75,10 @@ See `drrsim/metrics.py` docstring; summarised in README. Statistics: mean over 2
    if the pick is on an edge. Full table: `results/TUNE/tuning_summary.csv`.
    *Finding carried forward:* throughput-based Jain is blind to the cost of
    prioritisation in this setting; we therefore also report per-class delay costs.
+3. **E8 (partitioned buffer) added after E1.** A shared tail-drop buffer makes throughput shares scheduler-independent for
+   work-conserving schedulers, so fairness differences could only show with per-class buffers; E8 was therefore added after the
+   first E1 results and is exploratory. (It was recorded in the experiment index but not numbered here until the 2026-10-23
+   audit, which found the numbering skipped 3.)
 
 ## E9 — SQ-DRR damping ablation (pre-registered 2026-10-22, before running)
 Question (RQ3): does SQ-DRR's weight oscillation *cause* worse tail delay?
@@ -394,3 +398,14 @@ re-evaluated under each; verdict "mapping-robust" if R1 and R2 hold at 3/3 loads
 - **E19 verdict "mixed"**: a static DRR with quanta (6000, 6000, 1500), tuned on dev seeds like DR-DRR, has lower W than
   DR-DRR at 8 of 14 points (all of the overloaded ones, by up to 0.74) and higher at 6 (all the lightly loaded ones). The
   paper no longer presents adaptation as necessary.
+
+## E19H — static DRR on fresh seeds (pre-registered 2026-10-23, before running)
+E19 evaluated the tuned static quanta on the reporting seeds 101-120 (the same seeds as DR-DRR). To remove any doubt that the
+comparison depends on those seeds, the same quanta (no retuning; config/tuned_static_drr.json) are run at the 14 E1 points on
+the fresh seeds 201-220 and compared, paired by trace, with DR-DRR's E15 runs on the same seeds. Same verdict rule as E19:
+"adaptation adds value" if DR-DRR has lower W at >= 8 of 14 points (Holm-corrected paired Wilcoxon) and higher at <= 2;
+"static suffices" if DR-DRR is better at <= 2; otherwise "mixed". Prediction written before running: the E19 pattern (static
+better at the heavy and bursty points, DR-DRR better at light load) repeats, i.e. the verdict is again "mixed".
+Tuning budgets, for the record: DR-DRR's kappa was chosen among 5 grid values (no edge extension was needed); the static
+quanta among 16 settings (4 x 4 grid), with the same objective, constraint, tie rule and development seeds. The static search was
+therefore larger, not smaller.

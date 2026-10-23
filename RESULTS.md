@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-23 20:04 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `cc46741e6d832898`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-23 21:40 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `9ae5c371db290ba7`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -13,7 +13,7 @@ Generated 2026-10-23 20:04 by `scripts/make_report.py` from `results/*/runs.csv`
 
 1. **Strict Priority** gives the lowest latency-class p95 at 14/14 E1 points, but starves other classes under overload.
 2. **Starvation** (> 100 ms backlogged without service), episodes summed over E1–E8 (longest single gap): FIFO 1142 (288 ms), SP 21286 (2389 ms), CQDRR 12666 (444 ms); every other scheduler 0. FIFO has no priorities: its episodes are head-of-line waits in one long FIFO queue (mostly E4's 500 kB buffer), not service denial.
-3. **No single best adaptive scheduler**: best non-SP on W — DR-DRR 14/29, RL-SP+DRR 5/29, RevenueDRR 4/29, CQDRR 4/29, FuzzyDRR 2/29.
+3. **No single best adaptive scheduler**: best non-SP on W — DR-DRR 14/29, CQDRR 5/29, RL-SP+DRR 4/29, RevenueDRR 4/29, FuzzyDRR 2/29.
 4. **Shared tail-drop buffer fixes throughput shares**: Jain's index >= 0.9981 for every scheduler and run in E1 ON/OFF; fairness differences appear only with a partitioned buffer (E8).
 5. **Weight oscillation** helps under bursts and hurts under smooth overload (E9 + control E9C); damping (lambda = 0.5) lowers W by up to 51%.
 6. **Paper-trend checks**: RL-SP+DRR reproduced; CQDRR not reproduced (4/8); SCRR latency reproduced (8/8), fairness reproduced.
@@ -28,6 +28,7 @@ Generated 2026-10-23 20:04 by `scripts/make_report.py` from `results/*/runs.csv`
 15. **Tuned static DRR (E19)**: quanta [6000.0, 6000.0, 1500.0]; DR-DRR better at 6/14 points, worse at 8/14 -> mixed.
 16. **Kernel at 1 Mb/s (E16b)**: kernel waiting times match the simulator's prediction within the registered tolerance in 26/27 cells (18/27 at 10 Mb/s) and the scheduler order matches at 3/3 points.
 17. **Class-mapping sensitivity (E17b)**: with two alternative mappings (strict ports; packet size), SP is still lowest at every load and DR-DRR still beats DRR: robust.
+18. **Static DRR on fresh seeds (E19H)**: DR-DRR better at 6/14, worse at 8/14 -> mixed (E19 on the reporting seeds: 6 and 8).
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -321,7 +322,7 @@ W by arrival process (load 0.9, E3):
 | E8 | partitioned poisson1.2 | SP | 100% | RevenueDRR | 100% |
 
 Facts:
-- Best non-SP scheduler on W across these points: DR-DRR 14/29, RL-SP+DRR 5/29, RevenueDRR 4/29, CQDRR 4/29, FuzzyDRR 2/29.
+- Best non-SP scheduler by lowest mean W across these points (the table above ranks by mean rank, which can differ at close points): DR-DRR 14/29, CQDRR 5/29, RL-SP+DRR 4/29, RevenueDRR 4/29, FuzzyDRR 2/29.
 - Low-load control E7 (Poisson 0.3): W spans 0.089–0.110 across schedulers; latency-class p95 spans 0.89–1.10 ms (differences vanish as expected).
 
 ## E11 — Do the findings survive real-life conditions? (pre-registered)
@@ -692,6 +693,29 @@ Static quanta tuned on dev seeds: [6000.0, 6000.0, 1500.0]. Paired difference = 
 | onoff|1.2 | 1.990 | 1.457 | -0.533 ± 0.062 | 2.7e-05 |
 
 **Verdict: DR-DRR better at 6/14, worse at 8/14 -> mixed.**
+
+## E19H — static DRR on fresh seeds 201-220 (pre-registered)
+
+Same quanta as E19 (no retuning), paired by trace with DR-DRR's E15 runs. Difference = W(static) - W(DR-DRR).
+
+| point | W DR-DRR | W static DRR | difference ± 95 % CI | Holm p |
+|---|---|---|---|---|
+| poisson|0.4 | 0.119 | 0.124 | +0.005 ± 0.000 | 2.7e-05 |
+| onoff|0.4 | 0.145 | 0.176 | +0.031 ± 0.002 | 2.7e-05 |
+| poisson|0.6 | 0.171 | 0.199 | +0.027 ± 0.001 | 2.7e-05 |
+| onoff|0.6 | 0.357 | 0.378 | +0.022 ± 0.008 | 4.8e-05 |
+| poisson|0.8 | 0.216 | 0.315 | +0.099 ± 0.002 | 2.7e-05 |
+| onoff|0.8 | 0.828 | 0.523 | -0.305 ± 0.020 | 2.7e-05 |
+| poisson|0.9 | 0.318 | 0.396 | +0.079 ± 0.007 | 2.7e-05 |
+| onoff|0.9 | 1.177 | 0.738 | -0.439 ± 0.023 | 2.7e-05 |
+| poisson|0.95 | 0.454 | 0.435 | -0.019 ± 0.006 | 2.7e-05 |
+| onoff|0.95 | 1.352 | 0.923 | -0.429 ± 0.032 | 2.7e-05 |
+| poisson|1.05 | 0.931 | 0.533 | -0.398 ± 0.026 | 2.7e-05 |
+| onoff|1.05 | 1.600 | 1.168 | -0.432 ± 0.033 | 2.7e-05 |
+| poisson|1.2 | 1.331 | 0.584 | -0.748 ± 0.011 | 2.7e-05 |
+| onoff|1.2 | 2.009 | 1.461 | -0.548 ± 0.090 | 2.7e-05 |
+
+**Verdict: DR-DRR better at 6/14, worse at 8/14 -> mixed.** Static DRR is better at: onoff|0.8, onoff|0.9, poisson|0.95, onoff|0.95, poisson|1.05, onoff|1.05, poisson|1.2, onoff|1.2.
 
 ## E16b — kernel check at 1 Mb/s (pre-registered)
 

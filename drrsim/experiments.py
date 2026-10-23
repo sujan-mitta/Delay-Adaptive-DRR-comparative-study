@@ -226,6 +226,11 @@ def experiment_tasks(exp: str, tuned: dict):
         for load in LOADS:
             for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
                 t += [task("E19", pt, "DRR", s, cfg, {"quanta": q}) for s in SEEDS]
+    elif exp == "E19H":  # tuned static DRR on the fresh seeds, paired with E15's DR-DRR (protocol E19H)
+        q = load_static_tuned()
+        for load in LOADS:
+            for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
+                t += [task("E19H", pt, "DRR", s, cfg, {"quanta": q}) for s in HELDOUT_SEEDS]
     elif exp == "E7":
         t += _all("E7", "poisson|0.3", poisson(0.3), tuned)
     else:
