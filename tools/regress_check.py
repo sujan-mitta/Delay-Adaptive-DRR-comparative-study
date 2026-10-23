@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT))
 from drrsim.experiments import EXPERIMENTS, experiment_tasks, load_tuned, tuning_tasks  # noqa: E402
 from drrsim.runner import _execute, key  # noqa: E402
 
-ALL_EXPS = ["TUNE"] + EXPERIMENTS + ["E9C", "DEVD", "E1D", "E1V", "ES", "E11", "E12", "E14TUNE", "E14", "E15"]
+ALL_EXPS = ["TUNE"] + EXPERIMENTS + ["E9C", "DEVD", "E1D", "E1V", "ES", "E11", "E12", "E14TUNE", "E14", "E15", "E19TUNE", "E19"]
 
 
 def _tasks_for(e, tuned):

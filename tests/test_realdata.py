@@ -92,3 +92,23 @@ def test_window_scaling_gives_exact_offered_load(load):
 
 def test_wsl_path_helper():
     assert E16.wsl_path(Path("C:/Users/x/y.csv")) == "/mnt/c/Users/x/y.csv"
+
+
+@pytest.mark.parametrize("proto, sport, dport, size, strict, by_size", [
+    (17, 40000, 53, 80, 0, 0), (17, 123, 123, 90, 0, 0), (1, 0, 0, 84, 0, 0),
+    (17, 20000, 9999, 200, 2, 0),            # RTP-range UDP: latency in the registered mapping, not in the strict one
+    (17, 51000, 443, 1200, 1, 1), (17, 51000, 443, 250, 1, 0), (6, 51000, 443, 1500, 2, 2), (6, 40000, 80, 300, 2, 0),
+    (6, 40000, 80, 301, 2, 2),
+])
+def test_alternative_class_mappings(proto, sport, dport, size, strict, by_size):
+    assert E17.classify_strict(proto, sport, dport) == strict
+    assert E17.classify_size(proto, sport, dport, size) == by_size
+
+
+def test_static_drr_and_ablation_tasks_are_paired_with_e1_seeds():
+    from drrsim.experiments import SEEDS, STATIC_GRID, experiment_tasks
+    assert len(experiment_tasks("E19TUNE", {})) == len(STATIC_GRID) ** 2 * 2 * 5
+    if (ROOT / "config" / "tuned_static_drr.json").exists():
+        t = experiment_tasks("E19", {})
+        assert len(t) == 14 * len(SEEDS) and {x["scheduler"] for x in t} == {"DRR"}
+        assert {x["seed"] for x in t} == set(SEEDS) and len({x["point"] for x in t}) == 14

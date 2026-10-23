@@ -350,3 +350,47 @@ Question: do the main findings hold for real packet arrivals and sizes?
   the mapping was not changed after seeing the data. The derived arrays are not redistributed (regenerate them with
   `scripts/e17_realtrace.py parse`). Results: R1, R2, R3 hold at 3/3 loads; the best non-SP scheduler is CQDRR at all
   three loads (on synthetic traffic it is usually DR-DRR).
+
+## E18 — is the ranking an artefact of the score W? (pre-registered 2026-10-23, before computing any new metric)
+W uses the same per-class delay targets that DR-DRR uses internally, which could favour delay-target-aware schedulers.
+We re-score the saved runs (E1-E8, E11, E12, E17; no new simulation) with three scores that do not use our targets:
+- S1 regret: for each run, max over classes of p99_i(scheduler) / min over schedulers of p99_i at that point and seed
+  (how far the worst class is from the best any scheduler achieved for it);
+- S2 Borda: mean over classes of the scheduler's rank by p99_i at that point (1 = best), averaged over seeds;
+- S3 alternative targets: W recomputed with D = (20, 100, 1000) ms and with equal targets D = (50, 50, 50) ms.
+Verdict: "DR-DRR's lead is not an artefact of W" if, among non-SP schedulers, DR-DRR is the most frequent winner under
+at least 3 of the 4 scores (S1, S2, S3a, S3b) across the same 29 operating points used for W; "artefact" if it is the
+most frequent winner under at most 1; otherwise "partly".
+
+## E19 — does a tuned static DRR match DR-DRR? (pre-registered 2026-10-23)
+If fixed, well-chosen quanta did as well, adaptation would not be needed. Static DRR quanta (Q_lat, Q_vid) are tuned on
+dev seeds 1-5 by W with the main tuning rule (ON/OFF loads 0.95 and 1.2), grid {1500, 3000, 6000, 12000}^2 with
+Q_blk = 1500; the chosen pair is run at the 14 E1 points with seeds 101-120 (paired with E1).
+Verdict: "adaptation adds value" if DR-DRR has lower W than tuned static DRR at >= 8 of 14 points (paired Wilcoxon,
+Holm over 14) and higher at <= 2; "static suffices" if DR-DRR is better at <= 2; otherwise "mixed".
+
+## E16b — kernel check at 1 Mb/s (pre-registered 2026-10-23)
+E16's absolute delays were limited by virtual-machine timer stalls of the order of 0.1 ms against 0.16-1.2 ms packet
+times. At 1 Mb/s packet times are 10x longer, so the same stalls matter 10x less. Same testbed with tbf at 1 Mb/s; the
+E16 traces (first 3 s) with every time multiplied by 10. Prediction from the simulator's exact scale invariance (FIFO,
+SP, DRR): kernel waiting times = 10 x the simulator's at 10 Mb/s. K1b: kernel mean within 10 % + 5 ms (the 0.5 ms
+tolerance scaled by 10) of the prediction in >= 24 of 27 cells; K2b: same scheduler order by latency-class p95 at 3/3.
+
+## E17b — sensitivity to the real-traffic class mapping (pre-registered 2026-10-23)
+Two alternative mappings, applied to the same MAWI windows: strict (latency = DNS, NTP, ICMP only; video = UDP 443;
+bulk = rest) and size-based (latency = any packet <= 300 B; video = UDP 443 > 300 B; bulk = rest). R1-R3 of E17 are
+re-evaluated under each; verdict "mapping-robust" if R1 and R2 hold at 3/3 loads under both.
+
+### E16b / E17b / E18 / E19 — results and what they changed (written after running)
+- **E16b holds**: K1b 26/27 cells (criterion >= 24; the one miss is Poisson 0.9 FIFO latency, kernel 24.1 ms vs predicted
+  32.9 ms), K2b 3/3. At 1 Mb/s the kernel agrees with the simulator's exact-scaling prediction, which supports the E16
+  diagnosis (virtual-machine timer noise at 10 Mb/s, not a model error).
+- **E17b holds**: R1 and R2 at 3/3 loads under both alternative class mappings; CQDRR stays the best non-SP scheduler.
+  The derived MAWI arrays were re-parsed to keep protocol and ports (the registered classes are unchanged; E17's numbers are
+  identical apart from the two wall-clock columns).
+- **E18 verdict "partly an artefact of W"** (DR-DRR most frequent winner under 2 of 4 scores). Under regret (S1) RevenueDRR
+  wins 13 of 29 points; under equal targets (S3b) FIFO wins 28 of 29, which is expected because equal targets reward
+  equalising delays across classes. The paper's claim about DR-DRR was weakened accordingly.
+- **E19 verdict "mixed"**: a static DRR with quanta (6000, 6000, 1500), tuned on dev seeds like DR-DRR, has lower W than
+  DR-DRR at 8 of 14 points (all of the overloaded ones, by up to 0.74) and higher at 6 (all the lightly loaded ones). The
+  paper no longer presents adaptation as necessary.

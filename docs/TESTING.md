@@ -1,6 +1,6 @@
 # Testing and verification
 
-1,017 automated tests in sixteen layers, a regression guard over every saved run, and mutation testing of the suite itself.
+1,027 automated tests in sixteen layers, a regression guard over every saved run, and mutation testing of the suite itself.
 
 ```powershell
 python -m pip install -r requirements-dev.txt
@@ -28,7 +28,7 @@ python tools/regress_check.py                      # re-simulates every saved ru
 | `test_exhaustive.py` | 22 | **Exhaustive small-scope check, not sampling**: every trace of up to 4 packets on a grid built for exact ties (7,315 traces x 3 buffers = 21,945 cases); every scheduler keeps every invariant on every case (263,340 runs), and FIFO, SP, DRR (3 quanta settings) and RL-SP+DRR (2 rates) match the independent reference packet for packet on every case (153,615 comparisons). `EXHAUSTIVE_N=5` extends it to 33,649 traces (run once in round 7: 1,211,364 invariant runs and 706,629 reference comparisons, all correct, 11 min) |
 | `test_drr_theory.py` | 64 | DRR theory for any number of classes: **every packet within the Boyer et al. delay bound** (the formula reproduces the published 146.228 µs and Table 1 values; Hypothesis-generated systems and token-bucket inputs, both DRR rules); the **DRR fairness lemma** for backlogged classes; deficits stay below the largest packet; **skip-ahead over empty passes makes identical decisions** (integer, fractional and tiny quanta) and tiny quanta no longer hang; one class = FIFO for every rule; 4096 classes; **busy periods identical** for all work-conserving rules; class relabelling; **doubling the link rate halves every time exactly** |
 | `test_literature.py` | 42 | E13 published examples: any number of classes (FIFO, SP, DRR, DRR-EOS, SCRR serve everything in per-class order; 3-class schedulers refuse other counts; partitions split by the class count), **DRR-EOS vs DRR differ exactly when a packet arrives during the class's last packet**, token-bucket sources conform (greedy shape exact), **B1 trajectory delay = 119.256 µs and the paper's service order**, B2 within the published bounds, B3/B4 shares, the SCRR probe does not change decisions, a minimal case where SCRR as printed exceeds Theorem 1 |
-| `test_realdata.py` | 19 | E16/E17 tooling: the pre-registered port-to-class mapping, the pure-Python pcap reader (synthetic captures with IPv4, IPv6, VLAN, ARP, nanosecond timestamps and a truncated gzip), rescaling a real-traffic window to an exact offered load |
+| `test_realdata.py` | 29 | E16/E17 tooling: the pre-registered port-to-class mapping, the pure-Python pcap reader and the two alternative class mappings of E17b (synthetic captures with IPv4, IPv6, VLAN, ARP, nanosecond timestamps and a truncated gzip), rescaling a real-traffic window to an exact offered load |
 | `test_scripts.py` | 16 | miniature end-to-end runs of `tune.py` (incl. the `--force` overwrite guard), `run_experiments.py`, `e9_control.py`, `timeseries.py`, `confirm_damping.py` (exit codes) in temporary folders; guard paths; backlog reconstruction vs brute force |
 
 Coverage: **100 % of every `drrsim` module**; 94–99 % of the scripts (only `__main__` launch lines uncovered).

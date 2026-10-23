@@ -37,3 +37,12 @@ archived under `results/_superseded*` and `results/_aborted*` (33,140 runs in to
 - Proposition: bounded service gap of DR-DRR, checked on all 1,680 saved DR-DRR runs and by a property test.
 - DR-DRR's delay estimate moved into one method so the ablation variants override only that line (all saved DR-DRR runs
   re-simulate exactly).
+
+## Evidence round (this entry)
+- New pre-registered checks: E16b (kernel at 1 Mb/s), E17b (two alternative real-traffic class mappings), E18 (re-scoring
+  without our delay targets), E19 (tuned static DRR). E16b and E17b hold. E18 and E19 go against our own conclusions: DR-DRR's
+  lead is partly an artefact of the score W, and a tuned static DRR beats DR-DRR at 8 of 14 load points; the paper says so.
+- Simulator runs are now 16,240 (E19 and its tuning added 440), still all re-simulated exactly by the regression guard.
+- The paper text was rewritten for plainer, less templated prose (style rules in paper_draft/STYLE.md, which is private);
+  both paper versions now carry an AI-use statement.
+

@@ -20,7 +20,7 @@ ip -n e16rcv link set e16v1 up
 MAC=$(ip -n e16rcv link show e16v1 | awk '/link\/ether/{print $2}')
 ip -n e16snd neigh replace 10.9.0.2 lladdr "$MAC" dev e16v0 nud permanent      # no ARP during the run
 TC="tc -n e16snd"
-$TC qdisc add dev e16v0 root handle 1: tbf rate 10mbit burst 1600 limit 200000
+$TC qdisc add dev e16v0 root handle 1: tbf rate ${RATE:-10mbit} burst 1600 limit 200000   # E16b sets RATE=1mbit
 case "$MODE" in
   fifo)
     $TC qdisc add dev e16v0 parent 1:1 handle 2: bfifo limit 125000 ;;

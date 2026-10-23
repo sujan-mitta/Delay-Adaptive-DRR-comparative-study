@@ -1,0 +1,11 @@
+{
+ "created": "2026-10-23T20:02:19",
+ "code_hash": "cc46741e6d832898",
+ "rule": "min W@0.95 s.t. Jain@1.2>=0.98; ties within 1% -> smallest quanta",
+ "seeds": "1-5",
+ "quanta": [
+  6000.0,
+  6000.0,
+  1500.0
+ ]
+}

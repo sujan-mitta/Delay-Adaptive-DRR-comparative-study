@@ -46,6 +46,23 @@ def classify(proto, sport, dport):
     return 2
 
 
+def classify_strict(proto, sport, dport):
+    """E17b alternative mapping: latency = DNS, NTP, ICMP only; video = UDP 443; bulk = the rest."""
+    if proto in (1, 58) or (proto == 17 and (53 in (sport, dport) or 123 in (sport, dport))):
+        return 0
+    return 1 if proto == 17 and 443 in (sport, dport) else 2
+
+
+def classify_size(proto, sport, dport, size):
+    """E17b alternative mapping: latency = any packet <= 300 B; video = UDP 443 above 300 B; bulk = the rest."""
+    if size <= 300:
+        return 0
+    return 1 if proto == 17 and 443 in (sport, dport) else 2
+
+
+MAPPINGS = {"strict": lambda pr, sp, dp, sz: classify_strict(pr, sp, dp), "size": classify_size}
+
+
 def records(path):
     """Yield (time_s, wire_len, proto, sport, dport) from a gzip'd pcap, stopping cleanly at a truncated end.
     Reads through an offset into a growing buffer (compacted per chunk), so the cost is linear in the file size."""
@@ -105,19 +122,23 @@ def records(path):
 
 
 def parse(path):
-    t, c, s = [], [], []
+    t, c, s, pr, spo, dpo = [], [], [], [], [], []
     need = WINDOWS * WINDOW_PKTS
     for ts, ln, proto, sp, dp in records(path):
         t.append(ts)
         c.append(classify(proto, sp, dp))
         s.append(min(1500, max(40, ln)))
+        pr.append(proto)
+        spo.append(sp)
+        dpo.append(dp)
         if len(t) >= need:
             break
     if len(t) < need:
         raise SystemExit(f"only {len(t)} packets in the prefix; need {need}")
     t = np.asarray(t) - t[0]
     OUT.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(OUT / "mawi_windows.npz", t=t, cls=np.asarray(c, np.int8), size=np.asarray(s, np.int32))
+    np.savez_compressed(OUT / "mawi_windows.npz", t=t, cls=np.asarray(c, np.int8), size=np.asarray(s, np.int32),
+                        proto=np.asarray(pr, np.uint8), sport=np.asarray(spo, np.uint16), dport=np.asarray(dpo, np.uint16))
     h = hashlib.sha256(open(path, "rb").read()).hexdigest()
     meta = {"source": SOURCE, "prefix_bytes": Path(path).stat().st_size, "prefix_sha256": h, "packets": len(t),
             "span_s": float(t[-1]), "class_share_packets": np.bincount(c, minlength=3).tolist(),
@@ -126,10 +147,15 @@ def parse(path):
     print(json.dumps(meta, indent=1))
 
 
-def window(w, load):
+def window(w, load, mapping=None):
+    """mapping None = the pre-registered E17 classes; "strict" or "size" = the E17b alternatives."""
     d = np.load(OUT / "mawi_windows.npz")
     sl = slice(w * WINDOW_PKTS, (w + 1) * WINDOW_PKTS)
     t, c, s = d["t"][sl], d["cls"][sl], d["size"][sl]
+    if mapping is not None:
+        f = MAPPINGS[mapping]
+        c = np.array([f(int(a), int(b), int(e), int(z)) for a, b, e, z in
+                      zip(d["proto"][sl], d["sport"][sl], d["dport"][sl], s)], np.int8)
     t = t - t[0]
     rate_Bps = 10e6 / 8
     span = s.sum() / (load * rate_Bps)                  # duration that makes the offered load equal `load`
@@ -139,30 +165,34 @@ def window(w, load):
 
 
 def one(args):
-    w, load, name = args
-    tr, span = window(w, load)
+    w, load, name, mapping = args
+    tr, span = window(w, load, mapping)
     cfg = SimConfig(TrafficConfig(warmup=0.0, duration=span, load=load))
     tuned = load_tuned()
     log = simulate(tr, make(name, **tuned.get(name, {})), cfg)
     m = compute(tr, log, cfg)
     m["W"] = max(m[f"{k.name}_p95"] / k.delay_target for k in CLASSES)
-    return {"window": w, "load": load, "scheduler": name, **{k: v for k, v in m.items() if isinstance(v, (int, float))}}
+    return {"window": w, "load": load, "scheduler": name, "mapping": mapping or "registered",
+            **{k: v for k, v in m.items() if isinstance(v, (int, float))}}
 
 
-def run():
-    tasks = [(w, load, n) for load in LOADS for w in range(WINDOWS) for n in SCHEDS]
+def run(mapping=None):
+    out = OUT if mapping is None else ROOT / "results" / "E17b" / mapping
+    out.mkdir(parents=True, exist_ok=True)
+    tasks = [(w, load, n, mapping) for load in LOADS for w in range(WINDOWS) for n in SCHEDS]
     with Pool() as p:
         rows = p.map(one, tasks, chunksize=2)
     import csv
     keys = list(rows[0])
-    with open(OUT / "runs.csv", "w", newline="") as f:
+    with open(out / "runs.csv", "w", newline="") as f:
         wr = csv.DictWriter(f, fieldnames=keys)
         wr.writeheader()
         wr.writerows(rows)
-    (OUT / "meta.json").write_text(json.dumps({"code_hash": code_hash(), "windows": WINDOWS, "window_packets": WINDOW_PKTS,
-                                               "loads": LOADS, "schedulers": SCHEDS}, indent=1))
-    print("wrote", OUT / "runs.csv", len(rows), "runs")
+    (out / "meta.json").write_text(json.dumps({"code_hash": code_hash(), "windows": WINDOWS, "window_packets": WINDOW_PKTS,
+                                               "loads": LOADS, "schedulers": SCHEDS, "mapping": mapping or "registered"},
+                                              indent=1))
+    print("wrote", out / "runs.csv", len(rows), "runs")
 
 
 if __name__ == "__main__":
-    {"parse": lambda: parse(sys.argv[2]), "run": run}[sys.argv[1]]()
+    {"parse": lambda: parse(sys.argv[2]), "run": lambda: run(sys.argv[2] if len(sys.argv) > 2 else None)}[sys.argv[1]]()

@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-23 18:31 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `5cf6ad9dbe9b4c84`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-23 20:04 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `cc46741e6d832898`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -24,6 +24,10 @@ Generated 2026-10-23 18:31 by `scripts/make_report.py` from `results/*/runs.csv`
 11. **Held-out seeds (E15)**: SP lowest latency 14/14; same best non-SP scheduler 14/14; held-out means inside the original intervals for FIFO 13/14, SP 11/14, DRR 14/14, RL-SP+DRR 12/14, DR-DRR 14/14, CQDRR 9/14, FuzzyDRR 14/14, RevenueDRR 12/14.
 12. **Real Linux kernel (E16)**: kernel and simulator order FIFO, SP and DRR identically at 3/3 points; mean delays agree within the registered tolerance in 18/27 cells (the kernel's virtual-machine timer stalls lower its rate to 9.64-9.95 Mb/s).
 13. **Real backbone traffic (E17, MAWI)**: SP lowest latency 3/3 loads; DR-DRR beats DRR 3/3; no DRR-family starvation 3/3; the best non-SP scheduler is CQDRR (on synthetic traffic it is usually DR-DRR).
+14. **Score check (E18)**: DR-DRR is the most frequent best non-SP scheduler under 2 of 4 scores that do not use our targets -> partly an artefact of W (winners: W DR-DRR, S1 RevenueDRR, S2 DR-DRR, S3a DR-DRR, S3b FIFO).
+15. **Tuned static DRR (E19)**: quanta [6000.0, 6000.0, 1500.0]; DR-DRR better at 6/14 points, worse at 8/14 -> mixed.
+16. **Kernel at 1 Mb/s (E16b)**: kernel waiting times match the simulator's prediction within the registered tolerance in 26/27 cells (18/27 at 10 Mb/s) and the scheduler order matches at 3/3 points.
+17. **Class-mapping sensitivity (E17b)**: with two alternative mappings (strict ports; packet size), SP is still lowest at every load and DR-DRR still beats DRR: robust.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -651,6 +655,95 @@ Source: https://mawi.wide.ad.jp/mawi/samplepoint-F/2024/202401011400.pcap.gz (fi
 - **R2** DR-DRR beats DRR on W (paired over windows, p < 0.05): 3/3 loads (differences -0.424, -0.505, -0.336).
 - **R3** no DRR-family scheduler starves a class: 3/3 loads.
 - Best non-SP scheduler on mean W (descriptive): 0.8: CQDRR, 0.95: CQDRR, 1.2: CQDRR.
+
+## E18 — is the ranking an artefact of the score W? (pre-registered)
+
+Saved runs re-scored over the same 29 points with scores that do not use our delay targets. S1 regret = worst class's p99 divided by the best p99 any scheduler reached for that class (same seed); S2 = mean rank by p99 across classes; S3a/S3b = W with targets (20, 100, 1000) ms and (50, 50, 50) ms. Winner = best non-SP scheduler at a point.
+
+| score | wins per non-SP scheduler (of 29 points) | most frequent winner |
+|---|---|---|
+| W | DR-DRR 14, CQDRR 5, RL-SP+DRR 4, RevenueDRR 4, FuzzyDRR 2 | DR-DRR |
+| S1 | RevenueDRR 13, CQDRR 5, FuzzyDRR 3, RL-SP+DRR 3, FIFO 3, DR-DRR 2 | RevenueDRR |
+| S2 | DR-DRR 9, DRR 8, FIFO 5, CQDRR 4, RevenueDRR 2, RL-SP+DRR 1 | DR-DRR |
+| S3a | DR-DRR 14, CQDRR 5, RL-SP+DRR 4, RevenueDRR 4, FuzzyDRR 2 | DR-DRR |
+| S3b | FIFO 28, DR-DRR 1 | FIFO |
+
+**Verdict: DR-DRR is the most frequent winner under 2 of the 4 target-free or alternative-target scores -> its lead is partly an artefact of W.**
+
+## E19 — tuned static DRR against DR-DRR (pre-registered)
+
+Static quanta tuned on dev seeds: [6000.0, 6000.0, 1500.0]. Paired difference = W(static) - W(DR-DRR); Holm over 14 points.
+
+| point | W DR-DRR | W tuned static DRR | difference ± 95 % CI | Holm p |
+|---|---|---|---|---|
+| poisson|0.4 | 0.119 | 0.124 | +0.005 ± 0.000 | 2.7e-05 |
+| onoff|0.4 | 0.144 | 0.173 | +0.029 ± 0.002 | 2.7e-05 |
+| poisson|0.6 | 0.172 | 0.199 | +0.027 ± 0.001 | 2.7e-05 |
+| onoff|0.6 | 0.361 | 0.375 | +0.014 ± 0.009 | 0.0027 |
+| poisson|0.8 | 0.216 | 0.315 | +0.099 ± 0.002 | 2.7e-05 |
+| onoff|0.8 | 0.843 | 0.521 | -0.322 ± 0.024 | 2.7e-05 |
+| poisson|0.9 | 0.311 | 0.395 | +0.084 ± 0.007 | 2.7e-05 |
+| onoff|0.9 | 1.181 | 0.741 | -0.440 ± 0.022 | 2.7e-05 |
+| poisson|0.95 | 0.447 | 0.433 | -0.015 ± 0.006 | 0.00021 |
+| onoff|0.95 | 1.326 | 0.886 | -0.440 ± 0.022 | 2.7e-05 |
+| poisson|1.05 | 0.901 | 0.531 | -0.370 ± 0.033 | 2.7e-05 |
+| onoff|1.05 | 1.577 | 1.160 | -0.417 ± 0.031 | 2.7e-05 |
+| poisson|1.2 | 1.326 | 0.583 | -0.743 ± 0.013 | 2.7e-05 |
+| onoff|1.2 | 1.990 | 1.457 | -0.533 ± 0.062 | 2.7e-05 |
+
+**Verdict: DR-DRR better at 6/14, worse at 8/14 -> mixed.**
+
+## E16b — kernel check at 1 Mb/s (pre-registered)
+
+Run `20261023-191228`: same testbed with tbf at 1 Mb/s and the E16 traces with every time multiplied by 10, so a virtual-machine timer stall of a given size matters ten times less. Prediction: the simulator's waiting times at 10 Mb/s on the unscaled trace, times 10 (exact scale invariance of FIFO, SP and DRR).
+
+| point | scheduler | class | kernel mean (ms) | predicted mean (ms) | kernel p95 | predicted p95 |
+|---|---|---|---|---|---|---|
+| onoff|0.8 | FIFO | lat | 178.9 | 186.9 | 541.1 | 547.0 |
+| onoff|0.8 | FIFO | vid | 217.9 | 220.3 | 570.9 | 578.7 |
+| onoff|0.8 | FIFO | blk | 187.4 | 187.6 | 598.2 | 597.9 |
+| onoff|0.8 | SP | lat | 0.2 | 4.8 | 1.5 | 11.1 |
+| onoff|0.8 | SP | vid | 25.6 | 28.0 | 93.9 | 97.5 |
+| onoff|0.8 | SP | blk | 235.4 | 236.0 | 778.5 | 778.4 |
+| onoff|0.8 | DRR | lat | 18.5 | 18.5 | 68.2 | 66.0 |
+| onoff|0.8 | DRR | vid | 174.4 | 174.9 | 458.3 | 459.1 |
+| onoff|0.8 | DRR | blk | 153.9 | 154.1 | 538.9 | 536.0 |
+| onoff|0.95 | FIFO | lat | 501.3 | 512.0 | 821.5 | 830.0 |
+| onoff|0.95 | FIFO | vid | 537.9 | 541.5 | 871.5 | 872.0 |
+| onoff|0.95 | FIFO | blk | 480.4 | 479.2 | 850.9 | 848.9 |
+| onoff|0.95 | SP | lat | 0.3 | 5.3 | 1.7 | 11.3 |
+| onoff|0.95 | SP | vid | 54.1 | 56.4 | 173.9 | 177.5 |
+| onoff|0.95 | SP | blk | 405.3 | 405.7 | 1504.7 | 1507.3 |
+| onoff|0.95 | DRR | lat | 44.7 | 44.4 | 160.7 | 160.4 |
+| onoff|0.95 | DRR | vid | 322.0 | 317.1 | 767.2 | 763.1 |
+| onoff|0.95 | DRR | blk | 324.0 | 317.9 | 756.3 | 742.4 |
+| poisson|0.9 | FIFO | lat | 24.1 | 32.9 | 86.7 | 97.4 |
+| poisson|0.9 | FIFO | vid | 31.4 | 33.5 | 99.2 | 101.4 |
+| poisson|0.9 | FIFO | blk | 32.0 | 32.4 | 97.8 | 97.8 |
+| poisson|0.9 | SP | lat | 0.2 | 5.0 | 1.2 | 11.1 |
+| poisson|0.9 | SP | vid | 8.5 | 10.5 | 25.0 | 27.9 |
+| poisson|0.9 | SP | blk | 67.2 | 68.2 | 218.5 | 219.0 |
+| poisson|0.9 | DRR | lat | 8.7 | 10.3 | 24.2 | 23.6 |
+| poisson|0.9 | DRR | vid | 34.5 | 38.6 | 112.2 | 124.1 |
+| poisson|0.9 | DRR | blk | 36.2 | 38.1 | 125.9 | 135.1 |
+
+- **K1b** kernel mean within 10 % + 5 ms of the prediction: 26/27 cells -> holds (criterion: >= 24).
+- **K2b** same scheduler order by latency-class p95: 3/3 points -> holds.
+- Cells outside the tolerance: poisson|0.9/FIFO/lat.
+- The consistent exception is SP's latency class, where the kernel waits less than predicted (tbf's 1600 B bucket lets a small packet leave right after a large one); this stays inside the 5 ms allowance at 1 Mb/s.
+
+## E17b — sensitivity to the real-traffic class mapping (pre-registered)
+
+| mapping | load | SP lowest latency p95 | DR-DRR - DRR in W (significant?) | best non-SP |
+|---|---|---|---|---|
+| strict | 0.8 | yes | -0.406 (yes) | CQDRR |
+| strict | 0.95 | yes | -0.464 (yes) | CQDRR |
+| strict | 1.2 | yes | -0.293 (yes) | CQDRR |
+| size | 0.8 | yes | -0.483 (yes) | CQDRR |
+| size | 0.95 | yes | -0.673 (yes) | CQDRR |
+| size | 1.2 | yes | -0.400 (yes) | CQDRR |
+
+**Verdict: R1 and R2 hold at all 3 loads under both alternative mappings -> mapping-robust.**
 
 ## Effect sizes: paired difference in W against DRR (E1, 20 seeds)
 

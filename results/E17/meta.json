@@ -1,5 +1,5 @@
 {
- "code_hash": "5cf6ad9dbe9b4c84",
+ "code_hash": "cc46741e6d832898",
  "windows": 10,
  "window_packets": 100000,
  "loads": [
@@ -17,5 +17,6 @@
   "FuzzyDRR",
   "RevenueDRR",
   "SCRR"
- ]
+ ],
+ "mapping": "registered"
 }

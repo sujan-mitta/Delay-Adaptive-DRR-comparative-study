@@ -1,0 +1,22 @@
+{
+ "code_hash": "cc46741e6d832898",
+ "windows": 10,
+ "window_packets": 100000,
+ "loads": [
+  0.8,
+  0.95,
+  1.2
+ ],
+ "schedulers": [
+  "FIFO",
+  "SP",
+  "DRR",
+  "RL-SP+DRR",
+  "DR-DRR",
+  "CQDRR",
+  "FuzzyDRR",
+  "RevenueDRR",
+  "SCRR"
+ ],
+ "mapping": "size"
+}

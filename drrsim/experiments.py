@@ -61,6 +61,14 @@ def tuning_tasks(extra=None):
 
 
 ABLATION_TUNED_PATH = ROOT / "config" / "tuned_ablation.json"
+STATIC_GRID = [1500, 3000, 6000, 12000]
+STATIC_TUNED_PATH = ROOT / "config" / "tuned_static_drr.json"
+
+
+def load_static_tuned() -> tuple:
+    if not STATIC_TUNED_PATH.exists():
+        raise SystemExit("config/tuned_static_drr.json missing: run scripts/e19_static.py first")
+    return tuple(json.loads(STATIC_TUNED_PATH.read_text())["quanta"])
 
 
 def load_ablation_tuned() -> dict:
@@ -206,6 +214,18 @@ def experiment_tasks(exp: str, tuned: dict):
         for load in LOADS:
             t += _all("E15", f"poisson|{load}", poisson(load), tuned, seeds=HELDOUT_SEEDS)
             t += _all("E15", f"onoff|{load}", onoff(load), tuned, seeds=HELDOUT_SEEDS)
+    elif exp == "E19TUNE":  # E19: tune static DRR quanta (Q_lat, Q_vid; Q_blk = 1500) on dev seeds, protocol E19
+        for ql in STATIC_GRID:
+            for qv in STATIC_GRID:
+                for load in (0.95, 1.2):
+                    for s in DEV_SEEDS:
+                        t.append(task("E19TUNE", f"q={ql:g},{qv:g}|load={load}", "DRR", s, onoff(load),
+                                      {"quanta": (float(ql), float(qv), 1500.0)}, {"q_lat": ql, "q_vid": qv}))
+    elif exp == "E19":  # tuned static DRR at every E1 point, paired with E1 (protocol E19)
+        q = load_static_tuned()
+        for load in LOADS:
+            for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
+                t += [task("E19", pt, "DRR", s, cfg, {"quanta": q}) for s in SEEDS]
     elif exp == "E7":
         t += _all("E7", "poisson|0.3", poisson(0.3), tuned)
     else:

@@ -840,6 +840,152 @@ def main(out=None):
                     f"{sum(v[2] for v in res.values())}/3; the best non-SP scheduler is "
                     f"{', '.join(sorted(set(v[3] for v in res.values())))} (on synthetic traffic it is usually DR-DRR).")
 
+    # ---------------- E18: is the ranking an artefact of W?
+    e18_head = None
+    pts18 = []
+    for ex18 in ("E1", "E2", "E3", "E4", "E7", "E8"):
+        d18 = load(ex18)
+        for pt18 in d18.point.unique():
+            pts18.append((ex18, pt18, d18[d18.point == pt18]))
+    cls18 = [c.name for c in CLASSES]
+
+    def _scores(g):
+        """Per scheduler at one point: S1 regret, S2 Borda, S3a/S3b W with other targets (lower is better)."""
+        out = {}
+        best = g.groupby("seed")[[f"{c}_p99" for c in cls18]].min()
+        reg = g.set_index("seed")[[f"{c}_p99" for c in cls18]].div(best).max(axis=1)
+        out["S1"] = pd.Series(reg.values, index=g.scheduler.values).groupby(level=0).mean()
+        mp99 = g.groupby("scheduler")[[f"{c}_p99" for c in cls18]].mean()
+        out["S2"] = mp99.rank(axis=0, method="average").mean(axis=1)
+        for key, D in (("S3a", (0.02, 0.1, 1.0)), ("S3b", (0.05, 0.05, 0.05))):
+            wv = np.max([g[f"{c}_p95"] / dd for c, dd in zip(cls18, D)], axis=0)
+            out[key] = pd.Series(wv, index=g.index).groupby(g.scheduler).mean()
+        out["W"] = g.groupby("scheduler").W.mean()
+        return out
+
+    wins18 = {k: {} for k in ("W", "S1", "S2", "S3a", "S3b")}
+    for ex18, pt18, g in pts18:
+        sc18 = _scores(g)
+        for k, ser in sc18.items():
+            win = ser.drop("SP").idxmin()
+            wins18[k][win] = wins18[k].get(win, 0) + 1
+    tops = {k: max(v, key=v.get) for k, v in wins18.items()}
+    n_dr = sum(tops[k] == "DR-DRR" for k in ("S1", "S2", "S3a", "S3b"))
+    verdict18 = ("not an artefact of W" if n_dr >= 3 else "an artefact of W" if n_dr <= 1 else "partly an artefact of W")
+    w("## E18 — is the ranking an artefact of the score W? (pre-registered)")
+    w()
+    w("Saved runs re-scored over the same 29 points with scores that do not use our delay targets. S1 regret = worst class's "
+      "p99 divided by the best p99 any scheduler reached for that class (same seed); S2 = mean rank by p99 across classes; "
+      "S3a/S3b = W with targets (20, 100, 1000) ms and (50, 50, 50) ms. Winner = best non-SP scheduler at a point.")
+    w()
+    w("| score | wins per non-SP scheduler (of 29 points) | most frequent winner |")
+    w("|---|---|---|")
+    for k in ("W", "S1", "S2", "S3a", "S3b"):
+        w(f"| {k} | " + ", ".join(f"{n} {c}" for n, c in sorted(wins18[k].items(), key=lambda x: -x[1])) + f" | {tops[k]} |")
+    w()
+    w(f"**Verdict: DR-DRR is the most frequent winner under {n_dr} of the 4 target-free or alternative-target scores -> "
+      f"its lead is {verdict18}.**")
+    w()
+    e18_head = (f"14. **Score check (E18)**: DR-DRR is the most frequent best non-SP scheduler under {n_dr} of 4 scores that "
+                f"do not use our targets -> {verdict18} (winners: " + ", ".join(f"{k} {v}" for k, v in tops.items()) + ").")
+
+    # ---------------- E19: tuned static DRR
+    e19_head = None
+    if (ROOT / "results" / "E19" / "runs.csv").exists():
+        e19 = load("E19")
+        e1b = load("E1")
+        q19 = json.loads((ROOT / "config" / "tuned_static_drr.json").read_text())["quanta"]
+        rows19 = []
+        for pt in e1b.point.unique():
+            a = e1b[(e1b.point == pt) & (e1b.scheduler == "DR-DRR")].set_index("seed").sort_index()
+            b = e19[e19.point == pt].set_index("seed").sort_index()
+            assert (a.trace == b.trace).all(), "E19 not paired with E1"
+            dd = (b.W - a.W).dropna()
+            pv = _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0
+            m, h, _ = ci95(dd)
+            rows19.append((pt, a.W.mean(), b.W.mean(), m, h, pv))
+        adj19 = _holm(np.array([r[5] for r in rows19]))
+        better19 = sum(1 for r, x in zip(rows19, adj19) if r[3] > 0 and x < 0.05)
+        worse19 = sum(1 for r, x in zip(rows19, adj19) if r[3] < 0 and x < 0.05)
+        v19 = ("adaptation adds value" if better19 >= 8 and worse19 <= 2 else
+               "static suffices" if better19 <= 2 else "mixed")
+        w("## E19 — tuned static DRR against DR-DRR (pre-registered)")
+        w()
+        w(f"Static quanta tuned on dev seeds: {q19}. Paired difference = W(static) - W(DR-DRR); Holm over 14 points.")
+        w()
+        w("| point | W DR-DRR | W tuned static DRR | difference ± 95 % CI | Holm p |")
+        w("|---|---|---|---|---|")
+        for r, x in zip(rows19, adj19):
+            w(f"| {r[0]} | {r[1]:.3f} | {r[2]:.3f} | {r[3]:+.3f} ± {r[4]:.3f} | {x:.2g} |")
+        w()
+        w(f"**Verdict: DR-DRR better at {better19}/14, worse at {worse19}/14 -> {v19}.**")
+        w()
+        e19_head = (f"15. **Tuned static DRR (E19)**: quanta {q19}; DR-DRR better at {better19}/14 points, worse at "
+                    f"{worse19}/14 -> {v19}.")
+
+    e16b_head = e17b_head = None
+    e16b_dirs = sorted(d for d in (ROOT / "results" / "E16b").glob("*") if d.is_dir()) if (ROOT / "results" / "E16b").exists() else []
+    if e16b_dirs:
+        kb = pd.read_csv(e16b_dirs[-1] / "summary.csv")
+        gb = kb.groupby(["point", "scheduler", "class"], sort=False)[["kernel_mean_ms", "sim_mean_ms", "kernel_p95_ms",
+                                                                       "sim_p95_ms"]].mean()
+        okb = ((gb.kernel_mean_ms - gb.sim_mean_ms).abs() <= 0.10 * gb.sim_mean_ms + 5.0)
+        ordb = []
+        for pt, x in kb[kb["class"] == "lat"].groupby("point", sort=False):
+            ordb.append(x.groupby("scheduler").kernel_p95_ms.mean().sort_values().index.tolist() ==
+                        x.groupby("scheduler").sim_p95_ms.mean().sort_values().index.tolist())
+        rel = ((gb.kernel_mean_ms - gb.sim_mean_ms).abs() / gb.sim_mean_ms.clip(lower=1.0))
+        w("## E16b — kernel check at 1 Mb/s (pre-registered)")
+        w()
+        w(f"Run `{e16b_dirs[-1].name}`: same testbed with tbf at 1 Mb/s and the E16 traces with every time multiplied by 10, so a "
+          "virtual-machine timer stall of a given size matters ten times less. Prediction: the simulator's waiting times at "
+          "10 Mb/s on the unscaled trace, times 10 (exact scale invariance of FIFO, SP and DRR).")
+        w()
+        w("| point | scheduler | class | kernel mean (ms) | predicted mean (ms) | kernel p95 | predicted p95 |")
+        w("|---|---|---|---|---|---|---|")
+        for (pt, sc, cl), r in gb.iterrows():
+            w(f"| {pt} | {sc} | {cl} | {r.kernel_mean_ms:.1f} | {r.sim_mean_ms:.1f} | {r.kernel_p95_ms:.1f} | {r.sim_p95_ms:.1f} |")
+        w()
+        w(f"- **K1b** kernel mean within 10 % + 5 ms of the prediction: {int(okb.sum())}/{len(okb)} cells -> "
+          f"{'holds' if okb.sum() >= 24 else '**fails**'} (criterion: >= 24).")
+        w(f"- **K2b** same scheduler order by latency-class p95: {sum(ordb)}/{len(ordb)} points -> "
+          f"{'holds' if all(ordb) else '**fails**'}.")
+        w(f"- Cells outside the tolerance: " + (", ".join(f"{a}/{b}/{c}" for (a, b, c), v in okb.items() if not v) or "none") + ".")
+        w("- The consistent exception is SP's latency class, where the kernel waits less than predicted (tbf's 1600 B bucket "
+          "lets a small packet leave right after a large one); this stays inside the 5 ms allowance at 1 Mb/s.")
+        w()
+        e16b_head = (f"16. **Kernel at 1 Mb/s (E16b)**: kernel waiting times match the simulator's prediction within the registered "
+                     f"tolerance in {int(okb.sum())}/{len(okb)} cells (18/27 at 10 Mb/s) and the scheduler order matches at "
+                     f"{sum(ordb)}/{len(ordb)} points.")
+
+    if (ROOT / "results" / "E17b").exists():
+        res_b = {}
+        for mp in ("strict", "size"):
+            rb = pd.read_csv(ROOT / "results" / "E17b" / mp / "runs.csv")
+            rows_b = []
+            for ldb, gg in rb.groupby("load"):
+                mm = gg.groupby("scheduler")[["W", "lat_p95"]].mean()
+                aa = gg[gg.scheduler == "DR-DRR"].set_index("window").W
+                bb = gg[gg.scheduler == "DRR"].set_index("window").W
+                dd = aa - bb
+                pvb = _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0
+                rows_b.append((ldb, mm.lat_p95.idxmin() == "SP", bool(dd.mean() < 0 and pvb < 0.05), dd.mean(),
+                               mm.drop("SP").W.idxmin()))
+            res_b[mp] = rows_b
+        w("## E17b — sensitivity to the real-traffic class mapping (pre-registered)")
+        w()
+        w("| mapping | load | SP lowest latency p95 | DR-DRR - DRR in W (significant?) | best non-SP |")
+        w("|---|---|---|---|---|")
+        for mp, rows_b in res_b.items():
+            for ldb, r1, r2, dm, bst in rows_b:
+                w(f"| {mp} | {ldb} | {'yes' if r1 else 'no'} | {dm:+.3f} ({'yes' if r2 else 'no'}) | {bst} |")
+        w()
+        robust = all(r[1] and r[2] for rows_b in res_b.values() for r in rows_b)
+        w(f"**Verdict: R1 and R2 hold at all 3 loads under both alternative mappings -> {'mapping-robust' if robust else '**not mapping-robust**'}.**")
+        w()
+        e17b_head = (f"17. **Class-mapping sensitivity (E17b)**: with two alternative mappings (strict ports; packet size), SP is "
+                     f"still lowest at every load and DR-DRR still beats DRR: {'robust' if robust else 'not robust'}.")
+
     w("## Effect sizes: paired difference in W against DRR (E1, 20 seeds)")
     w()
     w("Mean of W(scheduler) - W(DRR) over paired seeds with a 95 % t-interval; negative = better than DRR. "
@@ -1073,7 +1219,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")
