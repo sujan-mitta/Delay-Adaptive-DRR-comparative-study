@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-23 01:39 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `d34ca77309f14f19`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-23 11:49 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `803154ed67fe7b29`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -419,7 +419,7 @@ M1 **fails**; M2: 8/8 inside, order unchanged -> passes.
 
 ## E13 — Published examples re-created in this simulator (pre-registered)
 
-Run `20261023-012809` (code d34ca77309f14f19). Each benchmark rebuilds a setup printed in a paper, runs it through the normal engine, and compares with the paper's own numbers. DRR-EOS is DRR with the end-of-service rule used in network calculus (a class keeps its turn if a packet arrives while its last packet is on the link); DRR is the dequeue-time rule of Linux `sch_drr` used everywhere else in this study.
+Run `20261023-114848` (code 803154ed67fe7b29). Each benchmark rebuilds a setup printed in a paper, runs it through the normal engine, and compares with the paper's own numbers. DRR-EOS is DRR with the end-of-service rule used in network calculus (a class keeps its turn if a packet arrives while its last packet is on the link); DRR is the dequeue-time rule of Linux `sch_drr` used everywhere else in this study.
 
 | bench | case | scheduler | quantity | ours | published | unit | verdict |
 |---|---|---|---|---|---|---|---|

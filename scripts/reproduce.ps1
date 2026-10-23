@@ -13,6 +13,8 @@ Step "python scripts/run_experiments.py E1V"        # superseded CQDRR draft, fo
 Step "python scripts/run_experiments.py ES"         # SCRR, optional ninth scheduler
 Step "python scripts/run_experiments.py E11"        # real-life stress scenarios
 Step "python scripts/run_experiments.py E12"        # more real-life conditions + checks of the method
+Step "python scripts/run_benchmarks.py"             # E13: published examples (new results folder per run)
+Step "python tools/regress_check.py"                # every saved run must re-simulate exactly
 Step "python scripts/timeseries.py"
 Step "python scripts/make_figures.py"
 Step "python scripts/make_report.py"

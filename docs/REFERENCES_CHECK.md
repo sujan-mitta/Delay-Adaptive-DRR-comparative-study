@@ -15,3 +15,14 @@ came from publisher/indexing pages; verify each against the PDF before citing.
 Sources: arxiv.org/abs/2002.07027; ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/ell2.70418;
 api.semanticscholar.org (DOI 10.1049/ell2.70418); cris.vtt.fi and research.fi entries for the
 Sayenko papers; reference lists citing doi:10.1016/j.jnca.2013.04.004.
+
+## Network-calculus and SCRR references (checked 2026-10-23)
+
+| Reference | Confirmed details | Source of the check |
+|---|---|---|
+| Tabatabaee & Le Boudec, "Deficit round-robin: A second network calculus analysis" | IEEE/ACM Trans. Netw., 2022, doi:10.1109/TNET.2022.3164772; conference version RTAS 2021; arXiv:2106.01034 | EPFL Infoscience record; full text read |
+| Boyer, Stea & Mangoua Sofack, "Deficit round robin with network calculus" | Proc. 6th Int. ICST Conf. VALUETOOLS, 2012, pp. 138-147, doi:10.4108/valuetools.2012.250202 | reference lists citing it (publisher page not reached) |
+| Soni, Li, Scharbarg & Fraboul, "Optimizing network calculus for switched Ethernet network with deficit round robin" | IEEE RTSS 2018, pp. 300-311 | DBLP; reference list of Tabatabaee & Le Boudec |
+| Bouillard, "Individual service curves for bandwidth-sharing policies using network calculus" | IEEE Networking Letters, vol. 3, no. 2, pp. 80-83, 2021 | reference list of Tabatabaee & Le Boudec; author preprint |
+| Sharafzadeh, Matson, Tourrilhes, Sharma & Ghorbani, "Self-Clocked Round-Robin Packet Scheduling" | USENIX NSDI 2025 | USENIX program page |
+| Alsahag et al. (fuzzy adaptive DRR) | doi:10.1016/j.jnca.2013.04.004, online 2013; volume still not confirmed | landing page read earlier; not found by web search on 2026-10-23 |
