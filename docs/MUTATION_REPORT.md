@@ -1,6 +1,6 @@
 # Mutation check
 
-55/55 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
+56/56 behaviour-changing planted bugs were caught by the test suite (2 further mutants are equivalent: they cannot change behaviour, see notes).
 
 | id | planted bug | result | first failing test |
 |---|---|---|---|
@@ -61,8 +61,11 @@
 | H1 | ON/OFF period limit too loose (1 ns ON periods hang generation again) | killed | `tests/test_matrix.py::test_onoff_periods_too_short_rejected_not_hung[1e-09]` |
 | H2 | link rate below 1 b/s accepted (service times can overflow) | killed | `tests/test_matrix.py::test_link_rate_outside_physical_range_rejected[0.5]` |
 | H3 | engine accepts an overflowing completion time as 'idle' | killed | `tests/test_matrix.py::test_engine_refuses_overflowing_completion_even_if_validation_is_bypassed` |
+| R5 | real-traffic class mapping changed after registration (QUIC no longer video) | killed | `tests/test_realdata.py::test_preregistered_class_mapping` |
 
 **Equivalent mutants**
 
 - **S1**: DRR resets a class's deficit when the class re-joins (on_enqueue), and the deficit is never read while the class is off the active list, so also zeroing it on leaving changes nothing.
 - **M4**: Water-filling converges to the unique max-min fair allocation whether a class whose residual demand equals the fair share is frozen this round (<=) or next round (<).
+
+Row R5 (E17 class mapping) was run separately with `--only` after the 55 above; the drrsim code was unchanged in between.

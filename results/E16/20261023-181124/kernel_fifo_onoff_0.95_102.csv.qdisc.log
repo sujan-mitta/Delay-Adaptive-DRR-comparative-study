@@ -1,0 +1,6 @@
+qdisc tbf 1: root refcnt 17 rate 10Mbit burst 1600b lat 159ms 
+ Sent 11642289 bytes 18517 pkt (dropped 741, overlimits 52604 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc bfifo 2: parent 1:1 limit 125000b
+ Sent 11642199 bytes 18516 pkt (dropped 741, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0

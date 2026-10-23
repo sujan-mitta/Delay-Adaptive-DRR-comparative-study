@@ -21,3 +21,6 @@ docs/VENUE.md
 
 # paper drafts stay private until the author decides
 paper_draft/
+
+# derived from the MAWI trace: regenerate with scripts/e17_realtrace.py parse (source URL and sha256 in parse_meta.json)
+results/E17/mawi_windows.npz

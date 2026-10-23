@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SUITES = ["tests/test_core.py", "tests/test_edge_cases.py", "tests/test_reference.py",
           "tests/test_properties.py", "tests/test_theory.py", "tests/test_robustness.py", "tests/test_scenarios.py",
           "tests/test_aqm_imix.py", "tests/test_metamorphic.py", "tests/test_pipeline.py", "tests/test_literature.py",
-          "tests/test_drr_theory.py", "tests/test_matrix.py", "tests/test_exhaustive.py"]
+          "tests/test_drr_theory.py", "tests/test_matrix.py", "tests/test_exhaustive.py", "tests/test_realdata.py"]
 
 # (id, file, exact original text, mutated text, description)
 MUTANTS = [
@@ -137,6 +137,8 @@ MUTANTS = [
      "link rate below 1 b/s accepted (service times can overflow)"),
     ("H3", "drrsim/engine.py", "            if t_free == INF:    # INF means", "            if False:    # INF means",
      "engine accepts an overflowing completion time as 'idle'"),
+    ("R5", "scripts/e17_realtrace.py", "        if 443 in ports:", "        if 80 in ports:",
+     "real-traffic class mapping changed after registration (QUIC no longer video)"),
 ]
 
 

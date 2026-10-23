@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-23 15:48 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `5cf6ad9dbe9b4c84`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-23 18:31 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `5cf6ad9dbe9b4c84`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -22,6 +22,8 @@ Generated 2026-10-23 15:48 by `scripts/make_report.py` from `results/*/runs.csv`
 9. **Published examples (E13)**: 14/16 pre-registered comparisons pass. The DRR trajectory delay of Tabatabaee & Le Boudec (119.256 µs) is reproduced exactly; Bouillard's bounds hold and are 83.8%–99.8% tight; the original DRR and RL-SP-DRR shares are reproduced; SCRR as printed exceeds its own Theorems 1–2 because of the order of two steps in Algorithm 4.
 10. **DR-DRR ablation (E14)**: against the backlog-only variant the verdict is 'the full rule adds value' (9 better / 0 worse of 14), against the head-of-line-only variant 'mixed' (4 / 6).
 11. **Held-out seeds (E15)**: SP lowest latency 14/14; same best non-SP scheduler 14/14; held-out means inside the original intervals for FIFO 13/14, SP 11/14, DRR 14/14, RL-SP+DRR 12/14, DR-DRR 14/14, CQDRR 9/14, FuzzyDRR 14/14, RevenueDRR 12/14.
+12. **Real Linux kernel (E16)**: kernel and simulator order FIFO, SP and DRR identically at 3/3 points; mean delays agree within the registered tolerance in 18/27 cells (the kernel's virtual-machine timer stalls lower its rate to 9.64-9.95 Mb/s).
+13. **Real backbone traffic (E17, MAWI)**: SP lowest latency 3/3 loads; DR-DRR beats DRR 3/3; no DRR-family starvation 3/3; the best non-SP scheduler is CQDRR (on synthetic traffic it is usually DR-DRR).
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -560,6 +562,95 @@ Starvation episodes (> 100 ms) and the longest service gap over the 14 points: D
 - **H2** same best non-SP scheduler as with seeds 101-120: 14/14 -> holds.
 - **H3** held-out mean W inside the 101-120 interval (points per scheduler): FIFO 13/14, SP 11/14, DRR 14/14, RL-SP+DRR 12/14, DR-DRR 14/14, CQDRR 9/14, FuzzyDRR 14/14, RevenueDRR 12/14 -> **fails**.
 - Why H3 can fail by chance: a new mean is itself noisy, so it falls inside the old 95 % interval with probability about 0.84 (difference of two independent 20-seed means), i.e. about 11.8 of 14 points per scheduler. Observed overall: 99/112 = 0.88. The registered threshold (>= 11 of 14 for every one of 8 schedulers) was strict; the verdict stays as registered.
+
+## E16 — real Linux kernel schedulers (pre-registered)
+
+Run `20261023-181124`: Linux tbf (10 Mb/s) with a byte FIFO, prio (3 bands) or drr (quantum 1500 B) in WSL2, the simulator's own traces (10 s, seeds 101-103), compared with the simulator on the same packets. Delay = waiting time before service.
+
+| point | scheduler | class | kernel mean (ms) | simulator mean (ms) | kernel p95 | simulator p95 | kernel drop | simulator drop |
+|---|---|---|---|---|---|---|---|---|
+| onoff|0.8 | FIFO | lat | 18.11 | 15.80 | 65.50 | 56.78 | 0.002 | 0.000 |
+| onoff|0.8 | FIFO | vid | 21.82 | 18.30 | 71.43 | 63.67 | 0.009 | 0.003 |
+| onoff|0.8 | FIFO | blk | 20.74 | 17.32 | 67.38 | 59.13 | 0.009 | 0.004 |
+| onoff|0.8 | SP | lat | 0.14 | 0.46 | 0.64 | 1.11 | 0.000 | 0.000 |
+| onoff|0.8 | SP | vid | 2.97 | 2.64 | 10.70 | 9.20 | 0.000 | 0.000 |
+| onoff|0.8 | SP | blk | 28.54 | 24.92 | 103.24 | 86.16 | 0.073 | 0.062 |
+| onoff|0.8 | DRR | lat | 2.15 | 1.59 | 7.52 | 5.52 | 0.000 | 0.000 |
+| onoff|0.8 | DRR | vid | 18.50 | 16.53 | 62.25 | 56.28 | 0.025 | 0.020 |
+| onoff|0.8 | DRR | blk | 19.14 | 17.11 | 63.68 | 58.54 | 0.025 | 0.018 |
+| onoff|0.95 | FIFO | lat | 46.65 | 44.69 | 93.36 | 91.57 | 0.013 | 0.009 |
+| onoff|0.95 | FIFO | vid | 48.86 | 46.36 | 97.40 | 95.43 | 0.058 | 0.049 |
+| onoff|0.95 | FIFO | blk | 47.85 | 45.09 | 97.76 | 94.26 | 0.058 | 0.051 |
+| onoff|0.95 | SP | lat | 0.18 | 0.52 | 0.84 | 1.14 | 0.000 | 0.000 |
+| onoff|0.95 | SP | vid | 7.31 | 6.32 | 26.82 | 22.87 | 0.004 | 0.002 |
+| onoff|0.95 | SP | blk | 49.40 | 44.98 | 163.69 | 146.00 | 0.229 | 0.205 |
+| onoff|0.95 | DRR | lat | 5.71 | 4.68 | 19.57 | 16.08 | 0.000 | 0.000 |
+| onoff|0.95 | DRR | vid | 33.00 | 30.41 | 82.40 | 77.58 | 0.092 | 0.080 |
+| onoff|0.95 | DRR | blk | 33.61 | 30.98 | 83.81 | 79.65 | 0.117 | 0.108 |
+| poisson|0.9 | FIFO | lat | 5.51 | 3.83 | 23.28 | 11.82 | 0.000 | 0.000 |
+| poisson|0.9 | FIFO | vid | 6.20 | 3.82 | 24.17 | 11.81 | 0.000 | 0.000 |
+| poisson|0.9 | FIFO | blk | 6.37 | 3.77 | 24.19 | 11.51 | 0.000 | 0.000 |
+| poisson|0.9 | SP | lat | 0.08 | 0.50 | 0.28 | 1.10 | 0.000 | 0.000 |
+| poisson|0.9 | SP | vid | 1.05 | 1.07 | 3.18 | 2.85 | 0.000 | 0.000 |
+| poisson|0.9 | SP | blk | 11.34 | 8.17 | 39.24 | 27.30 | 0.001 | 0.000 |
+| poisson|0.9 | DRR | lat | 1.05 | 1.06 | 2.66 | 2.41 | 0.000 | 0.000 |
+| poisson|0.9 | DRR | vid | 4.99 | 4.59 | 18.08 | 16.37 | 0.000 | 0.000 |
+| poisson|0.9 | DRR | blk | 5.19 | 4.35 | 19.51 | 15.09 | 0.000 | 0.000 |
+
+- **K1** kernel mean within 10 % + 0.5 ms of the simulator: 18/27 cells -> **fails**.
+- **K2** same order of the three schedulers by latency-class p95: 3/3 points -> holds.
+- Why K1 fails (measured, FIFO and DRR runs): back-to-back departures are exactly one transmission time apart (median ratio 1.000), but timer stalls in the virtual machine lower the aggregate service rate to 9.64-9.95 Mb/s, which raises queueing delay near full load; and tbf's 1600 B bucket lets a small packet leave right after a large one, so SP's latency class waits less in the kernel than in the non-preemptive model.
+
+## E17 — real backbone traffic (pre-registered)
+
+Source: https://mawi.wide.ad.jp/mawi/samplepoint-F/2024/202401011400.pcap.gz (first 152 MB, sha256 c76ac9380453d54b..., 1,000,000 packets over 6.7 s; byte shares latency/video/bulk 12.7%/7.8%/79.6%). 10 windows of 100,000 packets; times scaled to the target load.
+
+**Load 0.8**
+
+| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |
+|---|---|---|---|---|---|
+| SP | 0.509 | 1.13 | 23.9 | 110.8 | 6 |
+| CQDRR | 0.657 | 2.77 | 30.9 | 110.4 | 1 |
+| DR-DRR | 0.755 | 2.41 | 37.6 | 110.1 | 0 |
+| RevenueDRR | 0.957 | 7.41 | 38.5 | 109.5 | 0 |
+| FuzzyDRR | 1.109 | 2.35 | 55.3 | 109.4 | 0 |
+| SCRR | 1.161 | 2.36 | 57.7 | 109.7 | 0 |
+| DRR | 1.179 | 2.24 | 58.8 | 109.4 | 0 |
+| RL-SP+DRR | 1.205 | 3.27 | 58.9 | 109.4 | 0 |
+| FIFO | 9.376 | 93.76 | 89.0 | 95.1 | 2 |
+
+**Load 0.95**
+
+| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |
+|---|---|---|---|---|---|
+| SP | 0.509 | 1.15 | 23.5 | 123.3 | 5 |
+| CQDRR | 0.675 | 3.54 | 30.9 | 122.5 | 1 |
+| DR-DRR | 0.786 | 3.11 | 39.2 | 121.8 | 0 |
+| RevenueDRR | 0.972 | 7.98 | 39.5 | 121.4 | 0 |
+| FuzzyDRR | 1.238 | 3.14 | 61.8 | 121.0 | 0 |
+| SCRR | 1.268 | 3.10 | 62.9 | 121.5 | 0 |
+| DRR | 1.292 | 2.93 | 64.5 | 121.0 | 0 |
+| RL-SP+DRR | 1.321 | 4.07 | 65.0 | 121.0 | 0 |
+| FIFO | 9.887 | 98.87 | 97.7 | 98.8 | 3 |
+
+**Load 1.2**
+
+| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |
+|---|---|---|---|---|---|
+| SP | 0.429 | 1.19 | 18.9 | 139.1 | 3 |
+| CQDRR | 0.567 | 3.86 | 24.3 | 137.7 | 0 |
+| DR-DRR | 0.706 | 3.88 | 34.5 | 137.1 | 0 |
+| RevenueDRR | 0.890 | 8.06 | 34.6 | 136.8 | 0 |
+| SCRR | 1.017 | 4.06 | 48.6 | 137.4 | 0 |
+| FuzzyDRR | 1.033 | 4.25 | 50.7 | 136.1 | 0 |
+| DRR | 1.042 | 3.91 | 50.8 | 136.8 | 0 |
+| RL-SP+DRR | 1.096 | 5.23 | 51.0 | 136.7 | 0 |
+| FIFO | 9.973 | 99.73 | 99.4 | 99.6 | 5 |
+
+- **R1** SP lowest latency p95: 3/3 loads.
+- **R2** DR-DRR beats DRR on W (paired over windows, p < 0.05): 3/3 loads (differences -0.424, -0.505, -0.336).
+- **R3** no DRR-family scheduler starves a class: 3/3 loads.
+- Best non-SP scheduler on mean W (descriptive): 0.8: CQDRR, 0.95: CQDRR, 1.2: CQDRR.
 
 ## Effect sizes: paired difference in W against DRR (E1, 20 seeds)
 

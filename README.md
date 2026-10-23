@@ -24,6 +24,8 @@ python scripts/run_experiments.py E11  # real-life stress scenarios (jumbo, tiny
 python scripts/run_experiments.py E12  # IMIX, RED AQM, bulk flood, shallow buffer + jumbo; window and seed-count checks
 python scripts/run_benchmarks.py       # E13: published examples (DRR trajectory, DRR bounds, original DRR, RL-SP-DRR, SCRR theorems)
 python scripts/e14_ablation.py         # E14: DR-DRR ablation; E15: held-out seeds 201-220
+python scripts/e16_kernel.py           # E16: real Linux kernel FIFO/prio/drr in WSL2 or Linux (root; see testbed/)
+python scripts/e17_realtrace.py parse <mawi.pcap.gz> ; python scripts/e17_realtrace.py run   # E17: real MAWI traffic
 python scripts/timeseries.py           # quanta traces for Figure 5
 python scripts/make_figures.py         # figures/ from results/*.csv only
 python scripts/make_report.py          # RESULTS.md from results/*.csv only

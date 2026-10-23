@@ -309,3 +309,44 @@ With base quantum Q0 >= the largest packet, quanta clipped to [Q0, M Q0], K clas
 a backlogged class waits at most sum over the other classes of (M Q0 + Lmax_j - 1) * 8 / C before service (21.6 ms for
 the study's settings). Checked against all 1,680 saved DR-DRR and DR-DRR+damping runs at 10 Mb/s: 0 violations,
 largest gap 89-95 % of the bound (M = 4, 8, 12).
+
+## E16 — real Linux kernel schedulers (pre-registered 2026-10-23, before any testbed code)
+Question: does the simulator predict what the real Linux kernel's schedulers do on the same packets?
+- Testbed: WSL2, Linux 6.18; two network namespaces joined by a veth pair. Egress of the sender: `tbf` at 10 Mb/s
+  (smallest feasible burst) with a child qdisc: `pfifo`-style byte FIFO (FIFO), `prio` with 3 bands (SP), or `drr` with
+  3 classes and quantum 1500 B (DRR); per-class byte limits equal to the simulator's partitioned buffer (125 kB / 3) for
+  SP and DRR, and 125 kB for FIFO. Classes are selected by UDP destination port. Frame size = the simulator's packet size.
+- Traffic: the simulator's own traces (ON/OFF 0.8, ON/OFF 0.95, Poisson 0.9; 10 s each; seeds 101-103), sent with their
+  exact inter-arrival times from a user-space sender; each packet carries its scheduled send time; the receiver records
+  the arrival time on the same clock.
+- Comparison with the simulator on the same trace (partitioned buffer for SP and DRR, shared for FIFO):
+  K1: per scheduler and class, the kernel's mean delay is within 10 % + 0.5 ms of the simulator's;
+  K2: the order of the three schedulers by latency-class p95 is the same in kernel and simulator at every point.
+  Also reported: per-class p95 and drop rates, and how often kernel and simulator send the same class next.
+- Known differences, stated in advance: kernel timers and the user-space sender add jitter of tens of microseconds;
+  tbf releases packets in bursts of up to its bucket; Linux counts frame bytes, the simulator counts packet bytes.
+
+## E17 — real backbone traffic (pre-registered 2026-10-23, before downloading)
+Question: do the main findings hold for real packet arrivals and sizes?
+- Data: the first ~200 MB of the public MAWI trace samplepoint-F 2024-01-01 14:00 (anonymized headers, WIDE project).
+  Packets are mapped to classes by protocol and port before any scheduling result is seen: latency = DNS (53), NTP (123),
+  SIP (5060-5061), RTP/RTCP-like UDP 16384-32767, and ICMP; video = UDP 443 (QUIC); bulk = everything else.
+- Replay: the trace is split into 10 consecutive windows (one per "seed"); inter-arrival times are scaled so that the
+  offered load on the 10 Mb/s link is 0.8, 0.95 or 1.2; real packet sizes are kept (capped at 1500 B). All 8 schedulers
+  and SCRR, shared 125 kB buffer, delay targets as in the main study.
+- R1: SP has the lowest latency-class p95 at all three loads. R2: DR-DRR beats DRR on mean W at all three loads (paired
+  over windows). R3: no DRR-family scheduler starves a class. The best non-SP scheduler is reported descriptively.
+
+### E16 / E17 — notes written after running (deviations and caveats)
+- E16: the first attempt stopped in testbed setup (a filter was attached to the classless FIFO) before any packet was
+  sent; its folder, which held only one generated trace, was removed and the run repeated in full. Results: K1 fails as
+  registered (18/27 cells), K2 holds (3/3). Measured cause of K1: per-packet transmission times are exact, but timer
+  stalls in the WSL2 virtual machine lower the aggregate service rate of tbf to 9.64-9.95 Mb/s; tbf's 1600 B bucket also
+  lets a small packet leave right after a large one, so SP's latency class waits less than in the non-preemptive model.
+  A post-hoc re-simulation at a per-run measured rate was tried and discarded: the rate estimate is not valid for SP.
+- E17: the download stopped at 151.7 MB (connection reset by the server) instead of ~200 MB; the 1,000,000 packets
+  needed were in the prefix (sha256 in results/E17/parse_meta.json). The pre-registered port mapping puts 42.5 % of
+  packets (12.7 % of bytes) into the latency class, because UDP ports 16384-32767 are also used by non-real-time flows;
+  the mapping was not changed after seeing the data. The derived arrays are not redistributed (regenerate them with
+  `scripts/e17_realtrace.py parse`). Results: R1, R2, R3 hold at 3/3 loads; the best non-SP scheduler is CQDRR at all
+  three loads (on synthetic traffic it is usually DR-DRR).

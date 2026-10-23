@@ -748,6 +748,98 @@ def main(out=None):
         e15_head = (f"11. **Held-out seeds (E15)**: SP lowest latency {h1}/14; same best non-SP scheduler {h2}/14; "
                     f"held-out means inside the original intervals for " + ", ".join(f"{n} {v}/14" for n, v in inside.items()) + ".")
 
+    e16_head = e17_head = None
+    e16_dirs = sorted(d for d in (ROOT / "results" / "E16").glob("*") if d.is_dir()) if (ROOT / "results" / "E16").exists() else []
+    if e16_dirs:
+        d16 = e16_dirs[-1]
+        k = pd.read_csv(d16 / "summary.csv")
+        g = k.groupby(["point", "scheduler", "class"], sort=False)[["kernel_mean_ms", "sim_mean_ms", "kernel_p95_ms",
+                                                                     "sim_p95_ms", "kernel_drop", "sim_drop"]].mean()
+        ok = ((g.kernel_mean_ms - g.sim_mean_ms).abs() <= 0.10 * g.sim_mean_ms + 0.5)
+        orders = []
+        for pt, x in k[k["class"] == "lat"].groupby("point", sort=False):
+            orders.append((pt, x.groupby("scheduler").kernel_p95_ms.mean().sort_values().index.tolist(),
+                           x.groupby("scheduler").sim_p95_ms.mean().sort_values().index.tolist()))
+        k2 = sum(a == b for _, a, b in orders)
+        rates = []
+        for f in sorted(d16.glob("kernel_*.csv")):
+            mode = f.name.split("_")[1]
+            if mode == "sp":            # a small packet may follow a large one within tbf's bucket: no rate estimate
+                continue
+            tr0 = np.loadtxt(d16 / ("trace_" + f.name.split("_", 2)[2]), delimiter=",")
+            kk = np.loadtxt(f, delimiter=",", dtype=np.int64)
+            kk = kk[np.argsort(kk[:, 3])]
+            size, rx, sched = tr0[kk[:, 0], 2], kk[:, 3] / 1e9, kk[:, 2] / 1e9
+            busy = sched[1:] < rx[:-1] - 1e-4
+            gap = np.diff(rx)[busy]
+            rates.append((size[1:][busy].sum() * 8 / gap.sum(), float(np.median(gap / (size[1:][busy] * 8 / 1e7)))))
+        w("## E16 — real Linux kernel schedulers (pre-registered)")
+        w()
+        w(f"Run `{d16.name}`: Linux tbf (10 Mb/s) with a byte FIFO, prio (3 bands) or drr (quantum 1500 B) in WSL2, the "
+          "simulator's own traces (10 s, seeds 101-103), compared with the simulator on the same packets. Delay = waiting "
+          "time before service.")
+        w()
+        w("| point | scheduler | class | kernel mean (ms) | simulator mean (ms) | kernel p95 | simulator p95 | kernel drop | simulator drop |")
+        w("|---|---|---|---|---|---|---|---|---|")
+        for (pt, sc, cl), r in g.iterrows():
+            w(f"| {pt} | {sc} | {cl} | {r.kernel_mean_ms:.2f} | {r.sim_mean_ms:.2f} | {r.kernel_p95_ms:.2f} | "
+              f"{r.sim_p95_ms:.2f} | {r.kernel_drop:.3f} | {r.sim_drop:.3f} |")
+        w()
+        w(f"- **K1** kernel mean within 10 % + 0.5 ms of the simulator: {int(ok.sum())}/{len(ok)} cells -> "
+          f"{'holds' if ok.all() else '**fails**'}.")
+        w(f"- **K2** same order of the three schedulers by latency-class p95: {k2}/{len(orders)} points -> "
+          f"{'holds' if k2 == len(orders) else '**fails**'}.")
+        w(f"- Why K1 fails (measured, FIFO and DRR runs): back-to-back departures are exactly one transmission time apart "
+          f"(median ratio {np.median([r[1] for r in rates]):.3f}), but timer stalls in the virtual machine lower the "
+          f"aggregate service rate to {min(r[0] for r in rates) / 1e6:.2f}-{max(r[0] for r in rates) / 1e6:.2f} Mb/s, which "
+          "raises queueing delay near full load; and tbf's 1600 B bucket lets a small packet leave right after a large "
+          "one, so SP's latency class waits less in the kernel than in the non-preemptive model.")
+        w()
+        e16_head = (f"12. **Real Linux kernel (E16)**: kernel and simulator order FIFO, SP and DRR identically at "
+                    f"{k2}/{len(orders)} points; mean delays agree within the registered tolerance in {int(ok.sum())}/"
+                    f"{len(ok)} cells (the kernel's virtual-machine timer stalls lower its rate to "
+                    f"{min(r[0] for r in rates) / 1e6:.2f}-{max(r[0] for r in rates) / 1e6:.2f} Mb/s).")
+
+    if (ROOT / "results" / "E17" / "runs.csv").exists():
+        r17 = pd.read_csv(ROOT / "results" / "E17" / "runs.csv")
+        pm = json.loads((ROOT / "results" / "E17" / "parse_meta.json").read_text())
+        w("## E17 — real backbone traffic (pre-registered)")
+        w()
+        sh = np.array(pm["class_share_bytes"]) / sum(pm["class_share_bytes"])
+        w(f"Source: {pm['source']} (first {pm['prefix_bytes'] / 1e6:.0f} MB, sha256 {pm['prefix_sha256'][:16]}..., "
+          f"{pm['packets']:,} packets over {pm['span_s']:.1f} s; byte shares latency/video/bulk "
+          f"{sh[0]:.1%}/{sh[1]:.1%}/{sh[2]:.1%}). 10 windows of 100,000 packets; times scaled to the target load.")
+        w()
+        res = {}
+        for ld17, g17 in r17.groupby("load"):
+            m = g17.groupby("scheduler")[["W", "lat_p95", "vid_p95", "blk_p95"]].mean()
+            st = g17.groupby("scheduler")[[f"{c.name}_starv_count" for c in CLASSES]].sum().sum(axis=1)
+            a = g17[g17.scheduler == "DR-DRR"].set_index("window").W
+            b = g17[g17.scheduler == "DRR"].set_index("window").W
+            dd = a - b
+            pv = _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0
+            fam = ["DRR", "RL-SP+DRR", "DR-DRR", "FuzzyDRR", "RevenueDRR", "SCRR"]
+            res[ld17] = (m.lat_p95.idxmin() == "SP", dd.mean() < 0 and pv < 0.05, int(st[fam].sum()) == 0,
+                         m.drop("SP").W.idxmin(), dd.mean(), pv)
+            w(f"**Load {ld17}**")
+            w()
+            w("| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |")
+            w("|---|---|---|---|---|---|")
+            for sc in m.sort_values("W").index:
+                w(f"| {sc} | {m.W[sc]:.3f} | {m.lat_p95[sc] * 1e3:.2f} | {m.vid_p95[sc] * 1e3:.1f} | "
+                  f"{m.blk_p95[sc] * 1e3:.1f} | {int(st[sc])} |")
+            w()
+        w(f"- **R1** SP lowest latency p95: {sum(v[0] for v in res.values())}/3 loads.")
+        w(f"- **R2** DR-DRR beats DRR on W (paired over windows, p < 0.05): {sum(v[1] for v in res.values())}/3 loads "
+          f"(differences {', '.join(f'{v[4]:+.3f}' for v in res.values())}).")
+        w(f"- **R3** no DRR-family scheduler starves a class: {sum(v[2] for v in res.values())}/3 loads.")
+        w(f"- Best non-SP scheduler on mean W (descriptive): {', '.join(f'{k}: {v[3]}' for k, v in res.items())}.")
+        w()
+        e17_head = (f"13. **Real backbone traffic (E17, MAWI)**: SP lowest latency {sum(v[0] for v in res.values())}/3 loads; "
+                    f"DR-DRR beats DRR {sum(v[1] for v in res.values())}/3; no DRR-family starvation "
+                    f"{sum(v[2] for v in res.values())}/3; the best non-SP scheduler is "
+                    f"{', '.join(sorted(set(v[3] for v in res.values())))} (on synthetic traffic it is usually DR-DRR).")
+
     w("## Effect sizes: paired difference in W against DRR (E1, 20 seeds)")
     w()
     w("Mean of W(scheduler) - W(DRR) over paired seeds with a 95 % t-interval; negative = better than DRR. "
@@ -981,7 +1073,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")
