@@ -45,6 +45,11 @@ the first head packet is sent at the start of the visit.
 visit per class (Claim 2), each at most M Q0 + L_j - 1 bytes (Claim 1). Service is non-preemptive and work-conserving, so these
 bytes take at most 8 sum_j (M Q0 + L_j - 1) / C seconds. QED.
 
+## Units and the packet in service
+The factor 8 turns bytes into bits because C is in bit/s, so G_i is in seconds. A packet already being transmitted when i's head
+packet becomes head of line belongs to a visit of some class j != i that Claim 2 already counts (its bytes are inside the Claim 1
+bound), so no separate residual-packet term max L_k / C is added; adding one would count that packet twice.
+
 ## Where the assumptions matter
 - **Assumption A fails** (for example 9000 B jumbo packets with Q0 = 1500 B): a visit may not be able to send its head packet, and
   the class waits for further visits; the bound does not hold. The simulator has such scenarios (E11 jumbo); the paper states the
