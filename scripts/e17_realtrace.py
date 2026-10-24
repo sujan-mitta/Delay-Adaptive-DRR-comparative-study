@@ -29,13 +29,15 @@ from drrsim.runner import code_hash  # noqa: E402
 from drrsim.traffic import Trace  # noqa: E402
 
 # E17 is the 2024 trace; E17c (pre-registered replication) is the 2022 trace, selected with E17_TRACE=c
-TRACE_C = os.environ.get("E17_TRACE") == "c"
-OUT = ROOT / "results" / ("E17c" if TRACE_C else "E17")
+TRACE = os.environ.get("E17_TRACE", "")          # "" = E17 (2024), "c" = E17c (2022), "d" = E17d (2019; as many windows as the prefix holds)
+TRACE_C = TRACE == "c"
+OUT = ROOT / "results" / {"": "E17", "c": "E17c", "d": "E17d"}[TRACE]
 WINDOWS, WINDOW_PKTS = 10, 100_000
 LOADS = (0.8, 0.95, 1.2)
 SCHEDS = ["FIFO", "SP", "DRR", "RL-SP+DRR", "DR-DRR", "CQDRR", "FuzzyDRR", "RevenueDRR", "SCRR"]
-SOURCE = ("https://mawi.wide.ad.jp/mawi/samplepoint-F/2022/202201011400.pcap.gz" if TRACE_C
-          else "https://mawi.wide.ad.jp/mawi/samplepoint-F/2024/202401011400.pcap.gz")
+SOURCE = {"": "https://mawi.wide.ad.jp/mawi/samplepoint-F/2024/202401011400.pcap.gz",
+          "c": "https://mawi.wide.ad.jp/mawi/samplepoint-F/2022/202201011400.pcap.gz",
+          "d": "https://mawi.wide.ad.jp/mawi/samplepoint-F/2019/201901011400.pcap.gz"}[TRACE]
 
 
 def classify(proto, sport, dport):
@@ -137,7 +139,10 @@ def parse(path):
         dpo.append(dp)
         if len(t) >= need:
             break
-    if len(t) < need:
+    if TRACE == "d":                                   # E17d: use as many whole windows as the prefix holds
+        keep = len(t) // WINDOW_PKTS * WINDOW_PKTS
+        t, c, s, pr, spo, dpo = (x[:keep] for x in (t, c, s, pr, spo, dpo))
+    elif len(t) < need:
         raise SystemExit(f"only {len(t)} packets in the prefix; need {need}")
     t = np.asarray(t) - t[0]
     OUT.mkdir(parents=True, exist_ok=True)
@@ -183,7 +188,8 @@ def one(args):
 def run(mapping=None):
     out = OUT if mapping is None else ROOT / "results" / "E17b" / mapping
     out.mkdir(parents=True, exist_ok=True)
-    tasks = [(w, load, n, mapping) for load in LOADS for w in range(WINDOWS) for n in SCHEDS]
+    nwin = len(np.load(OUT / "mawi_windows.npz")["t"]) // WINDOW_PKTS      # 10 for E17 and E17c; E17d uses what its prefix holds
+    tasks = [(w, load, n, mapping) for load in LOADS for w in range(nwin) for n in SCHEDS]
     with Pool() as p:
         rows = p.map(one, tasks, chunksize=2)
     import csv
@@ -192,7 +198,7 @@ def run(mapping=None):
         wr = csv.DictWriter(f, fieldnames=keys)
         wr.writeheader()
         wr.writerows(rows)
-    (out / "meta.json").write_text(json.dumps({"code_hash": code_hash(), "windows": WINDOWS, "window_packets": WINDOW_PKTS,
+    (out / "meta.json").write_text(json.dumps({"code_hash": code_hash(), "windows": nwin, "window_packets": WINDOW_PKTS,
                                                "loads": LOADS, "schedulers": SCHEDS, "mapping": mapping or "registered"},
                                               indent=1))
     print("wrote", out / "runs.csv", len(rows), "runs")

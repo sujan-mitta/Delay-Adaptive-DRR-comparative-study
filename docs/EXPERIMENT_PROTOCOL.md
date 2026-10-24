@@ -576,3 +576,21 @@ A holds (8 of 8), B holds (13 of 14), C holds (14 of 14). So the conclusion of E
 a demand-aware reading of RevenueDRR has the lowest W at the 8 heavy points and FuzzyDRR at the 6 light ones, DR-DRR at none. The
 throughput reading made FuzzyDRR clearly better than our first reading (and different from plain DRR), so for FuzzyDRR the reading mattered;
 it still does not reach DR-DRR at heavy load. Access to the source papers (closed per Unpaywall) was not obtained.
+
+## E17d — a third backbone trace (pre-registered 2026-10-24, before downloading)
+E17c's trace turned out to be 97 % bulk and could not separate the schedulers. A third trace from another year is added:
+https://mawi.wide.ad.jp/mawi/samplepoint-F/2019/201901011400.pcap.gz (samplepoint F, 2019-01-01 14:00), chosen only because it
+exists and is older; its class mix was not looked at beforehand. Procedure as E17 (registered port-to-class mapping, loads 0.8 /
+0.95 / 1.2, the eight compared schedulers, tuned parameters), except that the window count is reduced to what the first ~80 MB hold
+(at most 10 windows of 100,000 packets; the number actually used is reported).
+- R1d: SP has the lowest latency-class p95 at 3/3 loads. R2d: DR-DRR beats DRR on mean W (paired over windows, p < 0.05) at 3/3
+  loads. R3d: no scheduler other than SP, CQDRR and FIFO starves a class.
+- If the trace is again so bulk-dominated that the non-FIFO schedulers tie in W (spread below 0.001), R2d is reported as undecidable,
+  as for E17c, and the trace is described as a weaker check.
+- Descriptive: best non-SP scheduler; class shares.
+
+### E17d outcome (2026-10-24)
+The prefix (83,886,080 bytes, sha256 in `results/E17d/parse_meta.json`) held 1,000,000 packets over 16.8 s, so all 10 windows were used. Byte
+shares latency/video/bulk 7.4 % / 4.4 % / 88.2 % (packets 41 % / 1 % / 57 %); the mix is far more varied than E17c's. R1d holds (SP lowest latency
+p95 at 3/3 loads). R2d holds (DR-DRR below DRR at 3/3 loads, W lower by 0.51, 0.44 and 0.31, Wilcoxon p between 0.004 and 0.01 with 10
+windows). R3d holds (only SP, CQDRR and FIFO starved a class). Best non-SP scheduler: CQDRR at all three loads, DR-DRR second, as in E17.

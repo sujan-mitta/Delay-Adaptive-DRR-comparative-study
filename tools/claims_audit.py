@@ -69,7 +69,7 @@ def main(paper):
     # ------------------------------------------------------------------ ledger and set-up
     rows, t = run_ledger.build()
     for k, v in (("main", 6520), ("main_paired_groups", 600), ("main_paired_runs", 4800), ("main_single_runs", 1720),
-                 ("further", 13440), ("tuning", 2120), ("simulator_total", 22080), ("kernel_runs", 54), ("replay_runs", 1080), ("tandem_runs", 160),
+                 ("further", 13440), ("tuning", 2120), ("simulator_total", 22080), ("kernel_runs", 54), ("replay_runs", 1350), ("tandem_runs", 160),
                  ("archived", 33140)):
         check(f"ledger {k}", t[k], v)
     check("E6 distinct traces", rows["E6"]["distinct_traces"], 40)
@@ -587,6 +587,22 @@ def main(paper):
         qb += abs(m25["FuzzyDRR"] / drr_ - 1) > 0.05
         qc += min(three_, key=three_.get) == m24.idxmin()
     check("E25: A / B / C", (int(qa_ok), int(qa_n), int(qb), int(qc)), (8, 8, 13, 14))
+    # E17d: third backbone trace
+    metad = json.loads((ROOT / "results" / "E17d" / "parse_meta.json").read_text())
+    check("E17d: 1,000,000 packets in 16.8 s; byte shares 7.4 / 4.4 / 88.2 %", (metad["packets"], round(metad["span_s"], 1),
+          [round(x / sum(metad["class_share_bytes"]) * 100, 1) for x in metad["class_share_bytes"]]), (1000000, 16.8, [7.4, 4.4, 88.2]))
+    rdd = pd.read_csv(ROOT / "results" / "E17d" / "runs.csv")
+    check("E17d: 270 replay runs", len(rdd), 270)
+    sp_, w_, oth_, best_, dif_ = 0, 0, set(), [], []
+    for _, g_ in rdd.groupby("load"):
+        sp_ += g_.groupby("scheduler").lat_p95.mean().idxmin() == "SP"
+        dd_ = g_[g_.scheduler == "DR-DRR"].set_index("window").W - g_[g_.scheduler == "DRR"].set_index("window").W
+        w_ += (dd_.mean() < 0) and stats.wilcoxon(dd_).pvalue < 0.05
+        dif_.append(round(dd_.mean(), 2))
+        stc_ = g_.groupby("scheduler")[[f"{c}_starv_count" for c in CLS]].sum().sum(axis=1)
+        oth_ |= set(stc_[stc_ > 0].index) - {"SP", "CQDRR", "FIFO"}
+        best_.append(g_.groupby("scheduler").W.mean().drop("SP").idxmin())
+    check("E17d R1d / R2d / R3d / best non-SP / differences", (int(sp_), int(w_), oth_, best_, dif_), (3, 3, set(), ["CQDRR"] * 3, [-0.51, -0.44, -0.31]))
     # E17c: second backbone trace
     metac = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
     check("E17c: 1,000,000 packets in 27.5 s; 97.3 % bulk bytes", (metac["packets"], round(metac["span_s"], 1), round(metac["class_share_bytes"][2] / sum(metac["class_share_bytes"]) * 100, 1)),

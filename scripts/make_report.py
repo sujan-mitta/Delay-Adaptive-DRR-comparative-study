@@ -885,6 +885,44 @@ def main(out=None):
                      f"DR-DRR beats DRR {sum(v[1] for v in resc.values())}/3; no other starvation {sum(v[2] for v in resc.values())}/3; "
                      f"best non-SP: {', '.join(sorted(set(v[3] for v in resc.values())))}.")
 
+    # ---------------- E17d: third backbone trace (pre-registered replication of E17)
+    e17d_head = None
+    if (ROOT / "results" / "E17d" / "runs.csv").exists():
+        rdd = pd.read_csv(ROOT / "results" / "E17d" / "runs.csv")
+        pmd = json.loads((ROOT / "results" / "E17d" / "parse_meta.json").read_text())
+        w("## E17d - a third backbone trace (pre-registered replication of E17)")
+        w()
+        shd = np.array(pmd["class_share_bytes"]) / sum(pmd["class_share_bytes"])
+        w(f"Source: {pmd['source']} (first {pmd['prefix_bytes'] / 1e6:.0f} MB, sha256 {pmd['prefix_sha256'][:16]}..., "
+          f"{pmd['packets']:,} packets over {pmd['span_s']:.1f} s; byte shares latency/video/bulk "
+          f"{shd[0]:.1%}/{shd[1]:.1%}/{shd[2]:.1%}). Same mapping, loads and schedulers as E17; {rdd.window.nunique()} windows of 100,000 packets.")
+        w()
+        resd = {}
+        for ld_d, g_d in rdd.groupby("load"):
+            m_d = g_d.groupby("scheduler")[["W", "lat_p95", "vid_p95", "blk_p95"]].mean()
+            st_d = g_d.groupby("scheduler")[[f"{c.name}_starv_count" for c in CLASSES]].sum().sum(axis=1)
+            dd_d = g_d[g_d.scheduler == "DR-DRR"].set_index("window").W - g_d[g_d.scheduler == "DRR"].set_index("window").W
+            pv_d = _st.wilcoxon(dd_d).pvalue if np.any(dd_d != 0) else 1.0
+            others_d = set(st_d[st_d > 0].index) - {"SP", "CQDRR", "FIFO"}
+            resd[ld_d] = (m_d.lat_p95.idxmin() == "SP", dd_d.mean() < 0 and pv_d < 0.05, not others_d, m_d.drop("SP").W.idxmin(), dd_d.mean())
+            w(f"**Load {ld_d}**")
+            w()
+            w("| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |")
+            w("|---|---|---|---|---|---|")
+            for sc_d in m_d.sort_values("W").index:
+                w(f"| {sc_d} | {m_d.W[sc_d]:.3f} | {m_d.lat_p95[sc_d] * 1e3:.2f} | {m_d.vid_p95[sc_d] * 1e3:.1f} | "
+                  f"{m_d.blk_p95[sc_d] * 1e3:.1f} | {int(st_d[sc_d])} |")
+            w()
+        w(f"- **R1d** SP lowest latency p95: {sum(v[0] for v in resd.values())}/3 loads.")
+        w(f"- **R2d** DR-DRR beats DRR on W (paired over windows, p < 0.05): {sum(v[1] for v in resd.values())}/3 loads "
+          f"(differences {', '.join(f'{v[4]:+.3f}' for v in resd.values())}).")
+        w(f"- **R3d** no scheduler other than SP, CQDRR and FIFO starves a class: {sum(v[2] for v in resd.values())}/3 loads.")
+        w(f"- Best non-SP scheduler on mean W (descriptive; E17: CQDRR): {', '.join(f'{k}: {v[3]}' for k, v in resd.items())}.")
+        w()
+        e17d_head = (f"26. **Third backbone trace (E17d)**: SP lowest latency {sum(v[0] for v in resd.values())}/3 loads; DR-DRR beats DRR "
+                     f"{sum(v[1] for v in resd.values())}/3; no other starvation {sum(v[2] for v in resd.values())}/3; best non-SP "
+                     f"{', '.join(sorted(set(v[3] for v in resd.values())))}.")
+
     # ---------------- E18: is the ranking an artefact of W?
     e18_head = None
     pts18 = []
@@ -1537,7 +1575,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head, e22_head, e24_head, e23_head, e25_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head, e22_head, e24_head, e23_head, e25_head, e17d_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")

@@ -1,0 +1,17 @@
+{
+ "source": "https://mawi.wide.ad.jp/mawi/samplepoint-F/2019/201901011400.pcap.gz",
+ "prefix_bytes": 83886080,
+ "prefix_sha256": "a30fb9a2f1ef152d0b60f82396bad6abeccbd1f52f10c8fe0610bf75884bc9d2",
+ "packets": 1000000,
+ "span_s": 16.847460985183716,
+ "class_share_packets": [
+  413047,
+  12912,
+  574041
+ ],
+ "class_share_bytes": [
+  27584279.0,
+  16470623.0,
+  329515885.0
+ ]
+}

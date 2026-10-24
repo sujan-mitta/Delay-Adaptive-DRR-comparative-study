@@ -131,3 +131,15 @@ report generator (175 checks with the paper source, 117 without it). It found, a
   throughput-shortfall second input, gain, delay span), selects on development seeds, and checks whether the E24 verdict depends on the reading.
   It does not: A 8/8, B 13/14, C 14/14. The throughput reading made FuzzyDRR clearly better than our first one, so for FuzzyDRR the
   reading mattered. New options: FuzzyDRR `input2`, RevenueDRR `order`. Runs: simulator 22,080 (further 13,440, tuning 2,120).
+
+## Audit package: verification counts, model-checked bound, reproduction guide, third trace
+- `tools/verification_counts.py` -> `docs/VERIFICATION_COUNTS.md`: scheduler-by-scheduler counts of the exhaustive small-scope check
+  (21,945 cases per variant, 395,010 invariant cases over 18 variants; 197,505 reference comparisons over 9 reference configurations;
+  the five-packet one-off 706,629). Reconciles with every number in the paper; `tests/test_audit_docs.py` keeps the document current.
+- `tests/test_proposition_model.py`: Proposition 1 checked on an independent abstract DRR model, exhaustively over 1,819 arrival patterns
+  and every integer quantum in [Q0, M Q0] at every visit, plus a negative control (a packet larger than Q0) that does violate the bound.
+  This is a checker, not an independent human reader; the proof still needs one.
+- `tools/make_reproduce_doc.py` -> `docs/REPRODUCE.md`: command, seeds, configuration, row counts and LF-normalised checksums of every
+  experiment, and the expected output of every check.
+- E17d (pre-registered): a third MAWI trace (2019, mixed classes, 7 % / 4 % / 88 % of bytes): R1d, R2d, R3d hold; CQDRR best non-SP as in E17.
+  Replay runs 1,350. `scripts/e17_realtrace.py` now takes E17_TRACE=d. Tests: 1,185. Claims audit: 207 checks.

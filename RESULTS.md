@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-24 13:25 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `cbddf4ace2cd8444`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-24 14:43 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `cbddf4ace2cd8444`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -36,6 +36,7 @@ Generated 2026-10-24 13:25 by `scripts/make_report.py` from `results/*/runs.csv`
 23. **Two-knob tuned baselines (E24)**: DR-DRR lowest of three at 0/14 (Q1 fails), 0/4 heavy ON/OFF (Q2 fails).
 24. **SD-DRR (E23)**: N1 1/14, N2 2 better / 4 worse, N3 0 starved, N4 3/6 -> adaptation on a static base is not shown to help.
 25. **Alternative readings (E25)**: A 8/8, B 13/14, C 14/14.
+26. **Third backbone trace (E17d)**: SP lowest latency 3/3 loads; DR-DRR beats DRR 3/3; no other starvation 3/3; best non-SP CQDRR.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -715,6 +716,57 @@ Source: https://mawi.wide.ad.jp/mawi/samplepoint-F/2022/202201011400.pcap.gz (fi
 - **R3c** no scheduler other than SP, CQDRR and FIFO starves a class: 3/3 loads.
 - Best non-SP scheduler on mean W (descriptive; E17: CQDRR): 0.8: FuzzyDRR, 0.95: FuzzyDRR, 1.2: DR-DRR.
 - Caveat: this trace is 97% bulk bytes, so W is set by the bulk class and seven schedulers (all but RevenueDRR and FIFO) tie to within 0.0001 in W at every load. R2c cannot be decided by W here, and the 'best non-SP' line above names a tie, not a winner. The per-class latency ordering is the informative result.
+
+## E17d - a third backbone trace (pre-registered replication of E17)
+
+Source: https://mawi.wide.ad.jp/mawi/samplepoint-F/2019/201901011400.pcap.gz (first 84 MB, sha256 a30fb9a2f1ef152d..., 1,000,000 packets over 16.8 s; byte shares latency/video/bulk 7.4%/4.4%/88.2%). Same mapping, loads and schedulers as E17; 10 windows of 100,000 packets.
+
+**Load 0.8**
+
+| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |
+|---|---|---|---|---|---|
+| SP | 0.502 | 1.07 | 23.0 | 105.1 | 6 |
+| CQDRR | 0.578 | 1.11 | 27.2 | 105.0 | 2 |
+| DR-DRR | 0.816 | 1.48 | 39.7 | 104.7 | 0 |
+| RevenueDRR | 0.993 | 6.57 | 40.5 | 104.4 | 0 |
+| FuzzyDRR | 1.219 | 1.47 | 59.8 | 104.6 | 0 |
+| SCRR | 1.308 | 1.32 | 64.2 | 104.6 | 0 |
+| DRR | 1.324 | 1.39 | 65.1 | 104.5 | 0 |
+| RL-SP+DRR | 1.335 | 1.10 | 65.6 | 104.6 | 0 |
+| FIFO | 9.481 | 94.81 | 95.4 | 96.6 | 0 |
+
+**Load 0.95**
+
+| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |
+|---|---|---|---|---|---|
+| SP | 0.447 | 1.08 | 20.1 | 110.8 | 4 |
+| CQDRR | 0.517 | 1.16 | 24.1 | 110.5 | 1 |
+| DR-DRR | 0.752 | 1.61 | 36.5 | 110.3 | 0 |
+| RevenueDRR | 0.904 | 6.62 | 35.6 | 110.0 | 0 |
+| FuzzyDRR | 1.099 | 1.58 | 53.8 | 109.9 | 0 |
+| SCRR | 1.160 | 1.45 | 56.9 | 110.1 | 0 |
+| DRR | 1.192 | 1.47 | 58.6 | 110.0 | 0 |
+| RL-SP+DRR | 1.210 | 1.12 | 59.5 | 110.0 | 0 |
+| FIFO | 9.867 | 98.67 | 97.7 | 98.8 | 0 |
+
+**Load 1.2**
+
+| scheduler | mean W | latency p95 (ms) | video p95 (ms) | bulk p95 (ms) | starvation episodes |
+|---|---|---|---|---|---|
+| SP | 0.456 | 1.09 | 19.4 | 118.8 | 6 |
+| CQDRR | 0.510 | 1.30 | 22.9 | 118.4 | 1 |
+| DR-DRR | 0.769 | 1.79 | 37.5 | 117.7 | 0 |
+| RevenueDRR | 0.916 | 6.40 | 34.9 | 117.6 | 0 |
+| FuzzyDRR | 1.071 | 1.72 | 52.7 | 117.1 | 0 |
+| SCRR | 1.073 | 1.61 | 52.6 | 117.6 | 0 |
+| DRR | 1.081 | 1.57 | 53.2 | 117.2 | 0 |
+| RL-SP+DRR | 1.133 | 1.15 | 55.8 | 117.3 | 0 |
+| FIFO | 9.960 | 99.60 | 99.2 | 99.5 | 4 |
+
+- **R1d** SP lowest latency p95: 3/3 loads.
+- **R2d** DR-DRR beats DRR on W (paired over windows, p < 0.05): 3/3 loads (differences -0.508, -0.440, -0.312).
+- **R3d** no scheduler other than SP, CQDRR and FIFO starves a class: 3/3 loads.
+- Best non-SP scheduler on mean W (descriptive; E17: CQDRR): 0.8: CQDRR, 0.95: CQDRR, 1.2: CQDRR.
 
 ## E18 — is the ranking an artefact of the score W? (pre-registered)
 
