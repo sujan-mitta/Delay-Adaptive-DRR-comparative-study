@@ -34,3 +34,9 @@ Sayenko papers; reference lists citing doi:10.1016/j.jnca.2013.04.004.
 | Lenzini, Mingozzi, Stea, "Performance analysis of Modified Deficit Round Robin schedulers" | J. High Speed Netw. 16(4), 399-422, 2007, doi:10.3233/HSN-2007-325 | metadata via Crossref; abstract seen in a search snippet only |
 | Mukherjee, Kuri, Singh, "Convexity and optimization in DRR scheduling for delay-constrained systems" | arXiv:2503.23366, 30 Mar 2025 (preprint, no venue listed) | arXiv abstract page read |
 
+
+## Access attempt for the two reconstructed baselines (2026-10-24)
+Unpaywall (open-access locator) reports `is_oa: false` and no open location for both Alsahag et al. (doi:10.1016/j.jnca.2013.04.004) and
+Sayenko et al. (doi:10.1007/978-3-540-30573-6_47). The VTT and research.fi records list the latter as not open access and not
+self-archived. No author copy or thesis was found for either. The reconstructions therefore stay abstract-and-preview readings; E24 and
+E25 measure how much the conclusions depend on them.

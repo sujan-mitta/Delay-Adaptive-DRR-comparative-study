@@ -1,0 +1,19 @@
+{
+ "rule": "see docs/EXPERIMENT_PROTOCOL.md E25",
+ "params": {
+  "RevenueDRR": {
+   "order": [
+    0,
+    1,
+    2
+   ],
+   "guar_scale": 0.25,
+   "tau": 0.0125
+  },
+  "FuzzyDRR": {
+   "input2": "throughput",
+   "gain": 1.0,
+   "delay_span": 2.0
+  }
+ }
+}

@@ -124,3 +124,10 @@ report generator (175 checks with the paper source, 117 without it). It found, a
   reconstructions; E24 and E6 show how much their ranking depends on tuning.
 - Run counts: simulator 20,860 (main 6,520; further 12,880; tuning 1,460); replay 1,080; tandem 160; kernel 54. Tests 1,179.
   The regression guard covers E23, E23R, E24 and their tuning runs (scripts are the task source). Claims audit: 202 checks.
+
+## Alternative readings of the reconstructed baselines (E25)
+- The full FuzzyDRR and RevenueDRR papers are closed access (Unpaywall: no open location; no author copy or thesis found), so E25
+  (pre-registered) tries 36 readings of RevenueDRR (spare-capacity order, guarantee scale, tau) and 30 of FuzzyDRR (occupancy or
+  throughput-shortfall second input, gain, delay span), selects on development seeds, and checks whether the E24 verdict depends on the reading.
+  It does not: A 8/8, B 13/14, C 14/14. The throughput reading made FuzzyDRR clearly better than our first one, so for FuzzyDRR the
+  reading mattered. New options: FuzzyDRR `input2`, RevenueDRR `order`. Runs: simulator 22,080 (further 13,440, tuning 2,120).

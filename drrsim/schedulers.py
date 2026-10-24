@@ -542,9 +542,10 @@ FUZZY_RULES = ((0.75, 1.0, 1.5),
 
 class FuzzyDRR(_AdaptiveDRR):
     name = "FuzzyDRR"
-    defaults = {"gain": 1.0, "delay_span": 2.0, "qmin": 300.0}
+    defaults = {"gain": 1.0, "delay_span": 2.0, "qmin": 300.0, "input2": "occupancy"}
 
     def validate(self):
+        self._need(self.p["input2"] in ("occupancy", "throughput"), f"input2 must be 'occupancy' or 'throughput', got {self.p['input2']!r}")
         self._num("gain", lo=0, hi=100)
         self._num("delay_span", lo=0, lo_open=True)
         self._num("qmin", lo=Q_LO, hi=Q_HI)
@@ -552,6 +553,16 @@ class FuzzyDRR(_AdaptiveDRR):
     def bind(self, view):
         self.p = {**self.p, "quanta": BASE_Q}
         super().bind(view)
+        self.served = [0.0] * K          # bytes dispatched per class since the last update (throughput reading, E25)
+        self.last_arr = [0] * K
+        self.backlog0 = [0] * K
+        self.short = [0.0] * K
+
+    def select(self, now):
+        c = super().select(now)
+        if c is not None:
+            self.served[c] += self.v.size[self.v.queues[c][0]]
+        return c
 
     def multiplier(self, x, y):
         g = self.p["gain"]
@@ -569,17 +580,28 @@ class FuzzyDRR(_AdaptiveDRR):
         v, p = self.v, self.p
         share = v.buffer_bytes / K
         for c in range(K):
-            x = min(1.0, v.qbytes[c] / share)
+            if p["input2"] == "throughput":
+                arrived = v.arrived_bytes[c] - self.last_arr[c]
+                demand = arrived + self.backlog0[c]
+                inst = 1.0 - min(1.0, self.served[c] / demand) if demand > 0 else 0.0
+                self.short[c] = 0.5 * self.short[c] + 0.5 * inst
+                x = self.short[c]
+                self.last_arr[c], self.backlog0[c], self.served[c] = v.arrived_bytes[c], v.qbytes[c], 0.0
+            else:
+                x = min(1.0, v.qbytes[c] / share)
             y = min(1.0, v.hol(c, now) / (p["delay_span"] * D_TARGET[c]))
             self.Q[c] = max(p["qmin"], BASE_Q[c] * self.multiplier(x, y))
 
 
 class RevenueDRR(_AdaptiveDRR):
     name = "RevenueDRR"
-    defaults = {"guar": (0.2, 0.3, 0.2), "tau": 0.1, "ewma": 0.1, "qmin": 150.0, "guar_scale": 1.0}
+    defaults = {"guar": (0.2, 0.3, 0.2), "tau": 0.1, "ewma": 0.1, "qmin": 150.0, "guar_scale": 1.0, "order": None}
 
     def validate(self):
         self._vector("guar", positive=False)
+        o = self.p["order"]
+        self._need(o is None or (isinstance(o, (tuple, list)) and sorted(o) == list(range(self.k))),
+                   f"order must be None or a permutation of the {self.k} classes, got {o!r}")
         self._num("tau", lo=0, lo_open=True)
         self._num("ewma", lo=0, hi=1, lo_open=True)
         self._num("qmin", lo=Q_LO, hi=Q_HI)
@@ -590,7 +612,7 @@ class RevenueDRR(_AdaptiveDRR):
         super().bind(view)
         self.R = [0.0] * K
         self.last_arrived = [0] * K
-        self.order = sorted(range(K), key=lambda c: -PRICE[c])
+        self.order = list(self.p["order"]) if self.p["order"] is not None else sorted(range(K), key=lambda c: -PRICE[c])
 
     def update(self, now):
         v, p = self.v, self.p

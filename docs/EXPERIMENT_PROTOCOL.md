@@ -551,3 +551,28 @@ DRR at 3 of 6 points; at 1 Mb/s it is worse at all three). The tuned static quan
 and the design does not fix the 1 Mb/s reversal. One design was registered and run; no variant was tried afterwards.
 The first E23 run attempt used an invalid scheduler label for the static DRR (280 failed tasks, kept in
 `results/E23/failures_first_attempt_label_bug.csv`); the fixed run re-used the 1,120 results already saved.
+
+## E25 — alternative readings of the reconstructed baselines (pre-registered 2026-10-24, before any code for them)
+Why: the full FuzzyDRR and RevenueDRR papers are paywalled (Unpaywall lists both as closed; no author copies found), so our versions
+are readings of abstracts and previews. Instead of one reading, we try a family of plausible ones, pick the best of each family on
+development seeds, and ask whether the conclusion about DR-DRR depends on which reading we chose.
+- RevenueDRR readings: the order in which spare capacity goes to classes (all 6 orders of latency, video, bulk; ours is latency,
+  video, bulk) x guarantee scale {0.25, 0.5, 1.0} x tau {0.0125, 0.1} = 36 settings.
+- FuzzyDRR readings: second fuzzy input = queue occupancy (ours) or throughput shortfall (1 - served bytes / (arrived bytes + backlog
+  at the start of the interval) in the last update interval, EWMA 0.5, the other reading the abstract suggests) x gain {0.1, 0.5, 1,
+  2, 3} x delay_span {1, 2, 4} = 30 settings.
+- Selection: development seeds 1-5, ON/OFF-medium at loads 0.95 and 1.2, objective W at 0.95 s.t. mean Jain at 1.2 >= 0.98, ties
+  within 1 % broken toward the reading closest to ours. Evaluation: the two selected readings and DR-DRR (E24 values) at the 14 E1
+  points, seeds 101-120.
+- A: the selected RevenueDRR reading has lower mean W than DR-DRR at >= 7 of the 8 points where E24's RevenueDRR won.
+- B: the selected FuzzyDRR reading differs from plain DRR by more than 5 % in mean W at >= 7 of 14 points (does the fuzzy mechanism do anything?).
+- C: at >= 11 of 14 points the lowest-W scheme of the three is the same as in E24.
+- Descriptive: which readings were selected.
+
+### E25 outcome (2026-10-24)
+Selected: RevenueDRR order (latency, video, bulk), guarantee scale 0.25, tau 0.0125 (the same as E24); FuzzyDRR second input
+**throughput shortfall**, gain 1.0, delay_span 2.0 (W at 0.95 on the development seeds 1.945 against 2.7 for our occupancy reading).
+A holds (8 of 8), B holds (13 of 14), C holds (14 of 14). So the conclusion of E24 does not depend on which of 66 readings we use:
+a demand-aware reading of RevenueDRR has the lowest W at the 8 heavy points and FuzzyDRR at the 6 light ones, DR-DRR at none. The
+throughput reading made FuzzyDRR clearly better than our first reading (and different from plain DRR), so for FuzzyDRR the reading mattered;
+it still does not reach DR-DRR at heavy load. Access to the source papers (closed per Unpaywall) was not obtained.

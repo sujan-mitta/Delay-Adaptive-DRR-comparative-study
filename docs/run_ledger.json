@@ -1,8 +1,8 @@
 {
  "main": 6520,
- "further": 12880,
- "tuning": 1460,
- "simulator_total": 20860,
+ "further": 13440,
+ "tuning": 2120,
+ "simulator_total": 22080,
  "kernel_runs": 54,
  "replay_runs": 1080,
  "tandem_runs": 160,

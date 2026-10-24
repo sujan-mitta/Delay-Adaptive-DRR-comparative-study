@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT))
 from drrsim.experiments import EXPERIMENTS, experiment_tasks, load_tuned, tuning_tasks  # noqa: E402
 from drrsim.runner import _execute, key  # noqa: E402
 
-ALL_EXPS = ["TUNE"] + EXPERIMENTS + ["E9C", "DEVD", "E1D", "E1V", "ES", "E11", "E12", "E14TUNE", "E14", "E15", "E19TUNE", "E19", "E19H", "E20", "E20B", "E21", "E23TUNE", "E23", "E23R", "E24TUNE", "E24"]
+ALL_EXPS = ["TUNE"] + EXPERIMENTS + ["E9C", "DEVD", "E1D", "E1V", "ES", "E11", "E12", "E14TUNE", "E14", "E15", "E19TUNE", "E19", "E19H", "E20", "E20B", "E21", "E23TUNE", "E23", "E23R", "E24TUNE", "E24", "E25TUNE", "E25"]
 
 
 def _tasks_for(e, tuned):
@@ -33,16 +33,16 @@ def _tasks_for(e, tuned):
         cfg = {"onoff|0.95": onoff(0.95), "onoff|1.2": onoff(1.2), "poisson|1.2": poisson(1.2)}
         return [task("E9C", f"{bp}|smooth={lam}", "DRR", s, c, {"quanta": tuple(means[f"{bp}|{lam}"])},
                      {"base_point": bp, "smooth": lam}) for bp, c in cfg.items() for lam in SQ_SMOOTH for s in SEEDS]
-    if e in ("E23TUNE", "E23", "E23R", "E24TUNE", "E24"):      # tasks are defined by the scripts that ran them
+    if e in ("E23TUNE", "E23", "E23R", "E24TUNE", "E24", "E25TUNE", "E25"):      # tasks are defined by the scripts that ran them
         import importlib.util
         import json
-        mod = "e23_sddrr" if e.startswith("E23") else "e24_retune"
+        mod = {"E23": "e23_sddrr", "E24": "e24_retune", "E25": "e25_readings"}[e[:3]]
         spec = importlib.util.spec_from_file_location(mod, ROOT / "scripts" / f"{mod}.py")
         m = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(m)
         if e.endswith("TUNE"):
             return m.tune_tasks()
-        chosen = json.loads((ROOT / "config" / ("tuned_sddrr.json" if mod == "e23_sddrr" else "tuned_2knob.json")).read_text())["params"]
+        chosen = json.loads((ROOT / "config" / {"e23_sddrr": "tuned_sddrr.json", "e24_retune": "tuned_2knob.json", "e25_readings": "tuned_readings.json"}[mod]).read_text())["params"]
         return m.rate_tasks(chosen) if e == "E23R" else m.eval_tasks(chosen)
     return experiment_tasks(e, tuned)
 SKIP = {"wall_time", "decisions_per_s"}

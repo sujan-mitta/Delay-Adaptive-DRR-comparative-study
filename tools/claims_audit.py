@@ -69,7 +69,7 @@ def main(paper):
     # ------------------------------------------------------------------ ledger and set-up
     rows, t = run_ledger.build()
     for k, v in (("main", 6520), ("main_paired_groups", 600), ("main_paired_runs", 4800), ("main_single_runs", 1720),
-                 ("further", 12880), ("tuning", 1460), ("simulator_total", 20860), ("kernel_runs", 54), ("replay_runs", 1080), ("tandem_runs", 160),
+                 ("further", 13440), ("tuning", 2120), ("simulator_total", 22080), ("kernel_runs", 54), ("replay_runs", 1080), ("tandem_runs", 160),
                  ("archived", 33140)):
         check(f"ledger {k}", t[k], v)
     check("E6 distinct traces", rows["E6"]["distinct_traces"], 40)
@@ -570,6 +570,23 @@ def main(paper):
     check("E23: N1 / N2 better / N2 worse / starvation / N4", (int(n1_), sum(1 for d_, a_ in zip(df_, ad_) if d_ < 0 and a_ < 0.05), sum(1 for d_, a_ in zip(df_, ad_) if d_ > 0 and a_ < 0.05),
           int(sd_[[f"{c}_starv_count" for c in CLS]].sum().sum()), int(n4_)), (1, 2, 4, 0, 3))
     check("E23: SD-DRR longest service gap 20.3 ms, below 21.6", (round(max(sd_[f"{c}_gap_max"].max() for c in CLS) * 1e3, 1), True), (20.3, True))
+    # E25: alternative readings
+    e25 = rd("E25")
+    ch25 = json.loads((ROOT / "config" / "tuned_readings.json").read_text())["params"]
+    check("E25 selected: RevenueDRR reading as E24; FuzzyDRR throughput input", (ch25["RevenueDRR"], ch25["FuzzyDRR"]["input2"]),
+          ({"order": [0, 1, 2], "guar_scale": 0.25, "tau": 0.0125}, "throughput"))
+    qa_ok = qa_n = qb = qc = 0
+    for pt_, g_ in e25.groupby("point"):
+        m25 = g_.groupby("scheduler").W.mean()
+        m24 = e24[e24.point == pt_].groupby("scheduler").W.mean()
+        drr_ = e1[(e1.point == pt_) & (e1.scheduler == "DRR")].W.mean()
+        three_ = {"DR-DRR": m24["DR-DRR"], "RevenueDRR": m25["RevenueDRR"], "FuzzyDRR": m25["FuzzyDRR"]}
+        if m24.idxmin() == "RevenueDRR":
+            qa_n += 1
+            qa_ok += m25["RevenueDRR"] < m24["DR-DRR"]
+        qb += abs(m25["FuzzyDRR"] / drr_ - 1) > 0.05
+        qc += min(three_, key=three_.get) == m24.idxmin()
+    check("E25: A / B / C", (int(qa_ok), int(qa_n), int(qb), int(qc)), (8, 8, 13, 14))
     # E17c: second backbone trace
     metac = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
     check("E17c: 1,000,000 packets in 27.5 s; 97.3 % bulk bytes", (metac["packets"], round(metac["span_s"], 1), round(metac["class_share_bytes"][2] / sum(metac["class_share_bytes"]) * 100, 1)),

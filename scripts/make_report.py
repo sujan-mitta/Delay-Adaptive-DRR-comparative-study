@@ -1208,6 +1208,39 @@ def main(out=None):
         w()
         e23_head = f"24. **SD-DRR (E23)**: N1 {n1}/14, N2 {n2b} better / {n2w} worse, N3 {st23} starved, N4 {n4}/6 -> adaptation on a static base is not shown to help."
 
+    e25_head = None
+    if (ROOT / "results" / "E25" / "runs.csv").exists():
+        e25 = load("E25")
+        e24b = load("E24")
+        e1d = load("E1")
+        ch25 = json.loads((ROOT / "config" / "tuned_readings.json").read_text())["params"]
+        w("## E25 — alternative readings of the reconstructed baselines (pre-registered)")
+        w()
+        w(f"Selected on development seeds from 36 RevenueDRR and 30 FuzzyDRR readings: RevenueDRR {ch25['RevenueDRR']}; FuzzyDRR {ch25['FuzzyDRR']}. "
+          "Mean W over seeds 101-120 at the 14 E1 points; DR-DRR uses the E24 values.")
+        w()
+        w("| point | DR-DRR | RevenueDRR (selected reading) | FuzzyDRR (selected reading) | lowest | lowest in E24 | plain DRR |")
+        w("|---|---|---|---|---|---|---|")
+        qa_ok = qa_n = qb = qc = 0
+        for pt25 in sorted(e25.point.unique()):
+            m25 = e25[e25.point == pt25].groupby("scheduler").W.mean()
+            m24 = e24b[e24b.point == pt25].groupby("scheduler").W.mean()
+            drr = e1d[(e1d.point == pt25) & (e1d.scheduler == "DRR")].W.mean()
+            three = {"DR-DRR": m24["DR-DRR"], "RevenueDRR": m25["RevenueDRR"], "FuzzyDRR": m25["FuzzyDRR"]}
+            w25, w24 = min(three, key=three.get), m24.idxmin()
+            if w24 == "RevenueDRR":
+                qa_n += 1
+                qa_ok += m25["RevenueDRR"] < m24["DR-DRR"]
+            qb += abs(m25["FuzzyDRR"] / drr - 1) > 0.05
+            qc += w25 == w24
+            w(f"| {pt25} | {m24['DR-DRR']:.3f} | {m25['RevenueDRR']:.3f} | {m25['FuzzyDRR']:.3f} | {w25} | {w24} | {drr:.3f} |")
+        w()
+        w(f"- **A** selected RevenueDRR beats DR-DRR at {qa_ok} of the {qa_n} points where E24's RevenueDRR won (needed 7): {'holds' if qa_ok >= 7 else '**fails**'}. "
+          f"**B** selected FuzzyDRR differs from plain DRR by more than 5 % at {qb}/14 (needed 7): {'holds' if qb >= 7 else '**fails**'}. "
+          f"**C** same lowest-W scheme as in E24 at {qc}/14 (needed 11): {'holds' if qc >= 11 else '**fails**'}.")
+        w()
+        e25_head = f"25. **Alternative readings (E25)**: A {qa_ok}/{qa_n}, B {qb}/14, C {qc}/14."
+
     e16b_head = e17b_head = None
     e16b_dirs = sorted(d for d in (ROOT / "results" / "E16b").glob("*") if d.is_dir()) if (ROOT / "results" / "E16b").exists() else []
     if e16b_dirs:
@@ -1504,7 +1537,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head, e22_head, e24_head, e23_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head, e22_head, e24_head, e23_head, e25_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")
