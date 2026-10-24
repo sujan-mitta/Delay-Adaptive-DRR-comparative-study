@@ -69,7 +69,7 @@ def main(paper):
     # ------------------------------------------------------------------ ledger and set-up
     rows, t = run_ledger.build()
     for k, v in (("main", 6520), ("main_paired_groups", 600), ("main_paired_runs", 4800), ("main_single_runs", 1720),
-                 ("further", 10040), ("tuning", 800), ("simulator_total", 17360), ("kernel_runs", 54), ("replay_runs", 1080),
+                 ("further", 10520), ("tuning", 800), ("simulator_total", 17840), ("kernel_runs", 54), ("replay_runs", 1080),
                  ("archived", 33140)):
         check(f"ledger {k}", t[k], v)
     check("E6 distinct traces", rows["E6"]["distinct_traces"], 40)
@@ -508,6 +508,34 @@ def main(paper):
     check("E20 MDRR-ALT latency p95 at ON/OFF 0.95: about 320 ms", round(lat20["MDRR-ALT"]["onoff|0.95"] * 1e3), 320)
     v_ = e20b[e20b.point == "onoff|0.95"]
     check("E20b MDRR-ALT-V at ON/OFF 0.95: latency 2.3 ms, W 3.17", (round(v_.lat_p95.mean() * 1e3, 1), round(v_.W.mean(), 2)), (2.3, 3.17))
+    # E21: other link rates; Holm over 29 points; RevenueDRR half-scale
+    e21 = rd("E21")
+    e21["rate"] = e21.point.str.split("|").str[0]
+    for rname, g_ in e21.groupby("rate"):
+        s1_ = sum(h.groupby("scheduler").lat_p95.mean().idxmin() == "SP" for _, h in g_.groupby("point"))
+        pv_, df_ = [], []
+        for _, h in g_.groupby("point"):
+            dd_ = (h[h.scheduler == "DR-DRR"].set_index("seed").sort_index().W - h[h.scheduler == "DRR"].set_index("seed").sort_index().W).dropna()
+            pv_.append(stats.wilcoxon(dd_).pvalue if np.any(dd_ != 0) else 1.0)
+            df_.append(dd_.mean())
+        ad_ = holm(pv_)
+        s2_ = sum(1 for d_, a_ in zip(df_, ad_) if d_ < 0 and a_ < 0.05)
+        stc_ = g_.groupby("scheduler")[[f"{c}_starv_count" for c in CLS]].sum().sum(axis=1)
+        check(f"E21 {rname}: S1 / S2 / DR-DRR starvation episodes", (s1_, s2_, int(stc_["DR-DRR"])), {"100Mb": (3, 3, 0), "1Mb": (3, 0, 3949)}[rname])
+        if rname == "1Mb":
+            gp_ = g_[g_.scheduler == "DR-DRR"]
+            check("E21 1 Mb/s: DR-DRR longest starvation 194 ms, below the 216 ms bound", (round(gp_[[f"{c}_starv_max" for c in CLS]].max().max() * 1e3), 194 < 216), (194, True))
+    allp, alld = [], []
+    for _, g_ in pd.concat([e1, rd("E2"), rd("E3"), rd("E4"), rd("E7"), rd("E8")]).groupby(["exp", "point"]):
+        dd_ = (g_[g_.scheduler == "DR-DRR"].set_index("seed").sort_index().W - g_[g_.scheduler == "DRR"].set_index("seed").sort_index().W).dropna()
+        allp.append(stats.wilcoxon(dd_).pvalue if np.any(dd_ != 0) else 1.0)
+        alld.append(dd_.mean())
+    ad29 = holm(allp)
+    check("Holm over all 29 points: DR-DRR vs DRR better / worse / not significant",
+          (sum(1 for d_, a_ in zip(alld, ad29) if d_ < 0 and a_ < 0.05), sum(1 for d_, a_ in zip(alld, ad29) if d_ > 0 and a_ < 0.05), int(sum(a_ >= 0.05 for a_ in ad29))), (23, 1, 5))
+    e6r = rd("E6")
+    e6r = e6r[e6r.scheduler == "RevenueDRR"]
+    check("E6: RevenueDRR at half guarantee scale W 0.84 / 1.39", (round(e6r[e6r.point == "guar_scale=x0.5|load=0.95"].W.mean(), 2), round(e6r[e6r.point == "guar_scale=x0.5|load=1.2"].W.mean(), 2)), (0.84, 1.39))
     # E17c: second backbone trace
     metac = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
     check("E17c: 1,000,000 packets in 27.5 s; 97.3 % bulk bytes", (metac["packets"], round(metac["span_s"], 1), round(metac["class_share_bytes"][2] / sum(metac["class_share_bytes"]) * 100, 1)),

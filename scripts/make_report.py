@@ -1067,6 +1067,51 @@ def main(out=None):
                     f"({verdicts20['MDRR-SP'][0]} better / {verdicts20['MDRR-SP'][1]} worse of 14); MDRR-ALT: {verdicts20['MDRR-ALT'][2]}; "
                     f"M1 {m1}/14, M2 {'holds' if m2 else 'fails'}, M3 {m3}/14.")
 
+    CLASSES_NAMES = [c.name for c in CLASSES]
+    e21_head = None
+    if (ROOT / "results" / "E21" / "runs.csv").exists():
+        e21 = load("E21")
+        e21["rate"] = e21.point.str.split("|").str[0]
+        e21["pt"] = e21.point.str.split("|", n=1).str[1]
+        w("## E21 — other link rates (pre-registered; no retuning)")
+        w()
+        w("Eight compared schedulers, ON/OFF 0.95, ON/OFF 1.2, Poisson 1.2, seeds 101-110; buffer scaled with the rate; update interval "
+          "and tuned parameters unchanged from 10 Mb/s. The 100 Mb/s runs last 10 s (1 s warm-up).")
+        w()
+        res21 = {}
+        for rname, g21 in e21.groupby("rate"):
+            s1 = 0
+            pv21, df21 = [], []
+            w(f"**{rname}**")
+            w()
+            w("| point | SP W | CQDRR W | DR-DRR W | DRR W | best non-SP | DR-DRR - DRR (95 % CI) | Holm p |")
+            w("|---|---|---|---|---|---|---|---|")
+            rows21 = []
+            for pt21, h in g21.groupby("pt"):
+                mw = h.groupby("scheduler").W.mean()
+                s1 += h.groupby("scheduler").lat_p95.mean().idxmin() == "SP"
+                a = h[h.scheduler == "DR-DRR"].set_index("seed").sort_index().W
+                b = h[h.scheduler == "DRR"].set_index("seed").sort_index().W
+                dd = (a - b).dropna()
+                m, hw, _ = ci95(dd)
+                pv21.append(_st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0)
+                df21.append(m)
+                rows21.append((pt21, mw, m, hw))
+            adj21 = _holm(np.array(pv21))
+            for (pt21, mw, m, hw), x in zip(rows21, adj21):
+                w(f"| {pt21} | {mw['SP']:.2f} | {mw['CQDRR']:.2f} | {mw['DR-DRR']:.2f} | {mw['DRR']:.2f} | {mw.drop('SP').idxmin()} | "
+                  f"{m:+.2f} ± {hw:.2f} | {x:.2g} |")
+            s2 = sum(1 for m, x in zip(df21, adj21) if m < 0 and x < 0.05)
+            st21 = g21.groupby("scheduler")[[f"{c}_starv_count" for c in CLASSES_NAMES]].sum().sum(axis=1)
+            others = sorted(set(st21[st21 > 0].index) - {"SP", "CQDRR", "FIFO"})
+            res21[rname] = (s1, s2, others, int(st21.get("DR-DRR", 0)))
+            w()
+            w(f"S1 (SP lowest latency p95): {s1}/3. S2 (DR-DRR beats DRR, Holm): {s2}/3. S3 (nobody but SP, CQDRR, FIFO starves): "
+              f"{'holds' if not others else 'fails: ' + ', '.join(others)}.")
+            w()
+        e21_head = (f"21. **Other link rates (E21)**: 100 Mb/s S1 {res21['100Mb'][0]}/3, S2 {res21['100Mb'][1]}/3; 1 Mb/s S1 {res21['1Mb'][0]}/3, "
+                    f"S2 {res21['1Mb'][1]}/3, DR-DRR starvation episodes {res21['1Mb'][3]}.")
+
     e16b_head = e17b_head = None
     e16b_dirs = sorted(d for d in (ROOT / "results" / "E16b").glob("*") if d.is_dir()) if (ROOT / "results" / "E16b").exists() else []
     if e16b_dirs:
@@ -1363,7 +1408,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")

@@ -462,3 +462,26 @@ analysis papers in full, so these are **reconstructions**.
   (low-latency queue takes one DRR turn, quantum 1500 B, between turns of the other classes) and ran it on the same 14 points
   and seeds as **E20b**. It is post-hoc: it was written after seeing E20, it has no pre-registered criteria, and it is not checked
   against the independent reference simulator (unit tests and the common invariants only). Its numbers are descriptive.
+
+## E21 — other link rates (pre-registered 2026-10-24, before any run)
+Why: every main result is at 10 Mb/s; a reviewer can fairly ask whether the conclusions are specific to that rate. FIFO, SP and
+DRR are exactly scale invariant (see the paper), but the adaptive schemes are not: their 10 ms update interval and their tuned
+constants do not scale.
+- Rates: 1 Mb/s (60 s after a 5 s warm-up, buffer 12.5 kB) and 100 Mb/s (10 s after a 1 s warm-up, buffer 1.25 MB). The buffer is
+  scaled with the rate so that it drains in the same 100 ms; packet sizes, delay targets, update interval (10 ms) and all
+  tuned parameters stay as at 10 Mb/s (no retuning). The shorter 100 Mb/s run is a deviation forced by run time (about 100,000 packets
+  per class-second at that rate).
+- Points: ON/OFF 0.95, ON/OFF 1.2, Poisson 1.2. Seeds 101-110. The eight compared schedulers.
+- S1: SP has the lowest latency-class p95 at 3/3 points at each rate.
+- S2: DR-DRR beats DRR on W (paired Wilcoxon, Holm over the 3 points of a rate, p < 0.05, DR-DRR lower) at >= 2/3 points at each rate.
+- S3: no scheduler other than SP, CQDRR and FIFO starves a class at either rate.
+- Descriptive: the best non-SP scheduler on mean W at each point.
+
+### E21 outcome (2026-10-24)
+- S1 holds at both rates (SP lowest latency p95 at 3/3 points). S2 holds at 100 Mb/s (3/3, Holm p = 0.006) and **fails at 1 Mb/s
+  (0/3: DR-DRR is worse than DRR at all three points)**. S3 holds at 100 Mb/s and **fails at 1 Mb/s**: DR-DRR starved classes in 3,949
+  episodes, the longest 194 ms. This is consistent with Proposition 1, whose bound at 1 Mb/s is 216 ms (above the 100 ms
+  starvation threshold). A 1500 B packet takes 12 ms at 1 Mb/s, longer than the 10 ms update interval. No retuning was done.
+- Also computed after the fact from saved runs (exploratory): Holm over all 29 points for DR-DRR vs DRR gives better at 23, worse
+  at 1 (Poisson 0.8, 0.00007 in W), not significant at 5; RevenueDRR at half its tuned guarantee scale scores below DR-DRR on the E6
+  traces (0.84 vs 1.33 at load 0.95, 1.39 vs 1.99 at 1.2).

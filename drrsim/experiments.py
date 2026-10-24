@@ -11,6 +11,7 @@ DEV_SEEDS = list(range(1, 6))
 SEEDS = list(range(101, 121))
 HELDOUT_SEEDS = list(range(201, 221))     # E15: never used before the held-out check
 ABLATION = ["DR-DRR-backlog", "DR-DRR-hol"]
+LINK_RATES = {"1Mb": (1e6, 60.0, 5.0, 12_500), "100Mb": (100e6, 10.0, 1.0, 1_250_000)}   # E21: rate, duration, warm-up, buffer
 MDRR = ["MDRR-SP", "MDRR-ALT"]
 MDRR_POSTHOC = ["MDRR-ALT-V"]      # E20b: added after E20, not pre-registered
 LOADS = [0.4, 0.6, 0.8, 0.9, 0.95, 1.05, 1.2]
@@ -224,6 +225,12 @@ def experiment_tasks(exp: str, tuned: dict):
         for load in LOADS:
             for pt, cfg in ((f"poisson|{load}", poisson(load)), (f"onoff|{load}", onoff(load))):
                 t += [task("E20B", pt, n, s, cfg, {}) for n in MDRR_POSTHOC for s in SEEDS]
+    elif exp == "E21":  # pre-registered link-rate check (protocol section E21); no retuning
+        for rname, (rate, dur, warm, buf) in LINK_RATES.items():
+            for pt, load, kind in (("onoff|0.95", 0.95, "onoff"), ("onoff|1.2", 1.2, "onoff"), ("poisson|1.2", 1.2, "poisson")):
+                cfg = SimConfig(TrafficConfig(load=load, arrival=kind, on_mean=BURSTS["medium"], link_rate=rate,
+                                              duration=dur, warmup=warm), buffer_bytes=buf)
+                t += _all("E21", f"{rname}|{pt}", cfg, tuned, seeds=SEEDS[:10])
     elif exp == "E19TUNE":  # E19: tune static DRR quanta (Q_lat, Q_vid; Q_blk = 1500) on dev seeds, protocol E19
         for ql in STATIC_GRID:
             for qv in STATIC_GRID:

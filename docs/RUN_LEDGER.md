@@ -25,6 +25,7 @@ Definitions: a *trace* is one generated packet sequence; a *group* is one (opera
 | E19H | further | 280 | 14 | 20 | 1 | 280 | 0 | 0 | 280 | 280 |
 | E20 | further | 560 | 14 | 20 | 2 | 280 | 280 | 560 | 0 | 280 |
 | E20B | further | 280 | 14 | 20 | 1 | 280 | 0 | 0 | 280 | 280 |
+| E21 | further | 480 | 6 | 10 | 8 | 60 | 60 | 480 | 0 | 60 |
 | ES | further | 720 | 36 | 20 | 2 | 720 | 0 | 0 | 720 | 340 |
 | TUNE | tuning | 320 | 64 | 5 | 6 | 320 | 0 | 0 | 320 | 10 |
 | DEVD | tuning | 140 | 28 | 5 | 1 | 140 | 0 | 0 | 140 | 70 |
@@ -37,9 +38,9 @@ Definitions: a *trace* is one generated packet sequence; a *group* is one (opera
 | of which in eight-scheduler paired groups (600 groups) | 4,800 |
 | of which single-scheduler sensitivity runs (E6) | 1,720 |
 | (point, seed) groups in the main matrix | 2,320 |
-| further reported arms | 10,040 |
+| further reported arms | 10,520 |
 | tuning on development seeds | 800 |
-| **simulator runs in total** | **17,360** |
+| **simulator runs in total** | **17,840** |
 | kernel runs (E16, E16b), not in the total | 54 |
 | replay runs (E17, E17b, E17c), not in the total | 1080 |
 | archived runs superseded by fixes, not reported | 33,140 |

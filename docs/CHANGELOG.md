@@ -101,3 +101,12 @@ report generator (175 checks with the paper source, 117 without it). It found, a
 - MDRR-SP and MDRR-ALT match the independent reference simulator on all 21,945 x 3 small cases (tests/reference.py RefMDRR);
   MDRR-ALT-V is not cross-checked against it. Both join the common invariant, matrix and edge-case test layers.
 - Simulator runs: 17,360 (+840); further arms 10,040. Tests: 1,141. Regression guard and claims audit (189 checks) extended.
+
+## Weakness round: link rates, corrected statistics, tuning sensitivity (E21)
+- E21 (pre-registered): the eight schedulers at 1 and 100 Mb/s. DR-DRR keeps its lead over DRR at 100 Mb/s and loses it at 1 Mb/s,
+  where it also starves classes (longest 194 ms, inside the 216 ms bound). Paper: new Section V-H, abstract, Table VIII, conclusion,
+  and the proposition text now say "at 10 Mb/s" where the 21.6 ms figure is used. Simulator runs 17,840.
+- Holm over all 29 points for the headline DR-DRR vs DRR comparison (23 better, 1 worse by 0.00007, 5 n.s.).
+- The paper now lists which analyses are exploratory (including knob sensitivity) and states that RevenueDRR at half its tuned
+  guarantee scale beats DR-DRR on the E6 traces, so rankings of the reconstructed baselines depend on tuning.
+- Threats: states plainly that DR-DRR is not new in idea and that the contribution is the comparison, the checks and the SCRR diagnosis.

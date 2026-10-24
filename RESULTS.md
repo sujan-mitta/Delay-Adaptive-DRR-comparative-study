@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-24 00:57 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `30f704be1acf84a5`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-24 11:16 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `8e473eebc23905de`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -31,6 +31,7 @@ Generated 2026-10-24 00:57 by `scripts/make_report.py` from `results/*/runs.csv`
 18. **Static DRR on fresh seeds (E19H)**: DR-DRR better at 6/14, worse at 8/14 -> mixed (E19 on the reporting seeds: 6 and 8).
 19. **Second backbone trace (E17c)**: SP lowest latency 3/3 loads; DR-DRR beats DRR 0/3; no other starvation 3/3; best non-SP: DR-DRR, FuzzyDRR.
 20. **Modified DRR baselines (E20, reconstructions)**: MDRR-SP vs DR-DRR mixed (4 better / 10 worse of 14); MDRR-ALT: DR-DRR beats MDRR-ALT; M1 14/14, M2 holds, M3 14/14.
+21. **Other link rates (E21)**: 100 Mb/s S1 3/3, S2 3/3; 1 Mb/s S1 3/3, S2 0/3, DR-DRR starvation episodes 3949.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -827,6 +828,30 @@ MDRR-SP: low-latency queue (class 0) served first, DRR over the other classes. M
 | poisson|1.2 | 4.91 | 1.7 | 1.33 | 4.90 |
 
 Starvation episodes: 0.
+
+## E21 — other link rates (pre-registered; no retuning)
+
+Eight compared schedulers, ON/OFF 0.95, ON/OFF 1.2, Poisson 1.2, seeds 101-110; buffer scaled with the rate; update interval and tuned parameters unchanged from 10 Mb/s. The 100 Mb/s runs last 10 s (1 s warm-up).
+
+**100Mb**
+
+| point | SP W | CQDRR W | DR-DRR W | DRR W | best non-SP | DR-DRR - DRR (95 % CI) | Holm p |
+|---|---|---|---|---|---|---|---|
+| onoff|0.95 | 0.53 | 0.99 | 1.23 | 2.87 | CQDRR | -1.63 ± 0.19 | 0.0059 |
+| onoff|1.2 | 0.78 | 1.05 | 1.97 | 6.74 | CQDRR | -4.77 ± 1.25 | 0.0059 |
+| poisson|1.2 | 0.55 | 0.55 | 0.71 | 5.13 | CQDRR | -4.42 ± 0.10 | 0.0059 |
+
+S1 (SP lowest latency p95): 3/3. S2 (DR-DRR beats DRR, Holm): 3/3. S3 (nobody but SP, CQDRR, FIFO starves): holds.
+
+**1Mb**
+
+| point | SP W | CQDRR W | DR-DRR W | DRR W | best non-SP | DR-DRR - DRR (95 % CI) | Holm p |
+|---|---|---|---|---|---|---|---|
+| onoff|0.95 | 1.14 | 4.17 | 7.91 | 3.99 | RevenueDRR | +3.92 ± 0.49 | 0.0059 |
+| onoff|1.2 | 1.34 | 5.43 | 9.46 | 7.38 | RevenueDRR | +2.09 ± 0.46 | 0.0059 |
+| poisson|1.2 | 1.13 | 3.14 | 11.23 | 3.49 | RevenueDRR | +7.74 ± 0.18 | 0.0059 |
+
+S1 (SP lowest latency p95): 3/3. S2 (DR-DRR beats DRR, Holm): 0/3. S3 (nobody but SP, CQDRR, FIFO starves): fails: DR-DRR.
 
 ## E16b — kernel check at 1 Mb/s (pre-registered)
 
