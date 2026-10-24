@@ -485,3 +485,69 @@ constants do not scale.
 - Also computed after the fact from saved runs (exploratory): Holm over all 29 points for DR-DRR vs DRR gives better at 23, worse
   at 1 (Poisson 0.8, 0.00007 in W), not significant at 5; RevenueDRR at half its tuned guarantee scale scores below DR-DRR on the E6
   traces (0.84 vs 1.33 at load 0.95, 1.39 vs 1.99 at 1.2).
+
+## E22 — two links in tandem (pre-registered 2026-10-24, before any run)
+Why: a reviewer can fairly say a single bottleneck is not a network. The simulator is single-link, but a two-hop path can be
+composed from it: the packets that leave link 1 are the through-traffic arrivals at link 2, where they meet fresh cross traffic.
+- Path: link 1 (10 Mb/s, 125 kB shared buffer) then link 2 (10 Mb/s, 125 kB). The same scheduler, with the same tuned parameters,
+  runs on both links. Through traffic: ON/OFF (medium bursts), load L on link 1, three classes as in the main study. Cross traffic on
+  link 2: Poisson, load 0.3, same class mix, an independent trace (seed + 1000). Zero propagation delay. A packet dropped on link 1
+  does not reach link 2.
+- Points: L = 0.8 and L = 0.95. Seeds 101-110. The eight compared schedulers (so link 2 carries 1.1 and 1.25 of its capacity).
+- Score: W2 = max over classes of p95 of the end-to-end queueing delay (wait on link 1 plus wait on link 2, through packets only,
+  arrivals in the same 60 s window after a 5 s warm-up) divided by 2 D_i (each hop gets the class's target).
+- T1: SP has the lowest latency-class end-to-end p95 at 2/2 points.
+- T2: DR-DRR beats DRR on W2 at 2/2 points (paired Wilcoxon, Holm over the 2 points, p < 0.05, DR-DRR lower).
+- T3: the order of the eight schedulers by mean W2 at each point has Spearman correlation >= 0.7 with their order by mean W on a
+  single link at ON/OFF 0.95 (E1).
+- Descriptive: the best non-SP scheduler on mean W2; per-hop p95.
+
+### E22 outcome (2026-10-24)
+T1 holds (SP lowest end-to-end latency tail at 2/2 points), T2 holds (DR-DRR beats DRR on W2 at 2/2, Holm p = 0.004, differences -1.57
+and -2.18), T3 holds (Spearman 0.98 at both points). Descriptive: RevenueDRR is the best non-SP scheduler on W2 at both points
+(0.85 and 1.20), ahead of DR-DRR (1.02 and 1.33). Limits: two identical links, zero propagation delay, one cross-traffic pattern,
+no more than two hops.
+
+## E24 — baselines tuned on two knobs (pre-registered 2026-10-24, before any run)
+Why: the reconstructed baselines (FuzzyDRR, RevenueDRR) were tuned on one knob each; E6 later showed that a second knob
+(RevenueDRR's guarantee scale) moves them past DR-DRR. To keep the ranking from resting on a thin tuning budget, each of the three
+adaptive schemes with several relevant knobs gets a two-knob grid, tuned like before.
+- Grids (dev seeds 1-5, ON/OFF-medium at loads 0.95 and 1.2): DR-DRR kappa {1,2,4,8,16} x theta {0.25,0.5,0.75,1.0};
+  FuzzyDRR gain {0.1,0.5,1,2,3} x delay_span {1,2,4}; RevenueDRR tau {0.0125,0.05,0.1,0.4} x guar_scale {0.25,0.5,1.0,1.5}.
+  Other knobs stay at the values in use.
+- Rule (as for the one-knob tuning): objective mean W at load 0.95, constraint mean Jain >= 0.98 at load 1.2, values within 1 % of the
+  best count as tied and the one closest (sum of |log ratio| over the knobs) to the specified default is picked. No grid extension.
+- Evaluation: the three tuned schemes at the 14 E1 points, seeds 101-120, paired with the saved E1 runs.
+- Q1: DR-DRR has the lowest mean W of the three at >= 8 of 14 points.
+- Q2: DR-DRR has the lowest mean W of the three at every ON/OFF point with load >= 0.9 (4 points).
+- Descriptive: the chosen values, and DR-DRR's W under one-knob and two-knob tuning.
+
+### E24 outcome (2026-10-24)
+Chosen: DR-DRR kappa 4, theta 0.75; FuzzyDRR gain 0.1, delay_span 2; RevenueDRR tau 0.0125 (the grid's lower edge), guar_scale 0.25 (the lower edge).
+Q1 **fails** (DR-DRR lowest of the three at 0 of 14 points) and Q2 **fails** (0 of 4). With two-knob tuning RevenueDRR has the lowest
+W at 8 points (ON/OFF 0.8-1.2, Poisson 0.95-1.2) and FuzzyDRR at the 6 light-load ones (by small margins). DR-DRR's one-knob
+lead over these reconstructions does not survive a larger tuning budget for them. Two chosen values sit on the grid edge, so
+RevenueDRR may be better still.
+
+## E23 — static base with a delay-risk boost, SD-DRR (pre-registered 2026-10-24, before any code for it)
+Why: E19 found that static quanta (6000, 6000, 1500 B) beat DR-DRR at heavy and bursty loads, E24 that a two-knob RevenueDRR does
+too, while DR-DRR is better at light loads and adapts. SD-DRR combines the two: DR-DRR's rule applied on top of a static base
+(the E19 quanta, tuned on development seeds) instead of 1500 B.
+- Rule: Q_i = clip(B_i (1 + kappa max(0, r_i - theta)), B_i, M B_i) with B = (6000, 6000, 1500) B, r_i as in Eq. (2), M = 2
+  (so the cap is 12000, 12000, 3000 B). Update interval 10 ms as for DR-DRR.
+- Tuning (dev seeds 1-5, same objective, constraint and tie rule as before): kappa {1,2,4,8,16} x theta {0.5,0.75,1.0}. M and B are not tuned.
+- Evaluation on fresh seeds 201-220 at the 14 E1 points. Competitors, each with the parameters already fixed for it: DR-DRR
+  (kappa 4, theta 0.75, E24), RevenueDRR and FuzzyDRR (E24 values), static DRR (6000, 6000, 1500) and plain DRR.
+- N1: SD-DRR has the lowest mean W among SD-DRR, DR-DRR, RevenueDRR, FuzzyDRR and static DRR at >= 8 of 14 points.
+- N2: SD-DRR is significantly better than static DRR (paired Wilcoxon, Holm over 14) at >= 7 points and significantly worse at <= 2.
+- N3: SD-DRR starves no class at any of the 14 points, and its largest service gap stays below 8 sum_j (M B_j + L_j - 1) / C for the
+  class concerned (at most 21.6 ms).
+- N4: at the E21 points (1 and 100 Mb/s, seeds 101-110, no retuning) SD-DRR has a lower mean W than DRR at >= 5 of 6.
+
+### E23 outcome (2026-10-24)
+Chosen (dev seeds): kappa 4, theta 0.75. N1 **fails** (SD-DRR lowest of the five at 1 of 14 points), N2 **fails** (better than static DRR
+at 2 points, worse at 4), N3 holds (no starvation; longest service gap 20.3 ms, inside the 21.6 ms bound), N4 **fails** (lower W than
+DRR at 3 of 6 points; at 1 Mb/s it is worse at all three). The tuned static quanta are not improved by a delay-risk boost at 10 Mb/s,
+and the design does not fix the 1 Mb/s reversal. One design was registered and run; no variant was tried afterwards.
+The first E23 run attempt used an invalid scheduler label for the static DRR (280 failed tasks, kept in
+`results/E23/failures_first_attempt_label_bug.csv`); the fixed run re-used the 1,120 results already saved.

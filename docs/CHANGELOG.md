@@ -110,3 +110,17 @@ report generator (175 checks with the paper source, 117 without it). It found, a
 - The paper now lists which analyses are exploratory (including knob sensitivity) and states that RevenueDRR at half its tuned
   guarantee scale beats DR-DRR on the E6 traces, so rankings of the reconstructed baselines depend on tuning.
 - Threats: states plainly that DR-DRR is not new in idea and that the contribution is the comparison, the checks and the SCRR diagnosis.
+
+## Three remaining weaknesses: tandem path, better-tuned baselines, a new design (E22, E23, E24)
+- E22 (pre-registered): a two-link path (through traffic plus independent cross traffic on link 2, same scheduler on both). SP's lead,
+  DR-DRR over DRR and the scheduler ordering carry over (T1-T3 hold); RevenueDRR is the best non-SP scheduler on the path.
+- E24 (pre-registered): DR-DRR, FuzzyDRR and RevenueDRR tuned on two knobs each. Both checks fail: DR-DRR is lowest of the three at 0
+  of 14 points; RevenueDRR (tau 0.0125, guar_scale 0.25, both on the grid edge) at 8, FuzzyDRR at 6. DR-DRR's one-knob lead over the
+  reconstructions rested on how little they were tuned.
+- E23 (pre-registered): SD-DRR, DR-DRR's rule on top of the E19 static base. It fails N1, N2 and N4 and meets N3: adaptation on top of
+  tuned static quanta is not shown to help. One design registered and run; none tried afterwards. A first run attempt used an invalid
+  label for the static DRR; the 280 failed tasks are kept in results/E23/failures_first_attempt_label_bug.csv.
+- Full source papers for FuzzyDRR and RevenueDRR could not be obtained (paywalled, no open copies), so the reconstructions stay
+  reconstructions; E24 and E6 show how much their ranking depends on tuning.
+- Run counts: simulator 20,860 (main 6,520; further 12,880; tuning 1,460); replay 1,080; tandem 160; kernel 54. Tests 1,179.
+  The regression guard covers E23, E23R, E24 and their tuning runs (scripts are the task source). Claims audit: 202 checks.

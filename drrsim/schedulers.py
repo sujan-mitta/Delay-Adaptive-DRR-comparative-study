@@ -318,6 +318,34 @@ class SQDRR(_AdaptiveDRR):
         return max(hol, drain)
 
 
+class SQDRRStatic(SQDRR):
+    """SD-DRR (E23): DR-DRR's delay-risk rule applied on top of a static base quantum per class (default: the E19 static
+    optimum) instead of 1500 B. Quanta stay in [B_i, M B_i], so the service-gap argument of Proposition 1 holds with M B_j."""
+    name = "SD-DRR"
+    defaults = {"kappa": 4.0, "theta": 0.5, "qmax_mult": 2.0, "smooth": 1.0, "base": (6000.0, 6000.0, 1500.0)}
+
+    def validate(self):
+        super().validate()
+        self._vector("base", positive=True)
+
+    def bind(self, view):
+        self.p = {**self.p, "quanta": tuple(float(x) for x in self.p["base"])}
+        DRR.bind(self, view)
+
+    def update(self, now):
+        v, p = self.v, self.p
+        base = p["base"]
+        tot = sum(self.Q)
+        for c in range(K):
+            phi = self.Q[c] / tot
+            drain = 8.0 * v.qbytes[c] / (v.link_rate * phi)
+            risk = self._delay_estimate(v.hol(c, now), drain) / D_TARGET[c]
+            q = base[c] * (1.0 + p["kappa"] * max(0.0, risk - p["theta"]))
+            target = min(max(q, base[c]), p["qmax_mult"] * base[c])
+            lam = p["smooth"]
+            self.Q[c] = target if lam == 1.0 else (1 - lam) * self.Q[c] + lam * target
+
+
 class CQDRRVariant(_AdaptiveDRR):
     """Our first-draft CQDRR reading (queue share x delay-requirement weight). Kept as a labelled
     variant outside the main 8 after the paper turned out to use a different rule (deviation 5)."""
@@ -777,7 +805,7 @@ class MDRRAlternateVisit(MDRRStrict):
 
 
 MAIN = (FIFO, StrictPriority, DRR, RLSPDRR, SQDRR, CQDRR, FuzzyDRR, RevenueDRR)
-REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService, SQDRRBacklog, SQDRRHol, MDRRStrict, MDRRAlternate, MDRRAlternateVisit)}
+REGISTRY = {cls.name: cls for cls in MAIN + (SQDRRDamped, CQDRRVariant, SCRR, DRREndOfService, SQDRRBacklog, SQDRRHol, MDRRStrict, MDRRAlternate, MDRRAlternateVisit, SQDRRStatic)}
 SCHEDULERS = [cls.name for cls in MAIN]   # the 8 compared schedulers; variants are run separately
 ADAPTIVE = [c.name for c in MAIN if c.adaptive]
 

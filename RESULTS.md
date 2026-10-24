@@ -1,6 +1,6 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-24 11:16 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `8e473eebc23905de`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-24 12:43 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `34237c82e2d4d877`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
@@ -32,6 +32,9 @@ Generated 2026-10-24 11:16 by `scripts/make_report.py` from `results/*/runs.csv`
 19. **Second backbone trace (E17c)**: SP lowest latency 3/3 loads; DR-DRR beats DRR 0/3; no other starvation 3/3; best non-SP: DR-DRR, FuzzyDRR.
 20. **Modified DRR baselines (E20, reconstructions)**: MDRR-SP vs DR-DRR mixed (4 better / 10 worse of 14); MDRR-ALT: DR-DRR beats MDRR-ALT; M1 14/14, M2 holds, M3 14/14.
 21. **Other link rates (E21)**: 100 Mb/s S1 3/3, S2 3/3; 1 Mb/s S1 3/3, S2 0/3, DR-DRR starvation episodes 3949.
+22. **Two links in tandem (E22)**: T1 2/2, T2 2/2, T3 2/2; best non-SP RevenueDRR.
+23. **Two-knob tuned baselines (E24)**: DR-DRR lowest of three at 0/14 (Q1 fails), 0/4 heavy ON/OFF (Q2 fails).
+24. **SD-DRR (E23)**: N1 1/14, N2 2 better / 4 worse, N3 0 starved, N4 3/6 -> adaptation on a static base is not shown to help.
 
 
 ## RQ1 — Latency-class p95 under identical traffic (E1)
@@ -852,6 +855,78 @@ S1 (SP lowest latency p95): 3/3. S2 (DR-DRR beats DRR, Holm): 3/3. S3 (nobody bu
 | poisson|1.2 | 1.13 | 3.14 | 11.23 | 3.49 | RevenueDRR | +7.74 ± 0.18 | 0.0059 |
 
 S1 (SP lowest latency p95): 3/3. S2 (DR-DRR beats DRR, Holm): 0/3. S3 (nobody but SP, CQDRR, FIFO starves): fails: DR-DRR.
+
+## E22 — two links in tandem (pre-registered)
+
+Same scheduler and tuned parameters on both 10 Mb/s links; through traffic ON/OFF at load L on link 1; independent Poisson cross traffic (load 0.3) on link 2. W2 = max over classes of the end-to-end queueing p95 / (2 x target). Seeds 101-110.
+
+| point | scheduler | latency e2e p95 (ms) | W2 |
+|---|---|---|---|
+| through=0.8 | SP | 1.8 | 0.42 |
+| through=0.8 | RevenueDRR | 13.9 | 0.85 |
+| through=0.8 | DR-DRR | 18.6 | 1.02 |
+| through=0.8 | CQDRR | 23.5 | 1.18 |
+| through=0.8 | FuzzyDRR | 32.8 | 2.12 |
+| through=0.8 | DRR | 24.7 | 2.59 |
+| through=0.8 | RL-SP+DRR | 7.3 | 2.63 |
+| through=0.8 | FIFO | 170.7 | 8.54 |
+| through=0.95 | SP | 1.8 | 0.55 |
+| through=0.95 | RevenueDRR | 15.1 | 1.20 |
+| through=0.95 | DR-DRR | 25.8 | 1.33 |
+| through=0.95 | CQDRR | 27.5 | 1.37 |
+| through=0.95 | FuzzyDRR | 64.6 | 3.24 |
+| through=0.95 | DRR | 55.3 | 3.51 |
+| through=0.95 | RL-SP+DRR | 18.2 | 3.54 |
+| through=0.95 | FIFO | 198.6 | 9.93 |
+
+- **T1** SP lowest end-to-end latency p95: 2/2. **T2** DR-DRR beats DRR on W2 (Holm): 2/2 (differences -1.57, -2.18). **T3** Spearman with the single-link order >= 0.7: 2/2 (0.98, 0.98).
+- Best non-SP on W2 (descriptive): RevenueDRR, RevenueDRR.
+
+## E24 — baselines tuned on two knobs (pre-registered)
+
+Chosen on development seeds: DR-DRR {'kappa': 4, 'theta': 0.75}; FuzzyDRR {'gain': 0.1, 'delay_span': 2.0}; RevenueDRR {'tau': 0.0125, 'guar_scale': 0.25}. Mean W over seeds 101-120 at the 14 E1 points (DR-DRR 1-knob = the value used in the main study).
+
+| point | DR-DRR (2 knobs) | FuzzyDRR | RevenueDRR | lowest | DR-DRR (1 knob) |
+|---|---|---|---|---|---|
+| onoff|0.4 | 0.144 | 0.124 | 0.161 | FuzzyDRR | 0.144 |
+| onoff|0.6 | 0.387 | 0.376 | 0.553 | FuzzyDRR | 0.361 |
+| onoff|0.8 | 0.937 | 1.739 | 0.755 | RevenueDRR | 0.843 |
+| onoff|0.9 | 1.186 | 2.477 | 0.805 | RevenueDRR | 1.181 |
+| onoff|0.95 | 1.293 | 2.726 | 0.820 | RevenueDRR | 1.326 |
+| onoff|1.05 | 1.510 | 4.024 | 0.855 | RevenueDRR | 1.577 |
+| onoff|1.2 | 1.800 | 6.322 | 1.087 | RevenueDRR | 1.990 |
+| poisson|0.4 | 0.119 | 0.109 | 0.118 | FuzzyDRR | 0.119 |
+| poisson|0.6 | 0.172 | 0.144 | 0.180 | FuzzyDRR | 0.172 |
+| poisson|0.8 | 0.216 | 0.205 | 0.300 | FuzzyDRR | 0.216 |
+| poisson|0.9 | 0.325 | 0.308 | 0.372 | FuzzyDRR | 0.311 |
+| poisson|0.95 | 0.552 | 0.627 | 0.404 | RevenueDRR | 0.447 |
+| poisson|1.05 | 0.736 | 1.737 | 0.531 | RevenueDRR | 0.901 |
+| poisson|1.2 | 0.764 | 1.955 | 0.583 | RevenueDRR | 1.326 |
+
+- **Q1** DR-DRR lowest of the three at 0/14 points (needed 8): **fails**. **Q2** at every ON/OFF point with load >= 0.9: 0/4 (**fails**).
+
+## E23 — SD-DRR: delay-risk boost on a static base (pre-registered)
+
+SD-DRR with {'kappa': 4, 'theta': 0.75} (chosen on development seeds), base (6000, 6000, 1500) B, M = 2. Fresh seeds 201-220. Competitors with their E24 / E19 parameters; 'static' = DRR with the base quanta.
+
+| point | SD-DRR | static | DR-DRR | RevenueDRR | FuzzyDRR | lowest | SD-DRR - static (95 % CI) | Holm p |
+|---|---|---|---|---|---|---|---|---|
+| onoff|0.4 | 0.176 | 0.176 | 0.145 | 0.164 | 0.125 | FuzzyDRR | +0.000 ± 0.000 | 1 |
+| onoff|0.6 | 0.378 | 0.378 | 0.382 | 0.557 | 0.370 | FuzzyDRR | +0.000 ± 0.000 | 1 |
+| onoff|0.8 | 0.545 | 0.523 | 0.915 | 0.765 | 1.695 | DRR | +0.022 ± 0.002 | 2.7e-05 |
+| onoff|0.9 | 0.728 | 0.738 | 1.171 | 0.816 | 2.469 | SD-DRR | -0.010 ± 0.012 | 0.91 |
+| onoff|0.95 | 0.880 | 0.923 | 1.312 | 0.828 | 2.779 | RevenueDRR | -0.043 ± 0.019 | 0.0012 |
+| onoff|1.05 | 1.101 | 1.168 | 1.522 | 0.872 | 4.099 | RevenueDRR | -0.067 ± 0.029 | 0.0032 |
+| onoff|1.2 | 1.466 | 1.461 | 1.791 | 1.100 | 6.383 | RevenueDRR | +0.005 ± 0.061 | 1 |
+| poisson|0.4 | 0.124 | 0.124 | 0.119 | 0.118 | 0.109 | FuzzyDRR | +0.000 ± 0.000 | 1 |
+| poisson|0.6 | 0.199 | 0.199 | 0.171 | 0.181 | 0.144 | FuzzyDRR | +0.000 ± 0.000 | 1 |
+| poisson|0.8 | 0.315 | 0.315 | 0.216 | 0.301 | 0.205 | FuzzyDRR | +0.000 ± 0.000 | 1 |
+| poisson|0.9 | 0.396 | 0.396 | 0.334 | 0.372 | 0.317 | FuzzyDRR | +0.000 ± 0.000 | 1 |
+| poisson|0.95 | 0.435 | 0.435 | 0.566 | 0.406 | 0.662 | RevenueDRR | +0.001 ± 0.001 | 0.0088 |
+| poisson|1.05 | 0.606 | 0.533 | 0.736 | 0.533 | 1.746 | RevenueDRR | +0.072 ± 0.001 | 2.7e-05 |
+| poisson|1.2 | 0.619 | 0.584 | 0.768 | 0.582 | 1.978 | RevenueDRR | +0.035 ± 0.002 | 2.7e-05 |
+
+- **N1** SD-DRR lowest of the five at 1/14 (needed 8): **fails**. **N2** better than static at 2/14, worse at 4/14 (needed >= 7 and <= 2): **fails**. **N3** starvation episodes 0, longest service gap 20.3 ms (bound 21.6 ms): holds. **N4** lower W than DRR at 1 and 100 Mb/s at 3/6 (needed 5): **fails**.
 
 ## E16b — kernel check at 1 Mb/s (pre-registered)
 

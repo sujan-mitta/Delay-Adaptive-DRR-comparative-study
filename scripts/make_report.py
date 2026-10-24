@@ -1112,6 +1112,102 @@ def main(out=None):
         e21_head = (f"21. **Other link rates (E21)**: 100 Mb/s S1 {res21['100Mb'][0]}/3, S2 {res21['100Mb'][1]}/3; 1 Mb/s S1 {res21['1Mb'][0]}/3, "
                     f"S2 {res21['1Mb'][1]}/3, DR-DRR starvation episodes {res21['1Mb'][3]}.")
 
+    e22_head = None
+    if (ROOT / "results" / "E22" / "runs.csv").exists():
+        d22 = pd.read_csv(ROOT / "results" / "E22" / "runs.csv")
+        base22 = load("E1")
+        single22 = base22[base22.point == "onoff|0.95"].groupby("scheduler").W.mean()
+        w("## E22 — two links in tandem (pre-registered)")
+        w()
+        w("Same scheduler and tuned parameters on both 10 Mb/s links; through traffic ON/OFF at load L on link 1; independent Poisson cross "
+          "traffic (load 0.3) on link 2. W2 = max over classes of the end-to-end queueing p95 / (2 x target). Seeds 101-110.")
+        w()
+        t1 = 0
+        pv22, df22, rho22, best22 = [], [], [], []
+        w("| point | scheduler | latency e2e p95 (ms) | W2 |")
+        w("|---|---|---|---|")
+        for pt22, g22 in d22.groupby("point"):
+            m22 = g22.groupby("scheduler")[["lat_e2e_p95", "W2"]].mean()
+            t1 += m22.lat_e2e_p95.idxmin() == "SP"
+            dd = g22[g22.scheduler == "DR-DRR"].set_index("seed").sort_index().W2 - g22[g22.scheduler == "DRR"].set_index("seed").sort_index().W2
+            pv22.append(_st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0)
+            df22.append(dd.mean())
+            rho22.append(_st.spearmanr(m22.W2[single22.index], single22).correlation)
+            best22.append(m22.W2.drop("SP").idxmin())
+            for sc in m22.sort_values("W2").index:
+                w(f"| {pt22} | {sc} | {m22.lat_e2e_p95[sc] * 1e3:.1f} | {m22.W2[sc]:.2f} |")
+        adj22 = _holm(np.array(pv22))
+        t2 = sum(1 for m, x in zip(df22, adj22) if m < 0 and x < 0.05)
+        t3 = sum(r_ >= 0.7 for r_ in rho22)
+        w()
+        w(f"- **T1** SP lowest end-to-end latency p95: {t1}/2. **T2** DR-DRR beats DRR on W2 (Holm): {t2}/2 (differences "
+          f"{', '.join(f'{m:+.2f}' for m in df22)}). **T3** Spearman with the single-link order >= 0.7: {t3}/2 ({', '.join(f'{r_:.2f}' for r_ in rho22)}).")
+        w(f"- Best non-SP on W2 (descriptive): {', '.join(best22)}.")
+        w()
+        e22_head = (f"22. **Two links in tandem (E22)**: T1 {t1}/2, T2 {t2}/2, T3 {t3}/2; best non-SP {', '.join(sorted(set(best22)))}.")
+
+    e24_head = e23_head = None
+    if (ROOT / "results" / "E24" / "runs.csv").exists():
+        e24 = load("E24")
+        e1c = load("E1")
+        tuned24 = json.loads((ROOT / "config" / "tuned_2knob.json").read_text())["params"]
+        w("## E24 — baselines tuned on two knobs (pre-registered)")
+        w()
+        w(f"Chosen on development seeds: {'; '.join(f'{k} {v}' for k, v in tuned24.items())}. Mean W over seeds 101-120 at the 14 E1 points "
+          "(DR-DRR 1-knob = the value used in the main study).")
+        w()
+        w("| point | DR-DRR (2 knobs) | FuzzyDRR | RevenueDRR | lowest | DR-DRR (1 knob) |")
+        w("|---|---|---|---|---|---|")
+        q1 = q2 = 0
+        for pt24 in sorted(e24.point.unique()):
+            m24 = e24[e24.point == pt24].groupby("scheduler").W.mean()
+            win = m24.idxmin()
+            q1 += win == "DR-DRR"
+            q2 += (win == "DR-DRR") and pt24.startswith("onoff") and float(pt24.split("|")[1]) >= 0.9
+            one = e1c[(e1c.point == pt24) & (e1c.scheduler == "DR-DRR")].W.mean()
+            w(f"| {pt24} | {m24['DR-DRR']:.3f} | {m24['FuzzyDRR']:.3f} | {m24['RevenueDRR']:.3f} | {win} | {one:.3f} |")
+        w()
+        w(f"- **Q1** DR-DRR lowest of the three at {q1}/14 points (needed 8): {'holds' if q1 >= 8 else '**fails**'}. **Q2** at every ON/OFF point with load >= 0.9: "
+          f"{q2}/4 ({'holds' if q2 == 4 else '**fails**'}).")
+        w()
+        e24_head = f"23. **Two-knob tuned baselines (E24)**: DR-DRR lowest of three at {q1}/14 (Q1 {'holds' if q1 >= 8 else 'fails'}), {q2}/4 heavy ON/OFF (Q2 {'holds' if q2 == 4 else 'fails'})."
+    if (ROOT / "results" / "E23" / "runs.csv").exists():
+        e23 = load("E23")
+        r23 = load("E23R")
+        tuned23 = json.loads((ROOT / "config" / "tuned_sddrr.json").read_text())["params"]
+        w("## E23 — SD-DRR: delay-risk boost on a static base (pre-registered)")
+        w()
+        w(f"SD-DRR with {tuned23} (chosen on development seeds), base (6000, 6000, 1500) B, M = 2. Fresh seeds 201-220. "
+          "Competitors with their E24 / E19 parameters; 'static' = DRR with the base quanta.")
+        w()
+        w("| point | SD-DRR | static | DR-DRR | RevenueDRR | FuzzyDRR | lowest | SD-DRR - static (95 % CI) | Holm p |")
+        w("|---|---|---|---|---|---|---|---|---|")
+        n1, rows23 = 0, []
+        for pt23 in sorted(e23.point.unique()):
+            g23 = e23[e23.point == pt23]
+            m23 = g23.groupby("scheduler").W.mean()
+            n1 += m23.idxmin() == "SD-DRR"
+            dd = g23[g23.scheduler == "SD-DRR"].set_index("seed").sort_index().W - g23[g23.scheduler == "DRR"].set_index("seed").sort_index().W
+            mm, hh, _ = ci95(dd)
+            rows23.append((pt23, m23, mm, hh, _st.wilcoxon(dd).pvalue if np.any(dd != 0) else 1.0))
+        adj23 = _holm(np.array([r_[4] for r_ in rows23]))
+        for (pt23, m23, mm, hh, _p), x in zip(rows23, adj23):
+            w(f"| {pt23} | {m23['SD-DRR']:.3f} | {m23['DRR']:.3f} | {m23['DR-DRR']:.3f} | {m23['RevenueDRR']:.3f} | {m23['FuzzyDRR']:.3f} | "
+              f"{m23.idxmin()} | {mm:+.3f} ± {hh:.3f} | {x:.2g} |")
+        n2b = sum(1 for r_, x in zip(rows23, adj23) if r_[2] < 0 and x < 0.05)
+        n2w = sum(1 for r_, x in zip(rows23, adj23) if r_[2] > 0 and x < 0.05)
+        sd23 = e23[e23.scheduler == "SD-DRR"]
+        st23 = int(sd23[[f"{c.name}_starv_count" for c in CLASSES]].values.sum())
+        gap23 = max(float(sd23[f"{c.name}_gap_max"].max()) for c in CLASSES)
+        n4 = sum(g_[g_.scheduler == "SD-DRR"].W.mean() < g_[g_.scheduler == "DRR"].W.mean() for _, g_ in r23.groupby("point"))
+        w()
+        w(f"- **N1** SD-DRR lowest of the five at {n1}/14 (needed 8): {'holds' if n1 >= 8 else '**fails**'}. **N2** better than static at {n2b}/14, worse at {n2w}/14 "
+          f"(needed >= 7 and <= 2): {'holds' if n2b >= 7 and n2w <= 2 else '**fails**'}. **N3** starvation episodes {st23}, longest service gap {gap23 * 1e3:.1f} ms "
+          f"(bound 21.6 ms): {'holds' if st23 == 0 and gap23 <= 0.0216 else '**fails**'}. **N4** lower W than DRR at 1 and 100 Mb/s at {n4}/6 (needed 5): "
+          f"{'holds' if n4 >= 5 else '**fails**'}.")
+        w()
+        e23_head = f"24. **SD-DRR (E23)**: N1 {n1}/14, N2 {n2b} better / {n2w} worse, N3 {st23} starved, N4 {n4}/6 -> adaptation on a static base is not shown to help."
+
     e16b_head = e17b_head = None
     e16b_dirs = sorted(d for d in (ROOT / "results" / "E16b").glob("*") if d.is_dir()) if (ROOT / "results" / "E16b").exists() else []
     if e16b_dirs:
@@ -1408,7 +1504,7 @@ def main(out=None):
          ""]
     if e13_head:
         H.insert(-1, e13_head)
-    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head):
+    for extra in (e14_head, e15_head, e16_head, e17_head, e18_head, e19_head, e16b_head, e17b_head, e19h_head, e17c_head, e20_head, e21_head, e22_head, e24_head, e23_head):
         if extra:
             H.insert(-1, extra)
     i = OUT.index("<<HEADLINE>>")

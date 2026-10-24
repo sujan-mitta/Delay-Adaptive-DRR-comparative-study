@@ -69,7 +69,7 @@ def main(paper):
     # ------------------------------------------------------------------ ledger and set-up
     rows, t = run_ledger.build()
     for k, v in (("main", 6520), ("main_paired_groups", 600), ("main_paired_runs", 4800), ("main_single_runs", 1720),
-                 ("further", 10520), ("tuning", 800), ("simulator_total", 17840), ("kernel_runs", 54), ("replay_runs", 1080),
+                 ("further", 12880), ("tuning", 1460), ("simulator_total", 20860), ("kernel_runs", 54), ("replay_runs", 1080), ("tandem_runs", 160),
                  ("archived", 33140)):
         check(f"ledger {k}", t[k], v)
     check("E6 distinct traces", rows["E6"]["distinct_traces"], 40)
@@ -536,6 +536,40 @@ def main(paper):
     e6r = rd("E6")
     e6r = e6r[e6r.scheduler == "RevenueDRR"]
     check("E6: RevenueDRR at half guarantee scale W 0.84 / 1.39", (round(e6r[e6r.point == "guar_scale=x0.5|load=0.95"].W.mean(), 2), round(e6r[e6r.point == "guar_scale=x0.5|load=1.2"].W.mean(), 2)), (0.84, 1.39))
+    # E22 tandem, E24 two-knob baselines, E23 SD-DRR
+    d22 = pd.read_csv(ROOT / "results" / "E22" / "runs.csv")
+    sing = e1[e1.point == "onoff|0.95"].groupby("scheduler").W.mean()
+    t1_, pv22, df22, rho22, best22 = 0, [], [], [], []
+    for _, g_ in d22.groupby("point"):
+        m_ = g_.groupby("scheduler")[["lat_e2e_p95", "W2"]].mean()
+        t1_ += m_.lat_e2e_p95.idxmin() == "SP"
+        dd_ = g_[g_.scheduler == "DR-DRR"].set_index("seed").sort_index().W2 - g_[g_.scheduler == "DRR"].set_index("seed").sort_index().W2
+        pv22.append(stats.wilcoxon(dd_).pvalue)
+        df22.append(dd_.mean())
+        rho22.append(stats.spearmanr(m_.W2[sing.index], sing).correlation)
+        best22.append(m_.W2.drop("SP").idxmin())
+    ad22 = holm(pv22)
+    check("E22 tandem: T1 / T2 / T3", (int(t1_), sum(1 for d_, a_ in zip(df22, ad22) if d_ < 0 and a_ < 0.05), sum(r_ >= 0.7 for r_ in rho22)), (2, 2, 2))
+    check("E22 best non-SP is RevenueDRR at both points", best22, ["RevenueDRR", "RevenueDRR"])
+    e24 = rd("E24")
+    wins24 = {pt_: g_.groupby("scheduler").W.mean().idxmin() for pt_, g_ in e24.groupby("point")}
+    check("E24: DR-DRR lowest of three at 0 of 14 points", sum(v == "DR-DRR" for v in wins24.values()), 0)
+    check("E24: RevenueDRR lowest at 8 heavy points, FuzzyDRR at 6 light ones", (sum(v == "RevenueDRR" for v in wins24.values()), sum(v == "FuzzyDRR" for v in wins24.values())), (8, 6))
+    p24 = json.loads((ROOT / "config" / "tuned_2knob.json").read_text())["params"]
+    check("E24 chosen: DR-DRR kappa 4 theta 0.75; RevenueDRR tau 0.0125 guar_scale 0.25", (p24["DR-DRR"], p24["RevenueDRR"]), ({"kappa": 4, "theta": 0.75}, {"tau": 0.0125, "guar_scale": 0.25}))
+    e23, r23 = rd("E23"), rd("E23R")
+    n1_ = sum(g_.groupby("scheduler").W.mean().idxmin() == "SD-DRR" for _, g_ in e23.groupby("point"))
+    pv_, df_ = [], []
+    for _, g_ in e23.groupby("point"):
+        dd_ = g_[g_.scheduler == "SD-DRR"].set_index("seed").sort_index().W - g_[g_.scheduler == "DRR"].set_index("seed").sort_index().W
+        pv_.append(stats.wilcoxon(dd_).pvalue if np.any(dd_ != 0) else 1.0)
+        df_.append(dd_.mean())
+    ad_ = holm(pv_)
+    sd_ = e23[e23.scheduler == "SD-DRR"]
+    n4_ = sum(g_[g_.scheduler == "SD-DRR"].W.mean() < g_[g_.scheduler == "DRR"].W.mean() for _, g_ in r23.groupby("point"))
+    check("E23: N1 / N2 better / N2 worse / starvation / N4", (int(n1_), sum(1 for d_, a_ in zip(df_, ad_) if d_ < 0 and a_ < 0.05), sum(1 for d_, a_ in zip(df_, ad_) if d_ > 0 and a_ < 0.05),
+          int(sd_[[f"{c}_starv_count" for c in CLS]].sum().sum()), int(n4_)), (1, 2, 4, 0, 3))
+    check("E23: SD-DRR longest service gap 20.3 ms, below 21.6", (round(max(sd_[f"{c}_gap_max"].max() for c in CLS) * 1e3, 1), True), (20.3, True))
     # E17c: second backbone trace
     metac = json.loads((ROOT / "results" / "E17c" / "parse_meta.json").read_text())
     check("E17c: 1,000,000 packets in 27.5 s; 97.3 % bulk bytes", (metac["packets"], round(metac["span_s"], 1), round(metac["class_share_bytes"][2] / sum(metac["class_share_bytes"]) * 100, 1)),

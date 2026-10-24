@@ -1,0 +1,17 @@
+{
+ "rule": "see docs/EXPERIMENT_PROTOCOL.md E24",
+ "params": {
+  "DR-DRR": {
+   "kappa": 4,
+   "theta": 0.75
+  },
+  "FuzzyDRR": {
+   "gain": 0.1,
+   "delay_span": 2.0
+  },
+  "RevenueDRR": {
+   "tau": 0.0125,
+   "guar_scale": 0.25
+  }
+ }
+}

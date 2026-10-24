@@ -1,0 +1,7 @@
+{
+ "rule": "see docs/EXPERIMENT_PROTOCOL.md E23",
+ "params": {
+  "kappa": 4,
+  "theta": 0.75
+ }
+}

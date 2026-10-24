@@ -15,8 +15,8 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 MAIN = ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8"]
-FURTHER = ["E1D", "E1V", "E9", "E9C", "E10", "E11", "E12", "E14", "E15", "E19", "E19H", "E20", "E20B", "E21", "ES"]
-TUNING = ["TUNE", "DEVD", "E14TUNE", "E19TUNE"]
+FURTHER = ["E1D", "E1V", "E9", "E9C", "E10", "E11", "E12", "E14", "E15", "E19", "E19H", "E20", "E20B", "E21", "E23", "E23R", "E24", "ES"]
+TUNING = ["TUNE", "DEVD", "E14TUNE", "E19TUNE", "E23TUNE", "E24TUNE"]
 
 
 def stats(exp):
@@ -46,9 +46,10 @@ def build():
     main, further, tuning = cat(MAIN), cat(FURTHER), cat(TUNING)
     kernel = sum(len(pd.read_csv(p)) // 3 for p in sorted((ROOT / "results").glob("E16*/*/summary.csv")))
     replay = sum(len(pd.read_csv(p)) for p in [ROOT / "results/E17/runs.csv", *sorted((ROOT / "results/E17b").glob("*/runs.csv")), *sorted((ROOT / "results/E17c").glob("runs.csv"))])
+    tandem = len(pd.read_csv(ROOT / "results/E22/runs.csv")) if (ROOT / "results/E22/runs.csv").exists() else 0
     archived = sum(len(pd.read_csv(p)) for p in (ROOT / "results").glob("_*/**/runs.csv"))
     return rows, {"main": main, "further": further, "tuning": tuning, "simulator_total": main + further + tuning,
-                  "kernel_runs": kernel, "replay_runs": replay, "archived": archived,
+                  "kernel_runs": kernel, "replay_runs": replay, "tandem_runs": tandem, "archived": archived,
                   "main_paired_groups": sum(rows[e]["paired_groups"] for e in MAIN if e in rows),
                   "main_paired_runs": sum(rows[e]["runs_in_paired_groups"] for e in MAIN if e in rows),
                   "main_single_runs": sum(rows[e]["unpaired_runs"] for e in MAIN if e in rows),
@@ -77,6 +78,7 @@ def render(rows, t):
             f"| **simulator runs in total** | **{t['simulator_total']:,}** |",
             f"| kernel runs (E16, E16b), not in the total | {t['kernel_runs']} |",
             f"| replay runs (E17, E17b, E17c), not in the total | {t['replay_runs']} |",
+            f"| tandem-path runs (E22), not in the total | {t['tandem_runs']} |",
             f"| archived runs superseded by fixes, not reported | {t['archived']:,} |"]
     return "\n".join(out) + "\n"
 

@@ -56,3 +56,24 @@ def test_the_bound_needs_assumption_a():
     _, gap = starvation_gaps(t[idx], log.start[idx], log.end[idx])
     bound = sum(1.0 * Q0 + (9000 if j == 1 else 1500) - 1 for j in (0, 2)) * 8 / 1e6       # L_j of the OTHER classes
     assert gap.max() > bound
+
+
+@settings(max_examples=150, deadline=None, suppress_health_check=[HealthCheck.too_slow, HealthCheck.data_too_large])
+@given(sc=scenario(), M=st.sampled_from([1.0, 2.0, 5.0]), kappa=st.sampled_from([0.0, 4.0, 100.0]),
+       rate=st.sampled_from([2e5, 1e6, 1e7]))
+def test_sd_drr_respects_the_gap_bound_with_its_own_caps(sc, M, kappa, rate):
+    """SD-DRR (E23): quanta in [B_i, M B_i], so the head wait of class i is at most 8 sum_{j != i} (M B_j + L_j - 1) / C."""
+    base = (6000.0, 6000.0, 1500.0)
+    t, cls, size = sc
+    o = np.lexsort((cls, t))
+    tr = Trace(np.asarray(t, float)[o], np.asarray(cls, np.int8)[o], np.asarray(size, np.int32)[o])
+    cfg = SimConfig(TrafficConfig(link_rate=rate, warmup=0.0, duration=1.0), buffer_bytes=10 ** 9, update_interval=0.01)
+    log = simulate(tr, make("SD-DRR", qmax_mult=M, kappa=kappa, base=base), cfg)
+    lmax = [int(tr.size[tr.cls == c].max()) if np.any(tr.cls == c) else 0 for c in range(3)]
+    for c in range(3):
+        idx = np.flatnonzero(tr.cls == c)
+        if not len(idx):
+            continue
+        _, gap = starvation_gaps(tr.t[idx], log.start[idx], log.end[idx])
+        bound = sum(M * base[j] + lmax[j] - 1 for j in range(3) if j != c) * 8 / rate
+        assert gap.max() <= bound * (1 + 1e-9), (c, gap.max(), bound)

@@ -1,0 +1,3081 @@
+key,error
+E23|poisson|0.4|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.4|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.4|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.6|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.6|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.8|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.8|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.9|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.9|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|0.95|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|0.95|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.05|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.05|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|poisson|1.2|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|201,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|202,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|203,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|204,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|205,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|206,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|207,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|208,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|209,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|210,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|211,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|212,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|213,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|214,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|215,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|216,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|217,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|218,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|219,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
+E23|onoff|1.2|static|220,"Traceback (most recent call last):
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\runner.py"", line 43, in _execute
+    m, _, tr = run_one(t[""cfg""], t[""scheduler""], t[""seed""], t[""params""])
+               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\__init__.py"", line 16, in run_one
+    sch = make(scheduler, **(params or {}))
+  File ""C:\Users\mitta\OneDrive\Desktop\cn2\drrsim\schedulers.py"", line 815, in make
+    return REGISTRY[name](k=k, **params)
+           ~~~~~~~~^^^^^^
+KeyError: 'static'
+"
