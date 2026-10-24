@@ -541,7 +541,7 @@ def main(paper):
 
     # ------------------------------------------------------------------ verification-suite counts (arithmetic and reports)
     check("traces of <= 4 packets on the 18-cell grid: 7,315; x 3 buffers = 21,945", (sum(__import__("math").comb(18 + n - 1, n) for n in range(5)), 7315 * 3), (7315, 21945))
-    check("reference comparisons 7 x 21,945 = 153,615", 7 * 21945, 153615)
+    check("reference comparisons 9 x 21,945 = 197,505", 9 * 21945, 197505)
     n5 = sum(__import__("math").comb(18 + n - 1, n) for n in range(6))
     check("five-packet run: 33,649 traces; 7 x 3 x 33,649 = 706,629 comparisons", (n5, 7 * 3 * n5), (33649, 706629))
     mut = (ROOT / "docs" / "MUTATION_REPORT.md").read_text(encoding="utf-8")
