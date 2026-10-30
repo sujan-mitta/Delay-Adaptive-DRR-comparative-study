@@ -1,11 +1,11 @@
 # RESULTS (auto-generated)
 
-Generated 2026-10-24 14:43 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `cbddf4ace2cd8444`. **Do not edit by hand** — re-run the script.
+Generated 2026-10-30 21:49 by `scripts/make_report.py` from `results/*/runs.csv`; code hash `cbddf4ace2cd8444`. **Do not edit by hand** — re-run the script.
 
 > **Verification status.** FIFO, SP and DRR are textbook. RL-SP+DRR (arXiv:2002.07027, Algorithm 1) and CQDRR (Electronics Letters e70418, Eqs. 1-13) were re-implemented from their full texts; where those papers are silent, our choices are listed in `docs/ALGORITHM_SPEC.md`. FuzzyDRR and RevenueDRR are *inspired-by* designs: their full texts could not be obtained, and only the abstract (FuzzyDRR) or a 2-page preview (RevenueDRR) was checked; FuzzyDRR has a known input mismatch. The optional ninth scheduler SCRR (NSDI 2025) follows its paper's Algorithms 3-4. DR-DRR (delay-risk DRR) is **our own design**: the plan's source for it could not be found, so it is not attributed. See `docs/REFERENCES_CHECK.md`.
 
 - Reported runs in the main matrix E1–E8: **6520** (seeds 101–120); further arms (E9, E9C, E10, E1D, E1V, ES) are reported in their own sections. Failed runs: **none**.
-- Pairing verified: 2320 (point, seed) groups, each with a single trace digest across all 8 schedulers.
+- Pairing verified: in the eight-scheduler experiments (E1-E5, E7, E8) each of the 600 (point, seed) groups has a single trace digest shared by all 8 schedulers (4,800 runs); E6 runs one scheduler per knob setting on 40 shared traces (1,720 runs). See docs/RUN_LEDGER.md.
 - Tuned parameters (dev seeds 1–5, frozen before reported runs): `{'RL-SP+DRR': {'rate_frac': 0.4}, 'DR-DRR': {'kappa': 4.0}, 'CQDRR': {'scale': 93.75}, 'FuzzyDRR': {'gain': 0.1}, 'RevenueDRR': {'tau': 0.0125}}`.
 - Values are mean ± 95 % t-interval half-width over 20 seeds; delays in ms. `W = max_i p95_i / D_i` with D = (10, 50, 500) ms: W ≤ 1 means every class met its p95 target.
 

@@ -75,7 +75,12 @@ def main(out=None):
     w(f"- Reported runs in the main matrix E1–E8: **{n_runs}** (seeds 101–120); further arms (E9, E9C, E10, E1D, E1V, ES) "
       f"are reported in their own sections. Failed runs: "
       f"**{'none' if not fails else ', '.join(fails)}**.")
-    w(f"- Pairing verified: {n_pairs} (point, seed) groups, each with a single trace digest across all 8 schedulers.")
+    sys.path.insert(0, str(ROOT / "tools"))
+    import run_ledger as _rl
+    _, _t = _rl.build()
+    w(f"- Pairing verified: in the eight-scheduler experiments (E1-E5, E7, E8) each of the {_t['main_paired_groups']} (point, seed) groups has a single "
+      f"trace digest shared by all 8 schedulers ({_t['main_paired_runs']:,} runs); E6 runs one scheduler per knob setting on 40 shared traces "
+      f"({_t['main_single_runs']:,} runs). See docs/RUN_LEDGER.md.")
     w(f"- Tuned parameters (dev seeds 1–5, frozen before reported runs): `{tuned}`.")
     w("- Values are mean ± 95 % t-interval half-width over 20 seeds; delays in ms. "
       "`W = max_i p95_i / D_i` with D = (10, 50, 500) ms: W ≤ 1 means every class met its p95 target.")
